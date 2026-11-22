@@ -1,0 +1,90 @@
+import { Campaign } from '../types/clinic';
+
+export const campaignsData: Campaign[] = [
+  {
+    id: 'camp-spine-screening-nov',
+    slug: 'free-spine-consultation-day',
+    title: 'اليوم الطبي المجاني لتقييم آلام الظهر والانزلاق الغضروفي',
+    departmentId: 'neurosurgery',
+    doctorId: 'dr-mohammed-aljurbani',
+    serviceSummary: 'فحص سريري أولي ومراجعة تقارير الرنين المغناطيسي لحالات آلام أسفل الظهر والرقبة',
+    dayLabel: 'الخميس — 26 نوفمبر 2026 (موعد تجريبي)',
+    periodLabel: 'الفترة الصباحية: 09:00 صباحًا – 01:00 ظهرًا',
+    locationLabel: 'مقر نوديسك كلينك — الدور الأول، عيادات جراحة المخ والأعصاب',
+    registrationWindow: 'مفتوح حتى اكتمال السعة أو قبل الموعد بـ 24 ساعة',
+    freeScopeExplanation:
+      'تشمل المجانية رسوم المعاينة والاستشارة التقييمية الأولية ضمن ساعات الحملة المحددة فقط؛ ولا تشمل الفحوصات المخبرية أو الأشعة الخارجية أو الأدوية في حال احتياج المراجع إليها.',
+    totalCapacity: 20,
+    bookedCount: 14,
+    status: 'open',
+    image: '/src/assets/images/dept_neurosurgery_suite_1795286629702.jpg',
+    notes: [
+      'يُرجى إحضار صور الأشعة أو الرنين المغناطيسي السابقة إن وجدت.',
+      'الأولوية للمسجلين مسبقًا عبر النموذج الإلكتروني وفق السعة المتاحة.',
+      'يتم تأكيد ساعة الحضور الدقيقة عبر رسالة نصية / تواصل هاتفي تجريبي.',
+    ],
+  },
+  {
+    id: 'camp-rehab-posture-check',
+    slug: 'rehab-posture-assessment-campaign',
+    title: 'حملة الفحص المجاني للقوام وتأهيل آلام الرقبة المكتبية',
+    departmentId: 'rehabilitation',
+    doctorId: 'team-rehab-unit',
+    serviceSummary: 'جلسة تقييم حركي مجانية وتوجيه بتمارين وقائية للوقاية من تيبّس الرقبة والظهر',
+    dayLabel: 'السبت — 21 نوفمبر 2026 (موعد تجريبي)',
+    periodLabel: 'الفترة المسائية: 04:00 عصرًا – 07:30 مساءً',
+    locationLabel: 'قسم التأهيل والعلاج الطبيعي — الدور الأرضي',
+    registrationWindow: 'أُغلق التسجيل لاكتمال المقاعد',
+    freeScopeExplanation:
+      'تغطي الحملة جلسة فحص القوام والتقييم العضلي الأولي مع توصية مكتوبة بتمارين منزلية؛ ولا تشمل الجلسات العلاجية الممتدة.',
+    totalCapacity: 15,
+    bookedCount: 15,
+    status: 'full',
+    image: '/src/assets/images/dept_rehab_gym_1795286629619.jpg',
+    notes: [
+      'اكتملت جميع المقاعد المخصصة لهذه الحملة في بيانات المعاينة.',
+      'يمكن متابعة الحملات القادمة أو حجز تقييم اعتيادي في قسم التأهيل.',
+    ],
+  },
+  {
+    id: 'camp-pain-awareness-dec',
+    slug: 'pain-clinic-awareness-day',
+    title: 'اليوم التوعوي للتعريف بخيارات علاج الألم المزمن غير الجراحية',
+    departmentId: 'pain',
+    doctorId: 'team-pain-unit',
+    serviceSummary: 'استشارة تعريفية بخيارات علاج الألم التداخلي لحالات آلام المفاصل والأعصاب المزمنة',
+    dayLabel: 'الخميس — 10 ديسمبر 2026 (حملة مجدولة)',
+    periodLabel: 'الفترة الصباحية: 09:30 صباحًا – 01:00 ظهرًا',
+    locationLabel: 'وحدة علاج الألم — نوديسك كلينك',
+    registrationWindow: 'يفتح استقبال الطلبات قبل الموعد بـ 5 أيام',
+    freeScopeExplanation:
+      'تشمل الاستشارة التثقيفية ومراجعة التاريخ المرضي للألم المزمن، ولا تشمل الإجراءات الحقنية التداخلية.',
+    totalCapacity: 25,
+    bookedCount: 0,
+    status: 'scheduled',
+    image: '/src/assets/images/dept_pain_clinic_1795286628900.jpg',
+    notes: [
+      'هذه الحملة في حالة «مجدولة» لمعاينة واجهة الحملات التي لم يبدأ التسجيل فيها بعد.',
+    ],
+  },
+  {
+    id: 'camp-pharmacy-elderly-oct',
+    slug: 'medication-review-day-archive',
+    title: 'مبادرة المراجعة الصيدلانية المجانية لأدوية الأعصاب والمفاصل',
+    departmentId: 'pharmacy',
+    serviceSummary: 'مراجعة التداخلات الدوائية وإرشادات الاستخدام الآمن للمسكنات والمكملات',
+    dayLabel: 'الخميس — 29 أكتوبر 2026 (منتهية)',
+    periodLabel: '09:00 صباحًا – 02:00 ظهرًا',
+    locationLabel: 'صيدلية نوديسك كلينك',
+    registrationWindow: 'انتهت فترة الحملة',
+    freeScopeExplanation: 'خدمة استشارية صيدلانية مجانية لمراجعة قائمة الأدوية الحالية للمراجعين.',
+    totalCapacity: 30,
+    bookedCount: 28,
+    status: 'ended',
+    image: '/src/assets/images/dept_pharmacy_counter_1795286630165.jpg',
+    notes: ['حملة أرشيفية لمعاينة حالة «منتهية» وإغلاق نموذج التسجيل.'],
+  },
+];
+
+export const getCampaignById = (id: string) =>
+  campaignsData.find((c) => c.id === id || c.slug === id);

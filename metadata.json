@@ -1,0 +1,6 @@
+{
+  "name": "نوديسك كلينك — NODISC Clinic",
+  "description": "نموذج تصوري تفاعلي متكامل لمركز نوديسك كلينك لجراحة المخ والأعصاب وعلاج الألم والتأهيل والعلاج الطبيعي والصيدلية.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
