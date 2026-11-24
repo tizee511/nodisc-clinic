@@ -16,6 +16,7 @@ import { useDataStore } from '../context/DataStoreContext';
 import { SafeImage } from '../components/SafeImage';
 import { DoctorPortraitFrame } from '../components/ClinicLogoMark';
 import { BookActionButton } from '../components/BookActionLink';
+import { SequentialCarousel } from '../components/SequentialCarousel';
 
 const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 
@@ -42,16 +43,30 @@ export const HomePage: React.FC = () => {
     library.find((l) => l.type === 'faq')?.id || null
   );
 
-  // Active open campaign (section ب)
-  const activeCampaign = campaigns.find((c) => getCampaignEffectiveStatus(c) === 'open');
-  const activeCampaignBooked = activeCampaign ? getCampaignBookedCount(activeCampaign.id) : 0;
+  // Campaigns sorted by priority: open -> scheduled -> full -> ended
+  const orderedCampaigns = [...campaigns].sort((a, b) => {
+    const rank: Record<string, number> = { open: 0, scheduled: 1, full: 2, ended: 3 };
+    const sa = getCampaignEffectiveStatus(a);
+    const sb = getCampaignEffectiveStatus(b);
+    return (rank[sa] ?? 4) - (rank[sb] ?? 4);
+  });
 
   const featuredDoctor = doctors.find((d) => d.isFeatured) || doctors[0];
-  const featuredServices = services.filter((s) => s.featuredOnHome).slice(0, 4);
-  const featuredStories = stories.filter((s) => s.featuredOnHome).slice(0, 2);
-  const featuredArticles = library
-    .filter((l) => (l.type === 'article' || l.type === 'condition') && l.featuredOnHome)
-    .slice(0, 2);
+  const sequentialServices = [
+    ...services.filter((s) => s.featuredOnHome),
+    ...services.filter((s) => !s.featuredOnHome),
+  ];
+  const sequentialStories = [
+    ...stories.filter((s) => s.featuredOnHome),
+    ...stories.filter((s) => !s.featuredOnHome),
+  ];
+  const libraryReadings = library.filter(
+    (l) => l.type === 'article' || l.type === 'condition' || l.type === 'procedure'
+  );
+  const sequentialArticles = [
+    ...libraryReadings.filter((l) => l.featuredOnHome),
+    ...libraryReadings.filter((l) => !l.featuredOnHome),
+  ];
   const featuredVideo =
     library.find((l) => l.type === 'video' && l.featuredOnHome) ||
     library.find((l) => l.type === 'video');
@@ -133,107 +148,194 @@ export const HomePage: React.FC = () => {
         );
 
       case 'campaign':
-        if (!activeCampaign) return null;
+        if (orderedCampaigns.length === 0) return null;
         return (
           <section
             key="campaign"
             style={{ backgroundColor: 'var(--color-petrol)' }}
             className="text-white border-b border-black/15"
           >
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
-              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
-                <div className="space-y-1.5 max-w-3xl">
-                  <div className="flex flex-wrap items-center gap-2 text-xs text-sky-200 font-medium">
-                    <span>{t('home.activeCampaignBadge')}</span>
-                    <span aria-hidden="true">·</span>
-                    <span>{activeCampaign.dayLabel}</span>
-                    <span aria-hidden="true">·</span>
-                    <span className="tabular-nums">
-                      {t('home.remainingSeats')}:{' '}
-                      {Math.max(0, activeCampaign.totalCapacity - activeCampaignBooked)}{' '}
-                      {t('home.seatsOf')} {activeCampaign.totalCapacity}
-                    </span>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 lg:py-12">
+              <SequentialCarousel
+                items={orderedCampaigns}
+                keyExtractor={(camp) => camp.id}
+                desktopCols={2}
+                tabletCols={2}
+                intervalMs={4200}
+                theme="dark"
+                ariaLabel={t('campaigns.title')}
+                isRTL={isRTL}
+                lang={lang}
+                headerLeft={
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-semibold text-sky-200">
+                        {t('home.activeCampaignBadge')}
+                      </span>
+                      <span className="px-2 py-0.5 rounded bg-white/15 text-white text-[11px] font-bold tabular-nums">
+                        {orderedCampaigns.length}
+                      </span>
+                    </div>
+                    <h2 className="font-display font-bold text-2xl sm:text-3xl text-white">
+                      {t('campaigns.title')}
+                    </h2>
+                    <p className="text-xs sm:text-sm text-sky-100/90 max-w-2xl">
+                      {t('campaigns.subtitle')}
+                    </p>
                   </div>
-                  <h2 className="font-display font-bold text-lg sm:text-xl text-white">
-                    {activeCampaign.title}
-                  </h2>
-                  <p className="text-sm text-sky-100/90">{activeCampaign.serviceSummary}</p>
-                </div>
-                <div className="shrink-0">
+                }
+                headerRightLink={
                   <Link
-                    to={`/campaigns/${activeCampaign.slug}`}
-                    className="inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-white text-[#093542] hover:bg-sky-50 text-sm font-semibold transition-colors whitespace-nowrap"
+                    to="/campaigns"
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-white text-[#093542] hover:bg-sky-50 text-xs font-bold transition-colors whitespace-nowrap"
                   >
-                    <span>{t('home.campaignDetails')}</span>
-                    <ArrowIcon className="w-4 h-4" />
+                    <span>{t('common.viewAll')}</span>
+                    <ArrowIcon className="w-3.5 h-3.5" />
                   </Link>
-                </div>
-              </div>
+                }
+                renderItem={(camp) => {
+                  const dept = departments.find((d) => d.id === camp.departmentId);
+                  const booked = getCampaignBookedCount(camp.id);
+                  const effectiveStatus = getCampaignEffectiveStatus(camp);
+                  const remaining =
+                    effectiveStatus === 'full'
+                      ? 0
+                      : Math.max(0, camp.totalCapacity - booked);
+
+                  const statusBadgeStyle =
+                    effectiveStatus === 'open'
+                      ? 'bg-emerald-600 text-white'
+                      : effectiveStatus === 'scheduled'
+                      ? 'bg-[#0284C7] text-white'
+                      : effectiveStatus === 'full'
+                      ? 'bg-amber-600 text-white'
+                      : 'bg-slate-700 text-white';
+
+                  return (
+                    <Link
+                      to={`/campaigns/${camp.slug}`}
+                      className="group bg-white text-slate-900 rounded-xl border border-white/20 overflow-hidden flex flex-col justify-between w-full shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5"
+                    >
+                      <div>
+                        {camp.image && (
+                          <div className="relative overflow-hidden">
+                            <SafeImage
+                              src={camp.image}
+                              alt={camp.title}
+                              aspectClass="aspect-[16/9]"
+                              className="transition-transform duration-500 ease-out group-hover:scale-[1.02]"
+                            />
+                            <span
+                              className={`absolute top-2.5 start-2.5 px-2.5 py-1 rounded-md text-[11px] font-bold shadow-xs ${statusBadgeStyle}`}
+                            >
+                              {t(`campaigns.status.${effectiveStatus}`)}
+                            </span>
+                          </div>
+                        )}
+                        <div className="p-5 space-y-2">
+                          <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                            {dept && (
+                              <span className="text-[#0284C7] font-semibold">{dept.nameAr}</span>
+                            )}
+                            <span aria-hidden="true">·</span>
+                            <span>{camp.dayLabel}</span>
+                          </div>
+                          <h3 className="font-display font-bold text-base sm:text-lg text-slate-900 group-hover:text-[#0F4C5C] line-clamp-2">
+                            {camp.title}
+                          </h3>
+                          <p className="text-sm text-slate-600 line-clamp-2 leading-relaxed">
+                            {camp.serviceSummary}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="px-5 py-3.5 border-t border-slate-100 flex items-center justify-between gap-3 text-xs">
+                        <span className="text-slate-600 tabular-nums">
+                          {t('home.remainingSeats')}:{' '}
+                          <strong className="text-slate-900">{remaining}</strong> {t('home.seatsOf')}{' '}
+                          {camp.totalCapacity}
+                        </span>
+                        <span className="text-[#0F4C5C] font-bold inline-flex items-center gap-1 whitespace-nowrap">
+                          <span>
+                            {effectiveStatus === 'open'
+                              ? t('home.campaignDetails')
+                              : t('common.readMore')}
+                          </span>
+                          <ArrowIcon className="w-3.5 h-3.5" />
+                        </span>
+                      </div>
+                    </Link>
+                  );
+                }}
+              />
             </div>
           </section>
         );
 
       case 'departments':
         return (
-          <section key="departments" id="departments-section" className="max-w-7xl mx-auto px-4 sm:px-6 py-14 lg:py-16">
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
-              <div>
-                <h2 className="font-display font-bold text-2xl sm:text-3xl text-slate-900">
-                  {t('home.departmentsHeading')}
-                </h2>
-                <p className="text-sm sm:text-base text-slate-600 mt-1.5 max-w-2xl">
-                  {t('home.departmentsSub')}
-                </p>
-              </div>
-              <Link
-                to="/services"
-                className="text-sm font-semibold text-[#0F4C5C] hover:text-[#0284C7] inline-flex items-center gap-1 whitespace-nowrap"
-              >
-                <span>{t('nav.services')}</span>
-                <ArrowIcon className="w-4 h-4" />
-              </Link>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {departments.map((dept, idx) => (
-                <motion.div
-                  key={dept.id}
-                  initial={{ opacity: 0, y: 18 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.15 }}
-                  transition={{ duration: 0.4, delay: idx * 0.06, ease: EASE_OUT_EXPO }}
-                  whileHover={{ y: -4 }}
-                  className="flex"
+          <section
+            key="departments"
+            id="departments-section"
+            className="max-w-7xl mx-auto px-4 sm:px-6 py-14 lg:py-16"
+          >
+            <SequentialCarousel
+              items={departments}
+              keyExtractor={(dept) => dept.id}
+              desktopCols={3}
+              tabletCols={2}
+              intervalMs={4200}
+              ariaLabel={t('home.departmentsHeading')}
+              isRTL={isRTL}
+              lang={lang}
+              headerLeft={
+                <div>
+                  <h2 className="font-display font-bold text-2xl sm:text-3xl text-slate-900">
+                    {t('home.departmentsHeading')}
+                  </h2>
+                  <p className="text-sm sm:text-base text-slate-600 mt-1.5 max-w-2xl">
+                    {t('home.departmentsSub')}
+                  </p>
+                </div>
+              }
+              headerRightLink={
+                <Link
+                  to="/services"
+                  className="text-sm font-semibold text-[#0F4C5C] hover:text-[#0284C7] inline-flex items-center gap-1 whitespace-nowrap px-2 py-1"
                 >
-                  <Link
-                    to={`/departments/${dept.slug}`}
-                    className="group bg-white rounded-xl border border-slate-200 overflow-hidden flex flex-col w-full transition-colors duration-200 hover:border-[#0F4C5C]/45"
-                  >
-                    <SafeImage
-                      src={dept.image}
-                      alt={dept.nameAr}
-                      aspectClass="aspect-[4/3]"
-                      className="transition-transform duration-500 ease-out group-hover:scale-[1.02]"
-                    />
-                    <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
-                      <div>
-                        <span className="text-xs text-slate-500 block mb-1" dir="ltr">
-                          {dept.nameEn}
-                        </span>
-                        <h3 className="font-display font-bold text-lg text-slate-900 group-hover:text-[#0F4C5C] transition-colors">
-                          {dept.nameAr}
-                        </h3>
-                        <p className="text-sm text-slate-600 mt-2 leading-relaxed">{dept.shortDesc}</p>
-                      </div>
-                      <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-[#0F4C5C]">
-                        <span>{t('common.readMore')}</span>
-                        <ArrowIcon className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
-                      </div>
+                  <span>{t('nav.services')}</span>
+                  <ArrowIcon className="w-4 h-4" />
+                </Link>
+              }
+              renderItem={(dept) => (
+                <Link
+                  to={`/departments/${dept.slug}`}
+                  className="group bg-white rounded-xl border border-slate-200 overflow-hidden flex flex-col w-full transition-all duration-200 hover:-translate-y-0.5 hover:border-[#0F4C5C]/45"
+                >
+                  <SafeImage
+                    src={dept.image}
+                    alt={dept.nameAr}
+                    aspectClass="aspect-[4/3]"
+                    className="transition-transform duration-500 ease-out group-hover:scale-[1.02]"
+                  />
+                  <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
+                    <div>
+                      <span className="text-xs text-slate-500 block mb-1" dir="ltr">
+                        {dept.nameEn}
+                      </span>
+                      <h3 className="font-display font-bold text-lg text-slate-900 group-hover:text-[#0F4C5C] transition-colors">
+                        {dept.nameAr}
+                      </h3>
+                      <p className="text-sm text-slate-600 mt-2 leading-relaxed">{dept.shortDesc}</p>
                     </div>
-                  </Link>
-                </motion.div>
-              ))}
-            </div>
+                    <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-[#0F4C5C]">
+                      <span>{t('common.readMore')}</span>
+                      <ArrowIcon className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
+                    </div>
+                  </div>
+                </Link>
+              )}
+            />
           </section>
         );
 
@@ -397,56 +499,71 @@ export const HomePage: React.FC = () => {
       case 'services':
         return (
           <section key="services" className="max-w-7xl mx-auto px-4 sm:px-6 py-14 lg:py-16">
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
-              <div>
-                <h2 className="font-display font-bold text-2xl sm:text-3xl text-slate-900">
-                  {t('home.servicesHeading')}
-                </h2>
-                <p className="text-sm sm:text-base text-slate-600 mt-1.5">{t('home.servicesSub')}</p>
-              </div>
-              <Link
-                to="/services"
-                className="text-sm font-semibold text-[#0F4C5C] hover:text-[#0284C7] inline-flex items-center gap-1 whitespace-nowrap"
-              >
-                <span>{t('common.viewAll')}</span>
-                <ArrowIcon className="w-4 h-4" />
-              </Link>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {featuredServices.map((srv, idx) => {
+            <SequentialCarousel
+              items={sequentialServices}
+              keyExtractor={(srv) => srv.id}
+              desktopCols={2}
+              tabletCols={2}
+              intervalMs={3800}
+              ariaLabel={t('home.servicesHeading')}
+              isRTL={isRTL}
+              lang={lang}
+              headerLeft={
+                <div>
+                  <h2 className="font-display font-bold text-2xl sm:text-3xl text-slate-900">
+                    {t('home.servicesHeading')}
+                  </h2>
+                  <p className="text-sm sm:text-base text-slate-600 mt-1.5">{t('home.servicesSub')}</p>
+                </div>
+              }
+              headerRightLink={
+                <Link
+                  to="/services"
+                  className="text-sm font-semibold text-[#0F4C5C] hover:text-[#0284C7] inline-flex items-center gap-1 whitespace-nowrap px-2 py-1"
+                >
+                  <span>{t('common.viewAll')}</span>
+                  <ArrowIcon className="w-4 h-4" />
+                </Link>
+              }
+              renderItem={(srv, idx) => {
                 const dept = departments.find((d) => d.id === srv.departmentId);
                 const doc = doctors.find((d) => d.id === srv.doctorId);
                 return (
-                  <motion.div
-                    key={srv.id}
-                    initial={{ opacity: 0, y: 16 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.15 }}
-                    transition={{ duration: 0.38, delay: idx * 0.06, ease: EASE_OUT_EXPO }}
-                    whileHover={{ y: -3 }}
-                    className="bg-white rounded-xl border border-slate-200 p-6 flex flex-col justify-between space-y-4 transition-colors hover:border-[#0F4C5C]/40"
-                  >
-                    <div className="space-y-2.5">
-                      <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
-                        <span className="font-semibold text-[#0284C7]">0{idx + 1}.</span>
-                        <span>{dept?.nameAr}</span>
-                        {doc && (
-                          <>
-                            <span aria-hidden="true">·</span>
-                            <span>{doc.nameAr}</span>
-                          </>
-                        )}
-                      </div>
-                      <h3 className="font-display font-bold text-lg text-slate-900">
-                        <Link to={`/services/${srv.slug}`} className="hover:text-[#0F4C5C]">
-                          {srv.title}
+                  <div className="group bg-white rounded-xl border border-slate-200 overflow-hidden flex flex-col justify-between w-full transition-all duration-200 hover:-translate-y-0.5 hover:border-[#0F4C5C]/40">
+                    <div>
+                      {srv.image && (
+                        <Link to={`/services/${srv.slug}`} className="block overflow-hidden">
+                          <SafeImage
+                            src={srv.image}
+                            alt={srv.title}
+                            aspectClass="aspect-[16/9]"
+                            className="transition-transform duration-500 ease-out group-hover:scale-[1.02]"
+                          />
                         </Link>
-                      </h3>
-                      <p className="text-sm text-slate-600 leading-relaxed">{srv.shortDesc}</p>
+                      )}
+                      <div className="p-6 pb-4 space-y-2.5">
+                        <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                          <span className="font-mono font-bold text-[#0284C7] tabular-nums">
+                            {String(idx + 1).padStart(2, '0')}.
+                          </span>
+                          <span>{dept?.nameAr}</span>
+                          {doc && (
+                            <>
+                              <span aria-hidden="true">·</span>
+                              <span>{doc.nameAr}</span>
+                            </>
+                          )}
+                        </div>
+                        <h3 className="font-display font-bold text-lg text-slate-900">
+                          <Link to={`/services/${srv.slug}`} className="hover:text-[#0F4C5C]">
+                            {srv.title}
+                          </Link>
+                        </h3>
+                        <p className="text-sm text-slate-600 leading-relaxed">{srv.shortDesc}</p>
+                      </div>
                     </div>
 
-                    <div className="pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
+                    <div className="px-6 pb-5 pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
                       <Link
                         to={`/services/${srv.slug}`}
                         className="text-sm font-semibold text-[#0F4C5C] hover:underline inline-flex items-center gap-1"
@@ -464,10 +581,10 @@ export const HomePage: React.FC = () => {
                         {t('common.bookService')}
                       </BookActionButton>
                     </div>
-                  </motion.div>
+                  </div>
                 );
-              })}
-            </div>
+              }}
+            />
           </section>
         );
 
@@ -475,43 +592,61 @@ export const HomePage: React.FC = () => {
         return (
           <section key="stories" className="bg-white border-y border-slate-200">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 py-14 lg:py-16">
-              <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
-                <div>
-                  <h2 className="font-display font-bold text-2xl sm:text-3xl text-slate-900">
-                    {t('home.storiesHeading')}
-                  </h2>
-                  <p className="text-sm sm:text-base text-slate-600 mt-1.5">{t('home.storiesSub')}</p>
-                </div>
-                <Link
-                  to="/stories"
-                  className="text-sm font-semibold text-[#0F4C5C] hover:text-[#0284C7] inline-flex items-center gap-1 whitespace-nowrap"
-                >
-                  <span>{t('nav.stories')}</span>
-                  <ArrowIcon className="w-4 h-4" />
-                </Link>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {featuredStories.map((story) => {
+              <SequentialCarousel
+                items={sequentialStories}
+                keyExtractor={(story) => story.id}
+                desktopCols={2}
+                tabletCols={2}
+                intervalMs={4400}
+                ariaLabel={t('home.storiesHeading')}
+                isRTL={isRTL}
+                lang={lang}
+                headerLeft={
+                  <div>
+                    <h2 className="font-display font-bold text-2xl sm:text-3xl text-slate-900">
+                      {t('home.storiesHeading')}
+                    </h2>
+                    <p className="text-sm sm:text-base text-slate-600 mt-1.5">{t('home.storiesSub')}</p>
+                  </div>
+                }
+                headerRightLink={
+                  <Link
+                    to="/stories"
+                    className="text-sm font-semibold text-[#0F4C5C] hover:text-[#0284C7] inline-flex items-center gap-1 whitespace-nowrap px-2 py-1"
+                  >
+                    <span>{t('nav.stories')}</span>
+                    <ArrowIcon className="w-4 h-4" />
+                  </Link>
+                }
+                renderItem={(story) => {
                   const dept = departments.find((d) => d.id === story.departmentId);
                   return (
                     <Link
-                      key={story.id}
                       to={`/stories/${story.slug}`}
-                      className="group bg-slate-50 rounded-xl border border-slate-200 p-6 flex flex-col justify-between space-y-4 hover:border-[#0F4C5C]/40 transition-colors"
+                      className="group bg-slate-50 rounded-xl border border-slate-200 overflow-hidden flex flex-col justify-between w-full hover:border-[#0F4C5C]/40 transition-colors"
                     >
-                      <div className="space-y-2.5">
-                        <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
-                          <span>{dept?.nameAr}</span>
-                          <span aria-hidden="true">·</span>
-                          <span className="tabular-nums">{story.date}</span>
+                      <div>
+                        {story.image && (
+                          <SafeImage
+                            src={story.image}
+                            alt={story.title}
+                            aspectClass="aspect-[16/9]"
+                            className="transition-transform duration-500 ease-out group-hover:scale-[1.02]"
+                          />
+                        )}
+                        <div className="p-6 pb-4 space-y-2.5">
+                          <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                            <span className="text-[#0284C7] font-medium">{dept?.nameAr}</span>
+                            <span aria-hidden="true">·</span>
+                            <span className="tabular-nums">{story.date}</span>
+                          </div>
+                          <h3 className="font-display font-bold text-lg text-slate-900 group-hover:text-[#0F4C5C]">
+                            {story.title}
+                          </h3>
+                          <p className="text-sm text-slate-600 leading-relaxed">{story.summary}</p>
                         </div>
-                        <h3 className="font-display font-bold text-lg text-slate-900 group-hover:text-[#0F4C5C]">
-                          {story.title}
-                        </h3>
-                        <p className="text-sm text-slate-600 leading-relaxed">{story.summary}</p>
                       </div>
-                      <div className="text-xs font-medium text-slate-500 pt-2 border-t border-slate-200/70 flex items-center justify-between">
+                      <div className="px-6 py-3.5 text-xs font-medium text-slate-500 border-t border-slate-200/70 flex items-center justify-between">
                         <span>{story.patientLabel}</span>
                         <span className="text-[#0F4C5C] font-semibold inline-flex items-center gap-1">
                           <span>{t('common.readMore')}</span>
@@ -520,8 +655,8 @@ export const HomePage: React.FC = () => {
                       </div>
                     </Link>
                   );
-                })}
-              </div>
+                }}
+              />
             </div>
           </section>
         );
@@ -546,36 +681,53 @@ export const HomePage: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-              <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-6">
-                {featuredArticles.map((art) => {
-                  const dept = departments.find((d) => d.id === art.departmentId);
-                  return (
-                    <Link
-                      key={art.id}
-                      to={`/library/${art.slug}`}
-                      className="group bg-white rounded-xl border border-slate-200 overflow-hidden flex flex-col"
-                    >
-                      <SafeImage src={art.image} alt={art.title} aspectClass="aspect-[4/3]" />
-                      <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
-                        <div>
-                          <div className="text-xs text-slate-500 flex flex-wrap items-center gap-1.5 mb-1.5">
-                            <span className="text-[#0284C7] font-medium">{art.typeLabel}</span>
-                            <span aria-hidden="true">·</span>
-                            <span>{dept?.nameAr}</span>
+              <div className="lg:col-span-7 flex flex-col justify-between">
+                <SequentialCarousel
+                  items={sequentialArticles}
+                  keyExtractor={(art) => art.id}
+                  desktopCols={2}
+                  tabletCols={2}
+                  intervalMs={4600}
+                  compactHeader
+                  ariaLabel={t('home.libraryHeading')}
+                  isRTL={isRTL}
+                  lang={lang}
+                  headerLeft={
+                    <span className="text-xs font-semibold text-[#0284C7]">
+                      {lang === 'ar'
+                        ? 'مقالات وحالات طبية متسلسلة'
+                        : 'Featured Medical Readings'}
+                    </span>
+                  }
+                  renderItem={(art) => {
+                    const dept = departments.find((d) => d.id === art.departmentId);
+                    return (
+                      <Link
+                        to={`/library/${art.slug}`}
+                        className="group bg-white rounded-xl border border-slate-200 overflow-hidden flex flex-col w-full hover:border-[#0F4C5C]/40 transition-colors"
+                      >
+                        <SafeImage src={art.image} alt={art.title} aspectClass="aspect-[4/3]" />
+                        <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
+                          <div>
+                            <div className="text-xs text-slate-500 flex flex-wrap items-center gap-1.5 mb-1.5">
+                              <span className="text-[#0284C7] font-medium">{art.typeLabel}</span>
+                              <span aria-hidden="true">·</span>
+                              <span>{dept?.nameAr}</span>
+                            </div>
+                            <h3 className="font-display font-bold text-base text-slate-900 group-hover:text-[#0F4C5C]">
+                              {art.title}
+                            </h3>
+                            <p className="text-sm text-slate-600 mt-2 line-clamp-3">{art.summary}</p>
                           </div>
-                          <h3 className="font-display font-bold text-base text-slate-900 group-hover:text-[#0F4C5C]">
-                            {art.title}
-                          </h3>
-                          <p className="text-sm text-slate-600 mt-2 line-clamp-3">{art.summary}</p>
+                          <span className="text-xs font-semibold text-[#0F4C5C] inline-flex items-center gap-1">
+                            <span>{t('common.readMore')}</span>
+                            <ArrowIcon className="w-3.5 h-3.5" />
+                          </span>
                         </div>
-                        <span className="text-xs font-semibold text-[#0F4C5C] inline-flex items-center gap-1">
-                          <span>{t('common.readMore')}</span>
-                          <ArrowIcon className="w-3.5 h-3.5" />
-                        </span>
-                      </div>
-                    </Link>
-                  );
-                })}
+                      </Link>
+                    );
+                  }}
+                />
               </div>
 
               {featuredVideo && (
@@ -632,44 +784,57 @@ export const HomePage: React.FC = () => {
         return (
           <section key="news" className="bg-white border-y border-slate-200">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 py-14 lg:py-16">
-              <div className="flex items-center justify-between gap-4 mb-8">
-                <h2 className="font-display font-bold text-2xl sm:text-3xl text-slate-900">
-                  {t('home.newsHeading')}
-                </h2>
-                <Link
-                  to="/news"
-                  className="text-sm font-semibold text-[#0F4C5C] hover:text-[#0284C7] inline-flex items-center gap-1 whitespace-nowrap"
-                >
-                  <span>{t('common.viewAll')}</span>
-                  <ArrowIcon className="w-4 h-4" />
-                </Link>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {news.slice(0, 3).map((item) => (
+              <SequentialCarousel
+                items={news}
+                keyExtractor={(item) => item.id}
+                desktopCols={2}
+                tabletCols={2}
+                intervalMs={4000}
+                ariaLabel={t('home.newsHeading')}
+                isRTL={isRTL}
+                lang={lang}
+                headerLeft={
+                  <h2 className="font-display font-bold text-2xl sm:text-3xl text-slate-900">
+                    {t('home.newsHeading')}
+                  </h2>
+                }
+                headerRightLink={
                   <Link
-                    key={item.id}
-                    to={`/news/${item.slug}`}
-                    className="group bg-slate-50 rounded-xl border border-slate-200 p-5 flex flex-col justify-between space-y-3 hover:border-[#0F4C5C]/40 transition-colors"
+                    to="/news"
+                    className="text-sm font-semibold text-[#0F4C5C] hover:text-[#0284C7] inline-flex items-center gap-1 whitespace-nowrap px-2 py-1"
                   >
-                    <div className="space-y-2">
-                      <div className="text-xs text-slate-500 flex items-center gap-2">
-                        <span className="text-[#0284C7] font-medium">{item.categoryLabel}</span>
-                        <span aria-hidden="true">·</span>
-                        <span className="tabular-nums">{item.date}</span>
-                      </div>
-                      <h3 className="font-display font-bold text-base text-slate-900 group-hover:text-[#0F4C5C]">
-                        {item.title}
-                      </h3>
-                      <p className="text-sm text-slate-600 line-clamp-3">{item.summary}</p>
-                    </div>
-                    <span className="text-xs font-semibold text-[#0F4C5C] inline-flex items-center gap-1 pt-2">
-                      <span>{t('common.readMore')}</span>
-                      <ArrowIcon className="w-3.5 h-3.5" />
-                    </span>
+                    <span>{t('common.viewAll')}</span>
+                    <ArrowIcon className="w-4 h-4" />
                   </Link>
-                ))}
-              </div>
+                }
+                renderItem={(item) => (
+                  <Link
+                    to={`/news/${item.slug}`}
+                    className="group bg-slate-50 rounded-xl border border-slate-200 overflow-hidden flex flex-col justify-between w-full hover:border-[#0F4C5C]/40 transition-colors"
+                  >
+                    <div>
+                      <SafeImage src={item.image} alt={item.title} aspectClass="aspect-[16/9]" />
+                      <div className="p-5 space-y-2">
+                        <div className="text-xs text-slate-500 flex items-center gap-2">
+                          <span className="text-[#0284C7] font-medium">{item.categoryLabel}</span>
+                          <span aria-hidden="true">·</span>
+                          <span className="tabular-nums">{item.date}</span>
+                        </div>
+                        <h3 className="font-display font-bold text-base text-slate-900 group-hover:text-[#0F4C5C]">
+                          {item.title}
+                        </h3>
+                        <p className="text-sm text-slate-600 line-clamp-3">{item.summary}</p>
+                      </div>
+                    </div>
+                    <div className="px-5 pb-5">
+                      <span className="text-xs font-semibold text-[#0F4C5C] inline-flex items-center gap-1 pt-2 border-t border-slate-200/70 w-full">
+                        <span>{t('common.readMore')}</span>
+                        <ArrowIcon className="w-3.5 h-3.5" />
+                      </span>
+                    </div>
+                  </Link>
+                )}
+              />
             </div>
           </section>
         );

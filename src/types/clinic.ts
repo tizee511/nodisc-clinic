@@ -198,6 +198,17 @@ export interface Product {
   requiresNote?: string;
 }
 
+export interface ProductReview {
+  id: string;
+  productId: string;
+  authorName: string;
+  rating: number;
+  title?: string;
+  comment: string;
+  createdAt: string;
+  verifiedPurchase?: boolean;
+}
+
 export interface InventoryLogEntry {
   id: string;
   productId: string;

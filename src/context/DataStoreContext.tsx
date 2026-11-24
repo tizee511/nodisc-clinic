@@ -8,6 +8,7 @@ import { newsData, successStoriesData } from '../data/newsAndStories';
 import { campaignsData } from '../data/campaigns';
 import {
   productCategoriesData,
+  productReviewsSeed,
   productsData,
   storeMainSectionsData,
 } from '../data/products';
@@ -56,6 +57,7 @@ import {
   PrescriptionSubmission,
   Product,
   ProductCategory,
+  ProductReview,
   RoleId,
   ScheduleSettings,
   SmsLogEntry,
@@ -130,6 +132,11 @@ interface DataStoreContextValue {
   setProductCategories: React.Dispatch<React.SetStateAction<ProductCategory[]>>;
   products: Product[];
   setProducts: React.Dispatch<React.SetStateAction<Product[]>>;
+  productReviews: ProductReview[];
+  addProductReview: (
+    review: Omit<ProductReview, 'id' | 'createdAt'>
+  ) => ProductReview;
+  getProductReviews: (productId: string) => ProductReview[];
   showWholesalePrices: boolean;
   setShowWholesalePrices: React.Dispatch<React.SetStateAction<boolean>>;
   inventoryLogs: InventoryLogEntry[];
@@ -246,6 +253,18 @@ export const DataStoreProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [productCategories, setProductCategories] =
     useState<ProductCategory[]>(productCategoriesData);
   const [products, setProducts] = useState<Product[]>(productsData);
+  const [productReviews, setProductReviews] = useState<ProductReview[]>(() => {
+    try {
+      const saved = localStorage.getItem('nodisc_product_reviews_v1');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {
+      // ignore storage errors
+    }
+    return productReviewsSeed;
+  });
   const [showWholesalePrices, setShowWholesalePrices] = useState(false);
   const [inventoryLogs, setInventoryLogs] = useState<InventoryLogEntry[]>(inventoryLogsSeed);
 
@@ -563,6 +582,31 @@ export const DataStoreProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       ...prev,
     ]);
     recordAudit('المخزون', `تعديل كمية (${delta > 0 ? '+' : ''}${delta}): ${reason}`, prd.name);
+  };
+
+  const getProductReviews = (productId: string): ProductReview[] =>
+    productReviews.filter((r) => r.productId === productId);
+
+  const addProductReview = (
+    review: Omit<ProductReview, 'id' | 'createdAt'>
+  ): ProductReview => {
+    const created: ProductReview = {
+      ...review,
+      id: `REV-${Date.now().toString().slice(-6)}`,
+      createdAt: new Date().toISOString().slice(0, 10),
+    };
+    setProductReviews((prev) => {
+      const next = [created, ...prev];
+      try {
+        localStorage.setItem('nodisc_product_reviews_v1', JSON.stringify(next));
+      } catch {
+        // ignore storage errors
+      }
+      return next;
+    });
+    const prd = products.find((p) => p.id === review.productId);
+    recordAudit('التقييمات', `إضافة تقييم (${review.rating}/5) للمنتج`, prd?.name || review.productId);
+    return created;
   };
 
   const addOrder = (order: OrderRecord) => {
@@ -1023,6 +1067,12 @@ export const DataStoreProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     setStoreMainSections(storeMainSectionsData);
     setProductCategories(productCategoriesData);
     setProducts(productsData);
+    setProductReviews(productReviewsSeed);
+    try {
+      localStorage.removeItem('nodisc_product_reviews_v1');
+    } catch {
+      // ignore
+    }
     setShowWholesalePrices(false);
     setInventoryLogs(inventoryLogsSeed);
     setScheduleSettings(scheduleSettingsSeed);
@@ -1087,6 +1137,9 @@ export const DataStoreProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         setProductCategories,
         products,
         setProducts,
+        productReviews,
+        addProductReview,
+        getProductReviews,
         showWholesalePrices,
         setShowWholesalePrices,
         inventoryLogs,

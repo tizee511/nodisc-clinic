@@ -3,13 +3,19 @@ import { Link, useParams } from 'react-router-dom';
 import { Check, Minus, Plus, ShoppingBag } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 import { useClinic } from '../../context/ClinicContext';
+import { useDataStore } from '../../context/DataStoreContext';
 import { Breadcrumbs } from '../../components/Breadcrumbs';
 import { SafeImage } from '../../components/SafeImage';
+import {
+  ProductReviewsSection,
+  StarRatingDisplay,
+} from '../../components/store/ProductReviewsSection';
 
 export const ProductDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const { lang, t, products, productCategories, storeMainSections } = useLanguage();
   const { addToCart, formatPrice } = useClinic();
+  const { getProductReviews } = useDataStore();
 
   const product = products.find((p) => p.slug === slug || p.id === slug);
 
@@ -43,6 +49,13 @@ export const ProductDetailPage: React.FC = () => {
   const discountPct = hasDiscount
     ? Math.round(((product.originalPriceYER! - product.priceYER) / product.originalPriceYER!) * 100)
     : 0;
+
+  const productReviews = getProductReviews(product.id);
+  const reviewCount = productReviews.length;
+  const averageRating =
+    reviewCount > 0
+      ? productReviews.reduce((sum, r) => sum + r.rating, 0) / reviewCount
+      : 0;
 
   const handleAdd = () => {
     const res = addToCart(product.id, qty, selectedOption);
@@ -97,6 +110,34 @@ export const ProductDetailPage: React.FC = () => {
               <p className="text-xs text-slate-500 mt-1">
                 {t('store.product.unit')}: {product.unit}
               </p>
+
+              {/* Clickable Star Rating Summary */}
+              <a
+                href="#product-reviews"
+                className="inline-flex items-center gap-2 mt-2.5 text-xs text-slate-600 hover:text-[#0F4C5C] transition-colors"
+              >
+                <StarRatingDisplay rating={averageRating} size="sm" />
+                {reviewCount > 0 ? (
+                  <span className="font-semibold text-slate-800 tabular-nums">
+                    {averageRating.toFixed(1)}{' '}
+                    <span className="font-normal text-slate-500">
+                      ({reviewCount}{' '}
+                      {lang === 'ar'
+                        ? reviewCount === 1
+                          ? 'تقييم'
+                          : 'تقييمات'
+                        : reviewCount === 1
+                        ? 'review'
+                        : 'reviews'}
+                      )
+                    </span>
+                  </span>
+                ) : (
+                  <span className="text-slate-500 underline-offset-2 hover:underline">
+                    {lang === 'ar' ? 'كن أول من يقيّم هذا المنتج' : 'Be the first to review'}
+                  </span>
+                )}
+              </a>
             </div>
 
             <div className="flex flex-wrap items-baseline gap-3 pb-4 border-b border-slate-100">
@@ -251,6 +292,9 @@ export const ProductDetailPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Customer Star Ratings & Reviews Section */}
+      <ProductReviewsSection productId={product.id} productName={product.name} />
     </div>
   );
 };

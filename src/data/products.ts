@@ -1,4 +1,4 @@
-import { Product, ProductCategory, StoreMainSection } from '../types/clinic';
+import { Product, ProductCategory, ProductReview, StoreMainSection } from '../types/clinic';
 
 export const storeMainSectionsData: StoreMainSection[] = [
   {
@@ -790,3 +790,127 @@ export const getProductById = (id: string) =>
 
 export const getCategoryById = (id: string) =>
   productCategoriesData.find((c) => c.id === id || c.slug === id);
+
+export const productReviewsSeed: ProductReview[] = [
+  {
+    id: 'rev-1',
+    productId: 'prd-hair-serum',
+    authorName: 'سارة الحميري',
+    rating: 5,
+    title: 'نتائج ملحوظة خلال شهر',
+    comment: 'خفيف على فروة الرأس ولا يسبب دهون، لاحظت فرقاً واضحاً في تقليل التساقط بعد الأسبوع الثالث مع الالتزام بالجرعة اليومية.',
+    createdAt: '2026-11-18',
+    verifiedPurchase: true,
+  },
+  {
+    id: 'rev-2',
+    productId: 'prd-hair-serum',
+    authorName: 'ندى العزاني',
+    rating: 4,
+    title: 'جيد جداً ومناسب للشعر الحساس',
+    comment: 'قوام السيروم مريح ورائحته لطيفة جداً، والتوصيل من صيدلية نوديسك كان سريعاً ومغلفاً بعناية.',
+    createdAt: '2026-11-12',
+    verifiedPurchase: true,
+  },
+  {
+    id: 'rev-3',
+    productId: 'prd-skin-sunscreen',
+    authorName: 'مها باوزير',
+    rating: 5,
+    title: 'أفضل واقي شمس بدون أثر أبيض',
+    comment: 'يمتص بسرعة فائقة ولا يترك لمعاناً مزعجاً، أستخدمه يومياً قبل الخروج للعمل ومناسب جداً للبشرة المختلطة.',
+    createdAt: '2026-11-19',
+    verifiedPurchase: true,
+  },
+  {
+    id: 'rev-4',
+    productId: 'prd-bcomplex-neuro',
+    authorName: 'أحمد الصبيحي',
+    rating: 5,
+    title: 'دعم ممتاز للأعصاب والتنميل',
+    comment: 'نصحني به الطبيب بعد مراجعة آلام أسفل الظهر، ساعدني كثيراً في تخفيف الوخز والتنميل مع جلسات العلاج الطبيعي.',
+    createdAt: '2026-11-17',
+    verifiedPurchase: true,
+  },
+  {
+    id: 'rev-5',
+    productId: 'prd-bcomplex-neuro',
+    authorName: 'عبدالله الوصابي',
+    rating: 5,
+    title: 'أصلي وبإشراف صيدلاني',
+    comment: 'أثق في صيدلية نوديسك لأن جميع المكملات أصلية ومخزنة بطريقة سليمة، والعلبة تكفي شهراً كاملاً.',
+    createdAt: '2026-11-10',
+    verifiedPurchase: true,
+  },
+  {
+    id: 'rev-6',
+    productId: 'prd-bcomplex-neuro',
+    authorName: 'ياسر المقطري',
+    rating: 4,
+    title: 'سهل البلع وفعال',
+    comment: 'مريح للمعدة مقارنة بأنواع أخرى جربتها سابقاً.',
+    createdAt: '2026-11-04',
+    verifiedPurchase: false,
+  },
+  {
+    id: 'rev-7',
+    productId: 'prd-lumbar-brace',
+    authorName: 'صالح الجرادي',
+    rating: 5,
+    title: 'تثبيت مريح جداً للفقرات القطنية',
+    comment: 'الدعامات الخلفية تعطي ثباتاً ممتازاً أثناء المشي والعمل المكتبي دون ضغط مزعج، ومقاسه مضبوط حسب جدول الصيدلية.',
+    createdAt: '2026-11-20',
+    verifiedPurchase: true,
+  },
+  {
+    id: 'rev-8',
+    productId: 'prd-lumbar-brace',
+    authorName: 'هشام البعداني',
+    rating: 4,
+    title: 'خامة عالية الجودة وتهوية ممتازة',
+    comment: 'القماش يسمح بالتهوية ولا يسبب حرارة عند ارتدائه لساعات، أنصح بالاستعانة بتوجيه الصيدلي لاختيار المقاس.',
+    createdAt: '2026-11-14',
+    verifiedPurchase: true,
+  },
+  {
+    id: 'rev-9',
+    productId: 'prd-cervical-pillow',
+    authorName: 'أم محمد',
+    rating: 5,
+    title: 'اختفت آلام الرقبة الصباحية',
+    comment: 'الوسادة تحافظ على استقامة الرقبة أثناء النوم على الظهر والجانب، وجودة الميموري فوم ممتازة.',
+    createdAt: '2026-11-16',
+    verifiedPurchase: true,
+  },
+  {
+    id: 'rev-10',
+    productId: 'prd-tens-unit',
+    authorName: 'فؤاد الشميري',
+    rating: 5,
+    title: 'عملي جداً للجلسات المنزلية',
+    comment: 'برامج الجهاز واضحة وسهلة الضبط لتخفيف التشنج العضلي في الظهر والكتف بالمنزل بين زيارات التأهيل.',
+    createdAt: '2026-11-15',
+    verifiedPurchase: true,
+  },
+  {
+    id: 'rev-11',
+    productId: 'prd-baby-lotion-kit',
+    authorName: 'أروى العامري',
+    rating: 5,
+    title: 'آمن ولطيف لبشرة الرضع',
+    comment: 'الطقم متكامل وخالٍ من العطور القوية، ناسب بشرة طفلي الحساسة من أول استخدام.',
+    createdAt: '2026-11-11',
+    verifiedPurchase: true,
+  },
+  {
+    id: 'rev-12',
+    productId: 'prd-seniors-multi',
+    authorName: 'جمال الأغبري',
+    rating: 5,
+    title: 'تحسن واضح في النشاط لوالدي',
+    comment: 'تركيبة متوازنة مخصصة لكبار السن، سهل البلع ولم يسبب أي انزعاج هضمي.',
+    createdAt: '2026-11-13',
+    verifiedPurchase: true,
+  },
+];
+

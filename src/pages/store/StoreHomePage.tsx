@@ -5,6 +5,7 @@ import { useLanguage } from '../../context/LanguageContext';
 import { useClinic } from '../../context/ClinicContext';
 import { Breadcrumbs } from '../../components/Breadcrumbs';
 import { SafeImage } from '../../components/SafeImage';
+import { StoreOffersCarousel } from '../../components/store/StoreOffersCarousel';
 
 export const StoreHomePage: React.FC = () => {
   const { lang, isRTL, t, storeMainSections, productCategories, products } = useLanguage();
@@ -44,14 +45,14 @@ export const StoreHomePage: React.FC = () => {
   }, [searchQuery, products, productCategories, storeMainSections, activeMainSection]);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 lg:py-12 space-y-10">
-      <div>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 lg:py-10 space-y-8">
+      <div className="space-y-4">
         <Breadcrumbs items={[{ label: t('nav.store') }]} />
 
-        {/* Store Header + Search + Offers + Prescription + Cart */}
-        <div className="bg-white rounded-xl border border-slate-200 p-6 sm:p-8 space-y-6">
+        {/* Store Title Header + Quick Actions */}
+        <div className="bg-white rounded-xl border border-slate-200 p-5 sm:p-6">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-            <div className="space-y-1.5">
+            <div className="space-y-1">
               <h1 className="font-display font-bold text-3xl text-slate-900">{t('store.title')}</h1>
               <p className="text-sm sm:text-base text-slate-600 max-w-2xl">{t('store.subtitle')}</p>
             </div>
@@ -86,7 +87,13 @@ export const StoreHomePage: React.FC = () => {
               </Link>
             </div>
           </div>
+        </div>
 
+        {/* Auto-Sliding Offers Carousel directly under the Store Title */}
+        <StoreOffersCarousel />
+
+        {/* Search & Standalone Main Store Groups Tabs */}
+        <div className="bg-white rounded-xl border border-slate-200 p-4 sm:p-5">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div className="relative flex-1 max-w-md">
               <Search className="w-4 h-4 text-slate-400 absolute top-1/2 -translate-y-1/2 start-3.5" />
@@ -96,11 +103,10 @@ export const StoreHomePage: React.FC = () => {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={t('store.searchPlaceholder')}
                 aria-label={t('store.searchPlaceholder')}
-                className="w-full ps-10 pe-4 py-3 rounded-lg border border-slate-300 text-sm focus:border-[#0F4C5C]"
+                className="w-full ps-10 pe-4 py-2.5 rounded-lg border border-slate-300 text-sm focus:border-[#0F4C5C]"
               />
             </div>
 
-            {/* Standalone Main Store Groups Tabs */}
             <div className="flex flex-wrap gap-2">
               <button
                 type="button"
@@ -133,36 +139,6 @@ export const StoreHomePage: React.FC = () => {
           </div>
         </div>
       </div>
-
-      {/* Offers Banner Highlight */}
-      {!searchQuery.trim() && offersCount > 0 && (
-        <Link
-          to="/store/offers"
-          className="block bg-gradient-to-l from-[#093542] to-[#0F4C5C] rounded-xl p-5 sm:p-6 text-white hover:opacity-95 transition-opacity"
-        >
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="flex items-start sm:items-center gap-3.5">
-              <span className="w-11 h-11 rounded-xl bg-white/15 border border-white/20 inline-flex items-center justify-center shrink-0">
-                <Percent className="w-5 h-5 text-sky-200" />
-              </span>
-              <div className="space-y-1">
-                <span className="text-xs font-semibold text-sky-200 block">
-                  {lang === 'ar'
-                    ? `${offersCount} عروض فعالة الآن في الصيدلية`
-                    : `${offersCount} Active Pharmacy Discounts`}
-                </span>
-                <h2 className="font-display font-bold text-lg sm:text-xl">
-                  {t('store.offers.title')} — {t('store.offers.bannerCta')}
-                </h2>
-              </div>
-            </div>
-            <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-white text-[#093542] text-xs font-bold shrink-0 self-start sm:self-auto whitespace-nowrap">
-              <span>{t('store.offers.viewOffers')}</span>
-              <ArrowIcon className="w-3.5 h-3.5" />
-            </span>
-          </div>
-        </Link>
-      )}
 
       {/* Search Results View OR Standalone Groups Layout */}
       {searchQuery.trim() ? (
