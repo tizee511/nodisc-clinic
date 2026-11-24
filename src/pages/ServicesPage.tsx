@@ -5,6 +5,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { Breadcrumbs } from '../components/Breadcrumbs';
 import { SafeImage } from '../components/SafeImage';
 import { BookActionButton } from '../components/BookActionLink';
+import { getFilterTabClass, ScrollableFilterBar } from '../components/ScrollableFilterBar';
 
 export const ServicesPage: React.FC = () => {
   const { lang, isRTL, t, departments, services, doctors } = useLanguage();
@@ -29,36 +30,43 @@ export const ServicesPage: React.FC = () => {
       </div>
 
       {/* Department Filter Tabs */}
-      <div className="flex flex-wrap gap-2 p-1.5 bg-slate-100 rounded-xl w-fit" role="tablist">
+      <ScrollableFilterBar ariaLabel={lang === 'ar' ? 'تصفية الخدمات حسب القسم' : 'Filter services by department'}>
         <button
           type="button"
           onClick={() => setSelectedDept('all')}
-          className={`px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
-            selectedDept === 'all'
-              ? 'bg-white text-[#0F4C5C] shadow-xs font-semibold'
-              : 'text-slate-600 hover:text-slate-900'
-          }`}
+          className={getFilterTabClass(selectedDept === 'all')}
         >
-          {t('common.all')} ({services.length})
+          <span>{t('common.all')}</span>
+          <span
+            className={`text-[11px] tabular-nums ${
+              selectedDept === 'all' ? 'text-sky-200' : 'text-slate-400'
+            }`}
+          >
+            ({services.length})
+          </span>
         </button>
         {departments.map((dept) => {
           const count = services.filter((s) => s.departmentId === dept.id).length;
+          const isActive = selectedDept === dept.id;
           return (
             <button
               key={dept.id}
               type="button"
               onClick={() => setSelectedDept(dept.id)}
-              className={`px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
-                selectedDept === dept.id
-                  ? 'bg-white text-[#0F4C5C] shadow-xs font-semibold'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
+              className={getFilterTabClass(isActive)}
             >
-              {dept.nameAr} ({count})
+              <span>{dept.nameAr}</span>
+              <span
+                className={`text-[11px] tabular-nums ${
+                  isActive ? 'text-sky-200' : 'text-slate-400'
+                }`}
+              >
+                ({count})
+              </span>
             </button>
           );
         })}
-      </div>
+      </ScrollableFilterBar>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filtered.map((srv) => {

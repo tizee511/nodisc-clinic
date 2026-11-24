@@ -167,11 +167,6 @@ export const StoreOffersCarousel: React.FC = () => {
                           -{discountPct}%
                         </span>
                       )}
-                      {prd.offerLabelAr && (
-                        <span className="absolute bottom-2.5 start-2.5 px-2.5 py-1 rounded-md bg-slate-900/80 backdrop-blur-xs text-white text-[11px] font-semibold">
-                          {prd.offerLabelAr}
-                        </span>
-                      )}
                     </Link>
 
                     <div className="p-4 space-y-1.5">

@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { CheckCircle2, MessageSquarePlus, ShieldCheck, Star } from 'lucide-react';
 import { useDataStore } from '../../context/DataStoreContext';
 import { useLanguage } from '../../context/LanguageContext';
+import { getFilterTabClass, ScrollableFilterBar } from '../ScrollableFilterBar';
 
 export const StarRatingDisplay: React.FC<{
   rating: number;
@@ -382,43 +383,50 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({
             </form>
           )}
 
-          {/* Filter Strip when reviews exist */}
+          {/* Movable Star Rating Filter Strip when reviews exist */}
           {reviews.length > 0 && (
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="flex flex-wrap gap-2">
-                <button
-                  type="button"
-                  onClick={() => setStarFilter('all')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors ${
-                    starFilter === 'all'
-                      ? 'bg-[#0F4C5C] text-white border-[#0F4C5C]'
-                      : 'bg-white text-slate-700 border-slate-300 hover:border-[#0F4C5C]'
+            <ScrollableFilterBar
+              surface="inset"
+              ariaLabel={lang === 'ar' ? 'تصفية التقييمات حسب النجوم' : 'Filter reviews by stars'}
+            >
+              <button
+                type="button"
+                onClick={() => setStarFilter('all')}
+                className={getFilterTabClass(starFilter === 'all', true)}
+              >
+                <span>{lang === 'ar' ? 'الكل' : 'All'}</span>
+                <span
+                  className={`text-[11px] tabular-nums ${
+                    starFilter === 'all' ? 'text-sky-200' : 'text-slate-400'
                   }`}
                 >
-                  {lang === 'ar' ? `الكل (${reviews.length})` : `All (${reviews.length})`}
-                </button>
-                {[5, 4, 3, 2, 1].map((s) => {
-                  const countForStar = reviews.filter((r) => r.rating === s).length;
-                  if (countForStar === 0) return null;
-                  return (
-                    <button
-                      key={s}
-                      type="button"
-                      onClick={() => setStarFilter(s)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors inline-flex items-center gap-1 tabular-nums ${
-                        starFilter === s
-                          ? 'bg-[#0F4C5C] text-white border-[#0F4C5C]'
-                          : 'bg-white text-slate-700 border-slate-300 hover:border-[#0F4C5C]'
+                  ({reviews.length})
+                </span>
+              </button>
+              {[5, 4, 3, 2, 1].map((s) => {
+                const countForStar = reviews.filter((r) => r.rating === s).length;
+                if (countForStar === 0) return null;
+                const isActive = starFilter === s;
+                return (
+                  <button
+                    key={s}
+                    type="button"
+                    onClick={() => setStarFilter(s)}
+                    className={getFilterTabClass(isActive, true)}
+                  >
+                    <span className="tabular-nums">{s}</span>
+                    <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
+                    <span
+                      className={`text-[11px] tabular-nums ${
+                        isActive ? 'text-sky-200' : 'text-slate-400'
                       }`}
                     >
-                      <span>{s}</span>
-                      <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
-                      <span>({countForStar})</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
+                      ({countForStar})
+                    </span>
+                  </button>
+                );
+              })}
+            </ScrollableFilterBar>
           )}
 
           {/* Review Cards List */}

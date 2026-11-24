@@ -119,7 +119,7 @@ export const AdminDepartmentsPage: React.FC = () => {
       recordAudit('الأطباء', 'تحديث ملف طبيب', editingDoc.nameAr);
     } else {
       setDoctors((prev) => [editingDoc, ...prev]);
-      recordAudit('الأطباء', 'إضافة طبيب/عضو فريق جديد', editingDoc.nameAr);
+      recordAudit('الأطباء', 'إضافة طبيب جديد', editingDoc.nameAr);
     }
     setEditingDoc(null);
   };
@@ -146,7 +146,7 @@ export const AdminDepartmentsPage: React.FC = () => {
           {(
             [
               { id: 'departments', ar: `الأقسام (${departments.length})`, en: `Departments (${departments.length})` },
-              { id: 'doctors', ar: `الأطباء والفريق (${doctors.length})`, en: `Doctors & Team (${doctors.length})` },
+              { id: 'doctors', ar: `الأطباء (${doctors.length})`, en: `Doctors (${doctors.length})` },
               { id: 'services', ar: `الخدمات الطبية (${services.length})`, en: `Services (${services.length})` },
             ] as const
           ).map((tab) => (
@@ -191,7 +191,7 @@ export const AdminDepartmentsPage: React.FC = () => {
             className="px-3.5 py-2 rounded-lg bg-[#0F4C5C] text-white text-xs font-semibold inline-flex items-center gap-1.5"
           >
             <Plus className="w-3.5 h-3.5" />
-            <span>{lang === 'ar' ? 'إضافة طبيب / فريق' : 'Add Physician'}</span>
+            <span>{lang === 'ar' ? 'إضافة طبيب' : 'Add Physician'}</span>
           </button>
         )}
 
@@ -302,7 +302,7 @@ export const AdminDepartmentsPage: React.FC = () => {
             <table className="w-full text-xs text-start">
               <thead className="bg-slate-50 border-b border-slate-200 text-slate-500">
                 <tr>
-                  <th className="px-4 py-3 text-start font-semibold">{lang === 'ar' ? 'الطبيب / الفريق' : 'Name'}</th>
+                  <th className="px-4 py-3 text-start font-semibold">{lang === 'ar' ? 'اسم الطبيب' : 'Physician Name'}</th>
                   <th className="px-4 py-3 text-start font-semibold">{lang === 'ar' ? 'الصفة' : 'Role'}</th>
                   <th className="px-4 py-3 text-start font-semibold">{lang === 'ar' ? 'القسم' : 'Department'}</th>
                   <th className="px-4 py-3 text-start font-semibold">{lang === 'ar' ? 'الحالة' : 'Status'}</th>
@@ -532,7 +532,7 @@ export const AdminDepartmentsPage: React.FC = () => {
             className="bg-white rounded-xl border border-slate-200 max-w-lg w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto"
           >
             <h3 className="font-display font-bold text-lg text-slate-900">
-              {lang === 'ar' ? 'بيانات الطبيب / الفريق' : 'Physician Details'}
+              {lang === 'ar' ? 'بيانات الطبيب' : 'Physician Details'}
             </h3>
             <div className="space-y-3 text-xs">
               <div>
@@ -581,7 +581,7 @@ export const AdminDepartmentsPage: React.FC = () => {
                 />
               </div>
               <AdminImageField
-                label="صورة الطبيب / المختص (اختياري)"
+                label="صورة الطبيب (اختياري)"
                 value={editingDoc.imageUrl}
                 onChange={(url) => setEditingDoc({ ...editingDoc, imageUrl: url })}
                 onClear={() => setEditingDoc({ ...editingDoc, imageUrl: null })}
@@ -667,7 +667,7 @@ export const AdminDepartmentsPage: React.FC = () => {
                     }
                     className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm bg-white"
                   >
-                    <option value="">فريق القسم</option>
+                    <option value="">{lang === 'ar' ? 'بدون تحديد طبيب' : 'Unassigned'}</option>
                     {doctors.map((d) => (
                       <option key={d.id} value={d.id}>
                         {d.nameAr}

@@ -13,6 +13,7 @@ import { useLanguage } from '../../context/LanguageContext';
 import { useClinic } from '../../context/ClinicContext';
 import { Breadcrumbs } from '../../components/Breadcrumbs';
 import { SafeImage } from '../../components/SafeImage';
+import { getFilterTabClass, ScrollableFilterBar } from '../../components/ScrollableFilterBar';
 import { Product } from '../../types/clinic';
 
 type OfferTypeFilter = 'all' | 'discount' | 'bundle' | 'medical';
@@ -61,19 +62,6 @@ const OfferCard: React.FC<OfferCardProps> = ({
   const savingsYER = hasDiscount ? product.originalPriceYER! - product.priceYER : 0;
   const daysLeft = getDaysRemaining(product.offerExpiresAt);
 
-  const offerTypeText =
-    product.offerType === 'bundle'
-      ? lang === 'ar'
-        ? 'باقة توفير'
-        : 'Bundle Deal'
-      : product.offerType === 'medical'
-      ? lang === 'ar'
-        ? 'أجهزة ومستلزمات'
-        : 'Medical & Rehab'
-      : lang === 'ar'
-      ? 'خصم مئوي'
-      : 'Direct Discount';
-
   return (
     <article className="group bg-white rounded-xl border border-slate-200 overflow-hidden flex flex-col justify-between transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md hover:border-[#0F4C5C]/45">
       <div>
@@ -87,9 +75,6 @@ const OfferCard: React.FC<OfferCardProps> = ({
               -{discountPct}%
             </span>
           )}
-          <span className="absolute top-3 end-3 px-2 py-0.5 rounded bg-white/95 backdrop-blur-xs border border-slate-200 text-[11px] font-semibold text-slate-700">
-            {offerTypeText}
-          </span>
         </Link>
 
         <div className="p-5 space-y-2.5">
@@ -279,29 +264,38 @@ export const StoreOffersPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Simple Top Filter Bar: Classify Offers by Type & Store Group */}
-      <div className="bg-white rounded-xl border border-slate-200 p-4 flex flex-wrap items-center justify-between gap-3">
-        <div className="flex flex-wrap items-center gap-2">
-          {offerTypeOptions.map((opt) => {
-            const count =
-              opt.id === 'all'
-                ? discountedProducts.length
-                : discountedProducts.filter((p) => (p.offerType || 'discount') === opt.id).length;
-            return (
-              <button
-                key={opt.id}
-                type="button"
-                onClick={() => setOfferTypeFilter(opt.id)}
-                className={`px-3.5 py-2 rounded-lg text-xs font-semibold border transition-colors whitespace-nowrap ${
-                  offerTypeFilter === opt.id
-                    ? 'bg-[#0F4C5C] text-white border-[#0F4C5C]'
-                    : 'bg-white text-slate-700 border-slate-300 hover:border-[#0F4C5C]'
-                }`}
-              >
-                {lang === 'ar' ? opt.ar : opt.en} ({count})
-              </button>
-            );
-          })}
+      {/* Movable Top Filter Bar: Classify Offers by Type & Store Group */}
+      <div className="bg-white rounded-xl border border-slate-200 p-4 flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+        <div className="min-w-0 flex-1">
+          <ScrollableFilterBar
+            surface="inset"
+            ariaLabel={lang === 'ar' ? 'تصفية العروض حسب النوع' : 'Filter offers by type'}
+          >
+            {offerTypeOptions.map((opt) => {
+              const count =
+                opt.id === 'all'
+                  ? discountedProducts.length
+                  : discountedProducts.filter((p) => (p.offerType || 'discount') === opt.id).length;
+              const isActive = offerTypeFilter === opt.id;
+              return (
+                <button
+                  key={opt.id}
+                  type="button"
+                  onClick={() => setOfferTypeFilter(opt.id)}
+                  className={getFilterTabClass(isActive)}
+                >
+                  <span>{lang === 'ar' ? opt.ar : opt.en}</span>
+                  <span
+                    className={`text-[11px] tabular-nums ${
+                      isActive ? 'text-sky-200' : 'text-slate-400'
+                    }`}
+                  >
+                    ({count})
+                  </span>
+                </button>
+              );
+            })}
+          </ScrollableFilterBar>
         </div>
 
         <div className="flex items-center gap-2.5">

@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Calendar, MessageSquare, Phone, X } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
+import { Calendar, FileUp, MessageSquare, Phone, X } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 export const FloatingContactButton: React.FC = () => {
   const [open, setOpen] = useState(false);
+  const { pathname } = useLocation();
   const { lang, localizedConfig, t } = useLanguage();
+  const isStoreRoute = pathname.startsWith('/store');
 
   if (!localizedConfig.features.showFloatingContactButton) return null;
 
@@ -19,7 +21,13 @@ export const FloatingContactButton: React.FC = () => {
         >
           <div className="flex items-center justify-between border-b border-slate-100 pb-2">
             <h3 className="font-display font-bold text-sm text-slate-900">
-              {lang === 'ar' ? 'التواصل السريع — نوديسك كلينك' : 'Quick Contact — NODISC Clinic'}
+              {isStoreRoute
+                ? lang === 'ar'
+                  ? 'خدمة عملاء المتجر والصيدلية'
+                  : 'Store & Pharmacy Support'
+                : lang === 'ar'
+                ? 'التواصل السريع — نوديسك كلينك'
+                : 'Quick Contact — NODISC Clinic'}
             </h3>
             <button
               type="button"
@@ -74,14 +82,25 @@ export const FloatingContactButton: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-2 gap-2 pt-1">
-            <Link
-              to="/book"
-              onClick={() => setOpen(false)}
-              className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[#0F4C5C] text-white text-xs font-semibold hover:bg-[#093542]"
-            >
-              <Calendar className="w-3.5 h-3.5" />
-              <span>{t('nav.bookAppointment')}</span>
-            </Link>
+            {isStoreRoute ? (
+              <Link
+                to="/store/prescription"
+                onClick={() => setOpen(false)}
+                className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[#0F4C5C] text-white text-xs font-semibold hover:bg-[#093542]"
+              >
+                <FileUp className="w-3.5 h-3.5" />
+                <span>{t('nav.prescriptionOrder')}</span>
+              </Link>
+            ) : (
+              <Link
+                to="/book"
+                onClick={() => setOpen(false)}
+                className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[#0F4C5C] text-white text-xs font-semibold hover:bg-[#093542]"
+              >
+                <Calendar className="w-3.5 h-3.5" />
+                <span>{t('nav.bookAppointment')}</span>
+              </Link>
+            )}
             <Link
               to="/contact"
               onClick={() => setOpen(false)}

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Check,
+  ChevronDown,
   Edit3,
   Eye,
   EyeOff,
@@ -61,6 +62,7 @@ export const AdminStoreStructurePage: React.FC = () => {
 
   const [editingSec, setEditingSec] = useState<StoreMainSection | null>(null);
   const [editingCat, setEditingCat] = useState<ProductCategory | null>(null);
+  const [expandedGroupIds, setExpandedGroupIds] = useState<Record<string, boolean>>({});
   const canManage = hasPermission('manage_store');
 
   const handleSaveSec = (e: React.FormEvent) => {
@@ -252,27 +254,111 @@ export const AdminStoreStructurePage: React.FC = () => {
 
                     <p className="text-xs text-slate-600">{sec.description}</p>
 
-                    {linkedCats.length > 0 && (
-                      <div className="flex flex-wrap gap-1.5 pt-1">
-                        {linkedCats.map((cat) => (
-                          <span
-                            key={cat.id}
-                            className="px-2 py-0.5 rounded bg-slate-100 border border-slate-200 text-[11px] text-slate-700 font-medium"
-                          >
-                            {cat.nameAr}
+                    <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500 tabular-nums">
+                      <div className="flex items-center gap-4">
+                        <span>
+                          الفروع: <strong>{linkedCats.length}</strong>
+                        </span>
+                        <span>
+                          المنتجات: <strong>{linkedProds.length}</strong>
+                        </span>
+                      </div>
+
+                      {linkedCats.length > 0 && (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setExpandedGroupIds((prev) => ({
+                              ...prev,
+                              [sec.id]: prev[sec.id] === false ? true : !prev[sec.id],
+                            }))
+                          }
+                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-sky-50 text-[#0F4C5C] font-semibold transition-colors"
+                        >
+                          <span>
+                            {expandedGroupIds[sec.id]
+                              ? 'إخفاء الفروع'
+                              : `عرض الفروع (${linkedCats.length})`}
                           </span>
-                        ))}
+                          <ChevronDown
+                            className={`w-3.5 h-3.5 transition-transform ${
+                              expandedGroupIds[sec.id] ? 'rotate-180' : ''
+                            }`}
+                          />
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Interactive Nested Tree of Branching Sub-Categories */}
+                    {linkedCats.length > 0 && expandedGroupIds[sec.id] && (
+                      <div className="ps-3 border-s-2 border-[#0F4C5C]/25 space-y-2 pt-1">
+                        {[...linkedCats]
+                          .sort((a, b) => a.order - b.order)
+                          .map((cat) => {
+                            const catProdCount = linkedProds.filter(
+                              (p) => p.categoryId === cat.id
+                            ).length;
+                            return (
+                              <div
+                                key={cat.id}
+                                className="flex items-center justify-between gap-2 p-2.5 rounded-lg bg-slate-50 border border-slate-200/80"
+                              >
+                                <div className="flex items-center gap-2.5 min-w-0">
+                                  <img
+                                    src={cat.image}
+                                    alt={cat.nameAr}
+                                    className="w-8 h-8 rounded object-cover border border-slate-200 shrink-0"
+                                  />
+                                  <div className="min-w-0">
+                                    <span className="block text-xs font-bold text-slate-900 truncate">
+                                      {cat.nameAr}
+                                    </span>
+                                    <span className="block text-[10px] text-slate-500 tabular-nums">
+                                      {catProdCount} منتج ·{' '}
+                                      {cat.visible ? 'ظاهر' : 'مخفي'}
+                                    </span>
+                                  </div>
+                                </div>
+
+                                {canManage && (
+                                  <div className="flex items-center gap-1 shrink-0">
+                                    <button
+                                      type="button"
+                                      onClick={() => setEditingCat({ ...cat })}
+                                      className="px-2 py-1 rounded bg-white border border-slate-200 hover:border-[#0F4C5C] text-[11px] font-semibold text-slate-700"
+                                    >
+                                      تعديل
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        setProductCategories((prev) =>
+                                          prev.map((c) =>
+                                            c.id === cat.id ? { ...c, visible: !c.visible } : c
+                                          )
+                                        );
+                                        recordAudit(
+                                          'هيكلة المتجر',
+                                          'تبديل ظهور تصنيف فرعي',
+                                          cat.nameAr
+                                        );
+                                      }}
+                                      className="p-1 rounded bg-white border border-slate-200 text-slate-600 hover:text-[#0F4C5C]"
+                                      title={cat.visible ? 'إخفاء' : 'إظهار'}
+                                    >
+                                      {cat.visible ? (
+                                        <EyeOff className="w-3.5 h-3.5" />
+                                      ) : (
+                                        <Eye className="w-3.5 h-3.5" />
+                                      )}
+                                    </button>
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
                       </div>
                     )}
-
-                    <div className="text-xs text-slate-500 flex items-center gap-4 tabular-nums">
-                      <span>
-                        الفروع: <strong>{linkedCats.length}</strong>
-                      </span>
-                      <span>
-                        المنتجات: <strong>{linkedProds.length}</strong>
-                      </span>
-                    </div>
                   </div>
 
                   {canManage && (

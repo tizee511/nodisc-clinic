@@ -569,7 +569,7 @@ export const BookAppointmentPage: React.FC = () => {
               <div>
                 <dt className="text-xs text-slate-500">{t('booking.fields.doctor')}</dt>
                 <dd className="font-medium text-slate-800 mt-0.5">
-                  {selectedDoctorObj?.nameAr || (lang === 'ar' ? 'تحديد من فريق القسم' : 'Assigned by department')}
+                  {selectedDoctorObj?.nameAr || (lang === 'ar' ? 'يُحدّد حسب القسم' : 'Assigned by department')}
                 </dd>
               </div>
               <div>

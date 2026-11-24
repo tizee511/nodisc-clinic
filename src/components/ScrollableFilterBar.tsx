@@ -1,0 +1,249 @@
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { ChevronLeft, ChevronRight, SlidersHorizontal } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
+
+export const getFilterTabClass = (isActive: boolean, compact = false) =>
+  `inline-flex items-center gap-1.5 rounded-xl font-semibold transition-all duration-150 whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0F4C5C] ${
+    compact ? 'px-3.5 py-1.5 text-xs' : 'px-4 py-2 text-xs sm:text-sm'
+  } ${
+    isActive
+      ? 'bg-[#0F4C5C] text-white shadow-[0_3px_10px_-2px_rgba(15,76,92,0.45)]'
+      : 'text-slate-700 hover:text-[#0F4C5C] hover:bg-sky-50/90'
+  }`;
+
+interface ScrollableFilterBarProps {
+  children: React.ReactNode;
+  ariaLabel: string;
+  role?: 'tablist' | 'group' | 'region';
+  surface?: 'elevated' | 'inset' | 'featured';
+  fullWidth?: boolean;
+  showFilterIcon?: boolean;
+  className?: string;
+}
+
+export const ScrollableFilterBar: React.FC<ScrollableFilterBarProps> = ({
+  children,
+  ariaLabel,
+  role = 'tablist',
+  surface = 'elevated',
+  fullWidth = false,
+  showFilterIcon,
+  className = '',
+}) => {
+  const { isRTL, lang } = useLanguage();
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const shouldShowIcon = showFilterIcon ?? surface === 'elevated';
+
+  const dragState = useRef<{
+    active: boolean;
+    startX: number;
+    startScrollLeft: number;
+    didDrag: boolean;
+  }>({
+    active: false,
+    startX: 0,
+    startScrollLeft: 0,
+    didDrag: false,
+  });
+
+  const updateScrollBounds = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const containerRect = el.getBoundingClientRect();
+    const childrenEls = Array.from(el.children) as HTMLElement[];
+    if (childrenEls.length === 0) {
+      setCanScrollLeft(false);
+      setCanScrollRight(false);
+      return;
+    }
+
+    let leftHidden = false;
+    let rightHidden = false;
+    for (const child of childrenEls) {
+      const rect = child.getBoundingClientRect();
+      if (rect.left < containerRect.left - 3) leftHidden = true;
+      if (rect.right > containerRect.right + 3) rightHidden = true;
+    }
+    setCanScrollLeft(leftHidden);
+    setCanScrollRight(rightHidden);
+  }, []);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    updateScrollBounds();
+    const raf = requestAnimationFrame(updateScrollBounds);
+
+    const observer =
+      typeof ResizeObserver !== 'undefined'
+        ? new ResizeObserver(() => updateScrollBounds())
+        : null;
+    observer?.observe(el);
+
+    window.addEventListener('resize', updateScrollBounds);
+    return () => {
+      cancelAnimationFrame(raf);
+      observer?.disconnect();
+      window.removeEventListener('resize', updateScrollBounds);
+    };
+  }, [children, isRTL, updateScrollBounds]);
+
+  const scrollPhysically = (deltaX: number) => {
+    const el = scrollRef.current;
+    if (!el) return;
+    el.scrollBy({ left: deltaX, behavior: 'smooth' });
+  };
+
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.button !== 0 && e.pointerType === 'mouse') return;
+    const el = scrollRef.current;
+    if (!el) return;
+    dragState.current = {
+      active: true,
+      startX: e.clientX,
+      startScrollLeft: el.scrollLeft,
+      didDrag: false,
+    };
+  };
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    const st = dragState.current;
+    if (!st.active) return;
+    const el = scrollRef.current;
+    if (!el) return;
+
+    const dx = e.clientX - st.startX;
+    if (!st.didDrag && Math.abs(dx) > 6) {
+      st.didDrag = true;
+      setIsDragging(true);
+    }
+    if (st.didDrag) {
+      el.scrollLeft = st.startScrollLeft - dx;
+    }
+  };
+
+  const endDrag = () => {
+    dragState.current.active = false;
+    if (isDragging) {
+      setIsDragging(false);
+    }
+    setTimeout(() => {
+      dragState.current.didDrag = false;
+    }, 0);
+  };
+
+  const handleClickCapture = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (dragState.current.didDrag) {
+      e.preventDefault();
+      e.stopPropagation();
+      dragState.current.didDrag = false;
+    }
+  };
+
+  const hasOverflow = canScrollLeft || canScrollRight;
+  const startEnabled = isRTL ? canScrollRight : canScrollLeft;
+  const endEnabled = isRTL ? canScrollLeft : canScrollRight;
+  const StartIcon = isRTL ? ChevronRight : ChevronLeft;
+  const EndIcon = isRTL ? ChevronLeft : ChevronRight;
+
+  const containerSurfaceClass =
+    surface === 'featured'
+      ? 'bg-gradient-to-b from-white to-sky-50/40 border border-[#0F4C5C]/25 rounded-2xl p-2 shadow-[0_10px_28px_-12px_rgba(15,76,92,0.28)] ring-1 ring-[#0F4C5C]/10'
+      : surface === 'elevated'
+      ? 'bg-white border border-[#0F4C5C]/20 rounded-2xl p-1.5 shadow-[0_8px_24px_-10px_rgba(15,76,92,0.22)] ring-1 ring-[#0F4C5C]/5'
+      : 'bg-slate-50 border border-slate-200 rounded-xl p-1.5 shadow-xs';
+
+  const fadeFrom =
+    surface === 'featured'
+      ? 'from-white'
+      : surface === 'elevated'
+      ? 'from-white'
+      : 'from-slate-50';
+
+  const arrowBtnSize = surface === 'featured' ? 'w-9 h-9' : 'w-8 h-8';
+
+  return (
+    <div
+      className={`relative ${fullWidth ? 'w-full' : 'w-fit max-w-full'} flex items-center gap-2 ${containerSurfaceClass} ${className}`}
+    >
+      {shouldShowIcon && (
+        <span
+          aria-hidden="true"
+          className="hidden sm:inline-flex w-8 h-8 rounded-xl bg-sky-50 border border-sky-200/70 text-[#0F4C5C] items-center justify-center shrink-0 ms-0.5"
+        >
+          <SlidersHorizontal className="w-4 h-4" />
+        </span>
+      )}
+
+      {hasOverflow && (
+        <button
+          type="button"
+          onClick={() => scrollPhysically(isRTL ? 260 : -260)}
+          disabled={!startEnabled}
+          aria-label={lang === 'ar' ? 'تحريك الشريط للخلف' : 'Scroll filters back'}
+          className={`${arrowBtnSize} rounded-xl border flex items-center justify-center shrink-0 transition-all duration-150 ${
+            startEnabled
+              ? 'bg-white border-slate-200 text-[#0F4C5C] hover:bg-[#0F4C5C] hover:text-white hover:border-[#0F4C5C] shadow-xs'
+              : 'bg-slate-50 border-slate-100 text-slate-300 cursor-default'
+          }`}
+        >
+          <StartIcon className="w-4 h-4" />
+        </button>
+      )}
+
+      <div className="relative min-w-0 flex-1 overflow-hidden">
+        {canScrollLeft && (
+          <div
+            aria-hidden="true"
+            className={`pointer-events-none absolute inset-y-0 left-0 w-7 z-10 bg-gradient-to-r ${fadeFrom} to-transparent`}
+          />
+        )}
+        {canScrollRight && (
+          <div
+            aria-hidden="true"
+            className={`pointer-events-none absolute inset-y-0 right-0 w-7 z-10 bg-gradient-to-l ${fadeFrom} to-transparent`}
+          />
+        )}
+
+        <div
+          ref={scrollRef}
+          role={role}
+          aria-label={ariaLabel}
+          onScroll={updateScrollBounds}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={endDrag}
+          onPointerCancel={endDrag}
+          onPointerLeave={endDrag}
+          onClickCapture={handleClickCapture}
+          className={`flex items-center flex-nowrap gap-2 overflow-x-auto max-w-full select-none py-0.5 px-0.5 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden ${
+            hasOverflow ? (isDragging ? 'cursor-grabbing' : 'cursor-grab') : ''
+          }`}
+        >
+          {children}
+        </div>
+      </div>
+
+      {hasOverflow && (
+        <button
+          type="button"
+          onClick={() => scrollPhysically(isRTL ? -260 : 260)}
+          disabled={!endEnabled}
+          aria-label={lang === 'ar' ? 'تحريك الشريط للأمام' : 'Scroll filters forward'}
+          className={`${arrowBtnSize} rounded-xl border flex items-center justify-center shrink-0 transition-all duration-150 ${
+            endEnabled
+              ? 'bg-white border-slate-200 text-[#0F4C5C] hover:bg-[#0F4C5C] hover:text-white hover:border-[#0F4C5C] shadow-xs'
+              : 'bg-slate-50 border-slate-100 text-slate-300 cursor-default'
+          }`}
+        >
+          <EndIcon className="w-4 h-4" />
+        </button>
+      )}
+    </div>
+  );
+};

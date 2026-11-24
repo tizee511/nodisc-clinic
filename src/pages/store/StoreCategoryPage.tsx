@@ -5,6 +5,8 @@ import { useLanguage } from '../../context/LanguageContext';
 import { useClinic } from '../../context/ClinicContext';
 import { Breadcrumbs } from '../../components/Breadcrumbs';
 import { SafeImage } from '../../components/SafeImage';
+import { getFilterTabClass, ScrollableFilterBar } from '../../components/ScrollableFilterBar';
+import { StoreMainGroupsFilterBar } from '../../components/store/StoreMainGroupsFilterBar';
 
 export const StoreCategoryPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -111,17 +113,26 @@ export const StoreCategoryPage: React.FC = () => {
         </Link>
       </div>
 
-      {/* Sub-Category Branching Filter Chips when a Main Group is active */}
+      {/* Prominent Store Main Groups Bar */}
+      <StoreMainGroupsFilterBar
+        selectedMainSectionId={selectedMainSecId}
+        onSelectMainSection={(id) => {
+          setSelectedMainSecId(id);
+          setSelectedCatId('all');
+        }}
+        allLabel={lang === 'ar' ? 'كل المجموعات' : 'All Groups'}
+      />
+
+      {/* Sub-Category Branching Filter Strip when a Main Group is active */}
       {visibleSubCategories.length > 0 && (
-        <div className="flex flex-wrap items-center gap-2">
+        <ScrollableFilterBar
+          surface="inset"
+          ariaLabel={lang === 'ar' ? 'التصنيفات الفرعية' : 'Subcategories'}
+        >
           <button
             type="button"
             onClick={() => setSelectedCatId('all')}
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold border transition-colors whitespace-nowrap ${
-              selectedCatId === 'all'
-                ? 'bg-[#0F4C5C] text-white border-[#0F4C5C]'
-                : 'bg-white text-slate-700 border-slate-300 hover:border-[#0F4C5C]'
-            }`}
+            className={getFilterTabClass(selectedCatId === 'all', true)}
           >
             {lang === 'ar' ? `كل ${activeSectionObj?.nameAr || 'الفروع'}` : 'All Subcategories'}
           </button>
@@ -130,16 +141,12 @@ export const StoreCategoryPage: React.FC = () => {
               key={c.id}
               type="button"
               onClick={() => setSelectedCatId(c.id)}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold border transition-colors whitespace-nowrap ${
-                selectedCatId === c.id
-                  ? 'bg-[#0F4C5C] text-white border-[#0F4C5C]'
-                  : 'bg-white text-slate-700 border-slate-300 hover:border-[#0F4C5C]'
-              }`}
+              className={getFilterTabClass(selectedCatId === c.id, true)}
             >
               {c.nameAr}
             </button>
           ))}
-        </div>
+        </ScrollableFilterBar>
       )}
 
       {/* Filter & Sort Controls */}

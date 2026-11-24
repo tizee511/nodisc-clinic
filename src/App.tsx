@@ -24,6 +24,7 @@ import { BookAppointmentPage } from './pages/BookAppointmentPage';
 import { CampaignDetailPage, CampaignsPage } from './pages/CampaignsPage';
 import { StoreHomePage } from './pages/store/StoreHomePage';
 import { StoreOffersPage } from './pages/store/StoreOffersPage';
+import { StoreWishlistPage } from './pages/store/StoreWishlistPage';
 import { StoreCategoryPage } from './pages/store/StoreCategoryPage';
 import { ProductDetailPage } from './pages/store/ProductDetailPage';
 import { CartPage } from './pages/store/CartPage';
@@ -133,6 +134,7 @@ export default function App() {
                 {/* Store & Pharmacy Routes */}
                 <Route path="/store" element={<StoreHomePage />} />
                 <Route path="/store/offers" element={<StoreOffersPage />} />
+                <Route path="/store/wishlist" element={<StoreWishlistPage />} />
                 <Route path="/store/category/:slug" element={<StoreCategoryPage />} />
                 <Route path="/store/product/:slug" element={<ProductDetailPage />} />
                 <Route path="/store/cart" element={<CartPage />} />

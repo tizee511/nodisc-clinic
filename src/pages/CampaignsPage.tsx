@@ -5,11 +5,26 @@ import { useLanguage } from '../context/LanguageContext';
 import { useDataStore } from '../context/DataStoreContext';
 import { Breadcrumbs } from '../components/Breadcrumbs';
 import { SafeImage } from '../components/SafeImage';
+import { getFilterTabClass, ScrollableFilterBar } from '../components/ScrollableFilterBar';
 import { CampaignStatus } from '../types/clinic';
 
 export const CampaignsPage: React.FC = () => {
-  const { t, campaigns, departments } = useLanguage();
+  const { lang, t, campaigns, departments } = useLanguage();
   const { getCampaignBookedCount, getCampaignEffectiveStatus } = useDataStore();
+  const [statusFilter, setStatusFilter] = useState<'all' | CampaignStatus>('all');
+
+  const statusTabs: { key: 'all' | CampaignStatus; label: string }[] = [
+    { key: 'all', label: t('common.all') },
+    { key: 'open', label: t('campaigns.status.open') },
+    { key: 'full', label: t('campaigns.status.full') },
+    { key: 'scheduled', label: t('campaigns.status.scheduled') },
+    { key: 'ended', label: t('campaigns.status.ended') },
+  ];
+
+  const filteredCampaigns =
+    statusFilter === 'all'
+      ? campaigns
+      : campaigns.filter((c) => getCampaignEffectiveStatus(c) === statusFilter);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 lg:py-12 space-y-8">
@@ -21,8 +36,36 @@ export const CampaignsPage: React.FC = () => {
         </p>
       </div>
 
+      {/* Campaign Status Filter Bar */}
+      <ScrollableFilterBar ariaLabel={lang === 'ar' ? 'تصفية الحملات الطبية' : 'Filter medical campaigns'}>
+        {statusTabs.map((tab) => {
+          const count =
+            tab.key === 'all'
+              ? campaigns.length
+              : campaigns.filter((c) => getCampaignEffectiveStatus(c) === tab.key).length;
+          const isActive = statusFilter === tab.key;
+          return (
+            <button
+              key={tab.key}
+              type="button"
+              onClick={() => setStatusFilter(tab.key)}
+              className={getFilterTabClass(isActive)}
+            >
+              <span>{tab.label}</span>
+              <span
+                className={`text-[11px] tabular-nums ${
+                  isActive ? 'text-sky-200' : 'text-slate-400'
+                }`}
+              >
+                ({count})
+              </span>
+            </button>
+          );
+        })}
+      </ScrollableFilterBar>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {campaigns.map((camp) => {
+        {filteredCampaigns.map((camp) => {
           const dept = departments.find((d) => d.id === camp.departmentId);
           const booked = getCampaignBookedCount(camp.id);
           const effectiveStatus = getCampaignEffectiveStatus(camp);

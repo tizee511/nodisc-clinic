@@ -4,6 +4,7 @@ import { ChevronDown, Play } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { Breadcrumbs } from '../components/Breadcrumbs';
 import { SafeImage } from '../components/SafeImage';
+import { getFilterTabClass, ScrollableFilterBar } from '../components/ScrollableFilterBar';
 import { LibraryCategory } from '../types/clinic';
 
 export const LibraryPage: React.FC = () => {
@@ -50,22 +51,18 @@ export const LibraryPage: React.FC = () => {
       </div>
 
       {/* Category Filter Tabs */}
-      <div className="flex flex-wrap gap-2 p-1.5 bg-slate-100 rounded-xl w-fit">
+      <ScrollableFilterBar ariaLabel={lang === 'ar' ? 'تصفية المكتبة الطبية' : 'Filter medical library'}>
         {tabs.map((tab) => (
           <button
             key={tab.key}
             type="button"
             onClick={() => handleSelectType(tab.key)}
-            className={`px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
-              activeType === tab.key
-                ? 'bg-white text-[#0F4C5C] shadow-xs font-semibold'
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
+            className={getFilterTabClass(activeType === tab.key)}
           >
             {tab.label}
           </button>
         ))}
-      </div>
+      </ScrollableFilterBar>
 
       {activeType === 'faq' ? (
         <div className="space-y-3 max-w-4xl">

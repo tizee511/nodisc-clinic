@@ -192,48 +192,6 @@ export const enDoctors: Record<string, Partial<Doctor>> = {
     isProfileEditableNote:
       'Profile aligned with the official NODISC Clinic Sana’a practice of Dr. Mohammed Abdullah Al-Jurbani.',
   },
-  'team-pain-unit': {
-    nameAr: 'NODISC Interventional Pain Team',
-    nameEn: 'فريق نوديسك لعلاج الألم التداخلي',
-    roleTitle: 'Specialists in Acute & Chronic Pain Assessment (Mayo Clinic PRC Standards)',
-    imagePlaceholderNote: 'NODISC Pain Management Team',
-    bio: 'A specialized clinical team dedicated to evaluating chronic back, neck, joint, and neuropathic pain using targeted outpatient interventions aligned with Mayo Clinic Pain Rehabilitation principles.',
-    qualifications: [
-      'Clinical Pain Medicine & Guided Interventional Protocols (Mayo Clinic PRC aligned)',
-      'Multidisciplinary coordination with Neurosurgery and Rehabilitation',
-    ],
-    experiences: [
-      'Targeted non-surgical relief for chronic spine, sciatic, and facet joint pain',
-      'Helping patients reduce dependency on prolonged oral analgesics',
-    ],
-    focusAreas: [
-      'Targeted Nerve Root Blocks',
-      'Facet Joint Pain Management',
-      'Chronic Neuropathic Pain Protocols',
-    ],
-    isProfileEditableNote: 'Integrated unit within NODISC Clinic Sana’a.',
-  },
-  'team-rehab-unit': {
-    nameAr: 'NODISC Rehabilitation & Physiotherapy Team',
-    nameEn: 'فريق نوديسك للتأهيل والعلاج الطبيعي',
-    roleTitle: 'Physiotherapy & Computerized Spinal Decompression Specialists',
-    imagePlaceholderNote: 'NODISC Rehabilitation Specialists',
-    bio: 'Licensed rehabilitation specialists delivering individualized exercise programming, computerized digital spinal traction, and post-surgical spine recovery with over 85% conservative improvement.',
-    qualifications: [
-      'Specialized Physiotherapy & Spinal Rehabilitation Credentials',
-      'Computerized digital traction and post-operative neurological recovery protocols',
-    ],
-    experiences: [
-      'Conservative disc rehabilitation avoiding unnecessary surgical intervention',
-      'Structured post-discectomy and posture-restoration mobility plans',
-    ],
-    focusAreas: [
-      'Digital Spinal Traction & Decompression',
-      'Post-Discectomy Rehabilitation',
-      'Manual Therapy & Core Stabilization',
-    ],
-    isProfileEditableNote: 'Integrated unit within NODISC Clinic Sana’a.',
-  },
 };
 
 export const enServices: Record<string, Partial<MedicalService>> = {

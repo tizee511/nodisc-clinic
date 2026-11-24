@@ -12,6 +12,7 @@ import { useLanguage } from './LanguageContext';
 import { useDataStore } from './DataStoreContext';
 
 const CART_STORAGE_KEY = 'nodisc_cart_v1';
+const WISHLIST_STORAGE_KEY = 'nodisc_wishlist_v1';
 const CURRENCY_STORAGE_KEY = 'nodisc_currency_v1';
 
 interface BookingPrefill {
@@ -29,6 +30,13 @@ interface ClinicContextValue {
   updateCartQuantity: (productId: string, selectedOption: string | undefined, quantity: number) => void;
   removeFromCart: (productId: string, selectedOption?: string) => void;
   clearCart: () => void;
+
+  wishlist: string[];
+  wishlistCount: number;
+  isInWishlist: (productId: string) => boolean;
+  toggleWishlist: (productId: string) => boolean;
+  removeFromWishlist: (productId: string) => void;
+  clearWishlist: () => void;
 
   currencyCode: string;
   setCurrencyCode: (code: string) => void;
@@ -76,6 +84,19 @@ export const ClinicProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     return [];
   });
 
+  const [wishlist, setWishlist] = useState<string[]>(() => {
+    try {
+      const raw = localStorage.getItem(WISHLIST_STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) return parsed.filter((id) => typeof id === 'string');
+      }
+    } catch {
+      // ignore invalid storage
+    }
+    return [];
+  });
+
   const [currencyCode, setCurrencyCodeState] = useState<string>(() => {
     try {
       const saved = localStorage.getItem(CURRENCY_STORAGE_KEY);
@@ -101,6 +122,14 @@ export const ClinicProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       // ignore
     }
   }, [cart]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(WISHLIST_STORAGE_KEY, JSON.stringify(wishlist));
+    } catch {
+      // ignore
+    }
+  }, [wishlist]);
 
   const setCurrencyCode = (code: string) => {
     if (code in liveConfig.currency.exchangeRatesFromYER) {
@@ -211,6 +240,26 @@ export const ClinicProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const clearCart = () => setCart([]);
 
+  const isInWishlist = (productId: string) => wishlist.includes(productId);
+
+  const toggleWishlist = (productId: string): boolean => {
+    const exists = wishlist.includes(productId);
+    setWishlist((prev) =>
+      exists ? prev.filter((id) => id !== productId) : [productId, ...prev]
+    );
+    return !exists;
+  };
+
+  const removeFromWishlist = (productId: string) => {
+    setWishlist((prev) => prev.filter((id) => id !== productId));
+  };
+
+  const clearWishlist = () => setWishlist([]);
+
+  const wishlistCount = wishlist.filter((id) =>
+    liveProducts.some((p) => p.id === id && p.visible !== false)
+  ).length;
+
   const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
   const cartSubtotalYER = cart.reduce((acc, item) => {
     const prod = liveProducts.find((p) => p.id === item.productId);
@@ -269,6 +318,12 @@ export const ClinicProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         updateCartQuantity,
         removeFromCart,
         clearCart,
+        wishlist,
+        wishlistCount,
+        isInWishlist,
+        toggleWishlist,
+        removeFromWishlist,
+        clearWishlist,
         currencyCode,
         setCurrencyCode,
         formatPrice,

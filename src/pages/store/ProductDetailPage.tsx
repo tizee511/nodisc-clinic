@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { Check, Minus, Plus, ShoppingBag } from 'lucide-react';
+import { Check, Heart, Minus, Plus, ShoppingBag } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 import { useClinic } from '../../context/ClinicContext';
 import { useDataStore } from '../../context/DataStoreContext';
@@ -10,11 +10,12 @@ import {
   ProductReviewsSection,
   StarRatingDisplay,
 } from '../../components/store/ProductReviewsSection';
+import { RelatedProductsCarousel } from '../../components/store/RelatedProductsCarousel';
 
 export const ProductDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const { lang, t, products, productCategories, storeMainSections } = useLanguage();
-  const { addToCart, formatPrice } = useClinic();
+  const { addToCart, formatPrice, isInWishlist, toggleWishlist } = useClinic();
   const { getProductReviews } = useDataStore();
 
   const product = products.find((p) => p.slug === slug || p.id === slug);
@@ -22,11 +23,16 @@ export const ProductDetailPage: React.FC = () => {
   const [selectedOption, setSelectedOption] = useState<string | undefined>(product?.options?.[0]);
   const [qty, setQty] = useState(1);
   const [feedback, setFeedback] = useState<{ type: 'ok' | 'err'; text: string } | null>(null);
+  const [wishlistNotice, setWishlistNotice] = useState<'added' | 'removed' | null>(null);
 
   React.useEffect(() => {
     setSelectedOption(product?.options?.[0]);
     setQty(1);
     setFeedback(null);
+    setWishlistNotice(null);
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   }, [product?.id]);
 
   if (!product) {
@@ -57,6 +63,8 @@ export const ProductDetailPage: React.FC = () => {
       ? productReviews.reduce((sum, r) => sum + r.rating, 0) / reviewCount
       : 0;
 
+  const inWishlist = isInWishlist(product.id);
+
   const handleAdd = () => {
     const res = addToCart(product.id, qty, selectedOption);
     if (res.ok) {
@@ -64,6 +72,11 @@ export const ProductDetailPage: React.FC = () => {
     } else {
       setFeedback({ type: 'err', text: res.message || t('store.product.maxReached') });
     }
+  };
+
+  const handleToggleWishlist = () => {
+    const added = toggleWishlist(product.id);
+    setWishlistNotice(added ? 'added' : 'removed');
   };
 
   return (
@@ -85,12 +98,48 @@ export const ProductDetailPage: React.FC = () => {
         <div className="bg-white rounded-xl border border-slate-200 p-6 sm:p-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Product Gallery */}
           <div className="lg:col-span-6">
-            <SafeImage
-              src={product.image}
-              alt={product.name}
-              aspectClass="aspect-[4/3]"
-              className="rounded-xl border border-slate-200"
-            />
+            <div className="relative">
+              <SafeImage
+                src={product.image}
+                alt={product.name}
+                aspectClass="aspect-[4/3]"
+                className="rounded-xl border border-slate-200"
+              />
+              <button
+                type="button"
+                onClick={handleToggleWishlist}
+                aria-pressed={inWishlist}
+                aria-label={
+                  inWishlist
+                    ? lang === 'ar'
+                      ? 'إزالة من القائمة المفضلة'
+                      : 'Remove from favorites'
+                    : lang === 'ar'
+                    ? 'إضافة إلى القائمة المفضلة'
+                    : 'Save to favorites'
+                }
+                title={
+                  inWishlist
+                    ? lang === 'ar'
+                      ? 'إزالة من المفضلة'
+                      : 'Remove from favorites'
+                    : lang === 'ar'
+                    ? 'حفظ في المفضلة'
+                    : 'Save to favorites'
+                }
+                className={`absolute top-3 end-3 w-10 h-10 rounded-full border shadow-sm flex items-center justify-center transition-all ${
+                  inWishlist
+                    ? 'bg-rose-50 border-rose-200 text-rose-600'
+                    : 'bg-white/95 hover:bg-rose-50 border-slate-200 text-slate-600 hover:text-rose-600'
+                }`}
+              >
+                <Heart
+                  className={`w-5 h-5 transition-transform ${
+                    inWishlist ? 'fill-rose-500 text-rose-600 scale-105' : ''
+                  }`}
+                />
+              </button>
+            </div>
           </div>
 
           {/* Contiguous Purchase Module */}
@@ -273,6 +322,32 @@ export const ProductDetailPage: React.FC = () => {
                     <span>{t('store.product.addToCart')}</span>
                   </button>
 
+                  <button
+                    type="button"
+                    onClick={handleToggleWishlist}
+                    aria-pressed={inWishlist}
+                    className={`inline-flex items-center justify-center gap-2 px-4 py-3.5 rounded-lg border text-sm font-semibold transition-colors ${
+                      inWishlist
+                        ? 'bg-rose-50 border-rose-300 text-rose-700 hover:bg-rose-100'
+                        : 'border-slate-300 text-slate-700 hover:border-rose-300 hover:text-rose-600 hover:bg-rose-50/60'
+                    }`}
+                  >
+                    <Heart
+                      className={`w-4 h-4 ${
+                        inWishlist ? 'fill-rose-500 text-rose-600' : ''
+                      }`}
+                    />
+                    <span>
+                      {inWishlist
+                        ? lang === 'ar'
+                          ? 'في المفضلة'
+                          : 'Saved'
+                        : lang === 'ar'
+                        ? 'حفظ في المفضلة'
+                        : 'Save'}
+                    </span>
+                  </button>
+
                   <Link
                     to="/store/cart"
                     className="px-5 py-3.5 rounded-lg border border-slate-300 text-slate-700 text-sm font-medium hover:bg-slate-50"
@@ -282,11 +357,63 @@ export const ProductDetailPage: React.FC = () => {
                 </div>
               </div>
             ) : (
-              <div className="p-4 rounded-lg bg-red-50 border border-red-200 text-sm text-red-800">
-                {t('store.product.outOfStock')} —{' '}
-                {lang === 'ar'
-                  ? 'يمكنك تصفح بدائل أخرى في نفس الفئة أو إرسال صورة وصفة طبية.'
-                  : 'Please browse alternatives in this category or submit a prescription photo.'}
+              <div className="space-y-3">
+                <div className="p-4 rounded-lg bg-red-50 border border-red-200 text-sm text-red-800">
+                  {t('store.product.outOfStock')} —{' '}
+                  {lang === 'ar'
+                    ? 'يمكنك تصفح بدائل أخرى في نفس الفئة أو إرسال صورة وصفة طبية.'
+                    : 'Please browse alternatives in this category or submit a prescription photo.'}
+                </div>
+                <button
+                  type="button"
+                  onClick={handleToggleWishlist}
+                  aria-pressed={inWishlist}
+                  className={`inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border text-sm font-semibold transition-colors ${
+                    inWishlist
+                      ? 'bg-rose-50 border-rose-300 text-rose-700 hover:bg-rose-100'
+                      : 'border-slate-300 text-slate-700 hover:border-rose-300 hover:text-rose-600 hover:bg-rose-50/60'
+                  }`}
+                >
+                  <Heart
+                    className={`w-4 h-4 ${
+                      inWishlist ? 'fill-rose-500 text-rose-600' : ''
+                    }`}
+                  />
+                  <span>
+                    {inWishlist
+                      ? lang === 'ar'
+                        ? 'في المفضلة'
+                        : 'Saved in Favorites'
+                      : lang === 'ar'
+                      ? 'حفظ في المفضلة لإشعار التوفر'
+                      : 'Save to Favorites'}
+                  </span>
+                </button>
+              </div>
+            )}
+
+            {(wishlistNotice || inWishlist) && (
+              <div className="flex items-center justify-between gap-2 px-3.5 py-2.5 rounded-lg bg-rose-50/70 border border-rose-200/80 text-xs text-rose-800">
+                <span className="inline-flex items-center gap-1.5 font-medium">
+                  <Heart
+                    className={`w-3.5 h-3.5 ${
+                      inWishlist ? 'fill-rose-500 text-rose-600' : 'text-slate-500'
+                    }`}
+                  />
+                  {wishlistNotice === 'removed'
+                    ? lang === 'ar'
+                      ? 'تمت إزالة المنتج من القائمة المفضلة.'
+                      : 'Removed from your favorites.'
+                    : lang === 'ar'
+                    ? 'هذا المنتج محفوظ في قائمتك المفضلة.'
+                    : 'This item is saved in your favorites list.'}
+                </span>
+                <Link
+                  to="/store/wishlist"
+                  className="font-bold text-rose-700 hover:underline shrink-0"
+                >
+                  {lang === 'ar' ? 'عرض المفضلة' : 'View Favorites'}
+                </Link>
               </div>
             )}
           </div>
@@ -295,6 +422,9 @@ export const ProductDetailPage: React.FC = () => {
 
       {/* Customer Star Ratings & Reviews Section */}
       <ProductReviewsSection productId={product.id} productName={product.name} />
+
+      {/* Sequential Related Products Carousel Below Customer Reviews */}
+      <RelatedProductsCarousel currentProduct={product} />
     </div>
   );
 };

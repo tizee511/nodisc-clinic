@@ -6,9 +6,16 @@ import { useClinic } from '../context/ClinicContext';
 import { Breadcrumbs } from '../components/Breadcrumbs';
 import { SafeImage } from '../components/SafeImage';
 import { BookActionButton } from '../components/BookActionLink';
+import { getFilterTabClass, ScrollableFilterBar } from '../components/ScrollableFilterBar';
 
 export const StoriesPage: React.FC = () => {
   const { lang, t, stories, departments } = useLanguage();
+  const [selectedDept, setSelectedDept] = useState<string>('all');
+
+  const filteredStories =
+    selectedDept === 'all'
+      ? stories
+      : stories.filter((s) => s.departmentId === selectedDept);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 lg:py-12 space-y-8">
@@ -22,8 +29,48 @@ export const StoriesPage: React.FC = () => {
         </p>
       </div>
 
+      {/* Department Filter Bar */}
+      <ScrollableFilterBar ariaLabel={lang === 'ar' ? 'تصفية قصص النجاح حسب القسم' : 'Filter stories by department'}>
+        <button
+          type="button"
+          onClick={() => setSelectedDept('all')}
+          className={getFilterTabClass(selectedDept === 'all')}
+        >
+          <span>{t('common.all')}</span>
+          <span
+            className={`text-[11px] tabular-nums ${
+              selectedDept === 'all' ? 'text-sky-200' : 'text-slate-400'
+            }`}
+          >
+            ({stories.length})
+          </span>
+        </button>
+        {departments.map((dept) => {
+          const count = stories.filter((s) => s.departmentId === dept.id).length;
+          if (count === 0) return null;
+          const isActive = selectedDept === dept.id;
+          return (
+            <button
+              key={dept.id}
+              type="button"
+              onClick={() => setSelectedDept(dept.id)}
+              className={getFilterTabClass(isActive)}
+            >
+              <span>{dept.nameAr}</span>
+              <span
+                className={`text-[11px] tabular-nums ${
+                  isActive ? 'text-sky-200' : 'text-slate-400'
+                }`}
+              >
+                ({count})
+              </span>
+            </button>
+          );
+        })}
+      </ScrollableFilterBar>
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {stories.map((story) => {
+        {filteredStories.map((story) => {
           const dept = departments.find((d) => d.id === story.departmentId);
           return (
             <Link
@@ -176,7 +223,7 @@ export const StoryDetailPage: React.FC = () => {
         <div className="text-sm space-y-1">
           {doctor && (
             <p>
-              <span className="text-slate-500">{lang === 'ar' ? 'الطبيب / الفريق:' : 'Specialist:'} </span>
+              <span className="text-slate-500">{lang === 'ar' ? 'الطبيب:' : 'Physician:'} </span>
               <Link to={`/doctors/${doctor.slug}`} className="font-semibold text-[#0F4C5C] hover:underline">
                 {doctor.nameAr}
               </Link>

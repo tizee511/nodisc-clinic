@@ -1,11 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { Breadcrumbs } from '../components/Breadcrumbs';
 import { SafeImage } from '../components/SafeImage';
+import { getFilterTabClass, ScrollableFilterBar } from '../components/ScrollableFilterBar';
 
 export const NewsPage: React.FC = () => {
-  const { lang, t, news } = useLanguage();
+  const { lang, t, news, departments } = useLanguage();
+  const [selectedDept, setSelectedDept] = useState<string>('all');
+
+  const filteredNews =
+    selectedDept === 'all'
+      ? news
+      : news.filter((item) => item.departmentId === selectedDept);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 lg:py-12 space-y-8">
@@ -19,8 +26,48 @@ export const NewsPage: React.FC = () => {
         </p>
       </div>
 
+      {/* Department Filter Bar */}
+      <ScrollableFilterBar ariaLabel={lang === 'ar' ? 'تصفية الأخبار حسب القسم' : 'Filter news by department'}>
+        <button
+          type="button"
+          onClick={() => setSelectedDept('all')}
+          className={getFilterTabClass(selectedDept === 'all')}
+        >
+          <span>{t('common.all')}</span>
+          <span
+            className={`text-[11px] tabular-nums ${
+              selectedDept === 'all' ? 'text-sky-200' : 'text-slate-400'
+            }`}
+          >
+            ({news.length})
+          </span>
+        </button>
+        {departments.map((dept) => {
+          const count = news.filter((item) => item.departmentId === dept.id).length;
+          if (count === 0) return null;
+          const isActive = selectedDept === dept.id;
+          return (
+            <button
+              key={dept.id}
+              type="button"
+              onClick={() => setSelectedDept(dept.id)}
+              className={getFilterTabClass(isActive)}
+            >
+              <span>{dept.nameAr}</span>
+              <span
+                className={`text-[11px] tabular-nums ${
+                  isActive ? 'text-sky-200' : 'text-slate-400'
+                }`}
+              >
+                ({count})
+              </span>
+            </button>
+          );
+        })}
+      </ScrollableFilterBar>
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {news.map((item) => (
+        {filteredNews.map((item) => (
           <Link
             key={item.id}
             to={`/news/${item.slug}`}

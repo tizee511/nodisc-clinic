@@ -560,7 +560,7 @@ export const SearchPage: React.FC = () => {
     });
     doctors.forEach((d) => {
       if (d.nameAr.toLowerCase().includes(q) || d.nameEn.toLowerCase().includes(q) || d.bio.toLowerCase().includes(q)) {
-        list.push({ id: `doc-${d.id}`, type: lang === 'ar' ? 'طبيب / فريق' : 'Physician', title: d.nameAr, desc: d.roleTitle, to: `/doctors/${d.slug}` });
+        list.push({ id: `doc-${d.id}`, type: lang === 'ar' ? 'طبيب' : 'Physician', title: d.nameAr, desc: d.roleTitle, to: `/doctors/${d.slug}` });
       }
     });
     services.forEach((s) => {

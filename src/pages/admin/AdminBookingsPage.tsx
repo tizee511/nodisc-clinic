@@ -243,7 +243,7 @@ export const AdminBookingsPage: React.FC = () => {
                         <span className="font-medium text-slate-800 block">{dept?.nameAr}</span>
                         <span className="text-[11px] text-slate-500">{srv?.title}</span>
                       </td>
-                      <td className="px-4 py-3 text-slate-700">{doc?.nameAr || 'فريق القسم'}</td>
+                      <td className="px-4 py-3 text-slate-700">{doc?.nameAr || 'حسب القسم'}</td>
                       <td className="px-4 py-3 tabular-nums">
                         <span className="font-medium text-slate-800 block">{app.preferredDay}</span>
                         <span className="text-[11px] text-slate-500">{app.preferredPeriod}</span>
