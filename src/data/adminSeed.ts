@@ -640,6 +640,22 @@ export const mediaLibrarySeed: MediaAsset[] = [
     description: 'صورة مستحضرات ومكملات الصيدلية',
     uploadedAt: '2026-11-16',
   },
+  {
+    id: 'MED-10',
+    title: 'الصورة الرسمية — د. محمد عبدالله الجرباني',
+    url: '/src/assets/images/doctor_real_official.jpg',
+    type: 'image',
+    description: 'الصورة الرسمية للدكتور محمد عبدالله الجرباني — استشاري جراحة المخ والأعصاب والعمود الفقري',
+    uploadedAt: '2026-11-23',
+  },
+  {
+    id: 'MED-11',
+    title: 'الشعار الرسمي — نوديسك كلينك',
+    url: '/src/assets/images/nodisc_full_logo.jpg',
+    type: 'image',
+    description: 'الشعار الرسمي لمركز نوديسك كلينك لجراحة المخ والأعصاب والعمود الفقري',
+    uploadedAt: '2026-11-23',
+  },
 ];
 
 export const auditLogSeed: AuditLogEntry[] = [

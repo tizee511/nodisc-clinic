@@ -169,6 +169,17 @@ export const CartPage: React.FC = () => {
                   {deliveryFee === 0 ? t('store.cart.freeDelivery') : formatPrice(deliveryFee)}
                 </span>
               </div>
+              {cartSubtotalYER < localizedConfig.payment.freeDeliveryThresholdYER && (
+                <p className="text-xs text-[#0284C7] bg-sky-50/70 border border-sky-100 rounded-lg p-2.5 tabular-nums">
+                  {lang === 'ar'
+                    ? `أضف منتجات بقيمة ${formatPrice(
+                        localizedConfig.payment.freeDeliveryThresholdYER - cartSubtotalYER
+                      )} للحصول على توصيل مجاني.`
+                    : `Add ${formatPrice(
+                        localizedConfig.payment.freeDeliveryThresholdYER - cartSubtotalYER
+                      )} more for free delivery.`}
+                </p>
+              )}
               <div className="pt-3 border-t border-slate-100 flex justify-between text-base font-bold text-slate-900">
                 <span>{t('store.cart.total')}</span>
                 <span className="text-[#0F4C5C] tabular-nums">{formatPrice(totalYER)}</span>
@@ -181,6 +192,12 @@ export const CartPage: React.FC = () => {
             >
               {t('store.cart.proceedCheckout')}
             </Link>
+
+            <p className="text-[11px] text-slate-500 leading-relaxed pt-1 border-t border-slate-100">
+              {lang === 'ar'
+                ? 'طرق الدفع المتاحة: نقدًا عند الاستلام، الكريمي حاسب، جوالي، جيب، ون كاش، فلوسك، أو الدفع المزدوج.'
+                : 'Supported payments: Cash on delivery, Al-Kuraimi, Jawali, Jeeb, OneCash, Flousak, or split payment.'}
+            </p>
           </aside>
         </div>
       )}

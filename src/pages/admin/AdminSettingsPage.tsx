@@ -1,7 +1,23 @@
 import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { History, RotateCcw, Save, ShieldAlert } from 'lucide-react';
+import {
+  Check,
+  Edit3,
+  Eye,
+  EyeOff,
+  History,
+  Plus,
+  RotateCcw,
+  Save,
+  ShieldAlert,
+  Trash2,
+  Upload,
+  Wallet,
+  X,
+} from 'lucide-react';
 import { AdminLayout } from '../../components/admin/AdminLayout';
+import { WalletBrandIcon } from '../../components/PaymentMethodIcons';
+import { PaymentNetworkConfig } from '../../config/siteConfig';
 import { useDataStore } from '../../context/DataStoreContext';
 import { useLanguage } from '../../context/LanguageContext';
 
@@ -19,6 +35,7 @@ export const AdminSettingsPage: React.FC = () => {
   const [auditFilter, setAuditFilter] = useState('');
   const [confirmResetOpen, setConfirmResetOpen] = useState(false);
   const [savedNotice, setSavedNotice] = useState<string | null>(null);
+  const [editingWallet, setEditingWallet] = useState<PaymentNetworkConfig | null>(null);
 
   const [form, setForm] = useState({
     tagline: siteConfigState.brand.tagline,
@@ -106,6 +123,98 @@ export const AdminSettingsPage: React.FC = () => {
     );
   };
 
+  const openNewWalletModal = () => {
+    setEditingWallet({
+      id: `wallet-${Date.now()}`,
+      name: '',
+      nameEn: '',
+      accountHint: '',
+      accountHintEn: '',
+      logoUrl: '',
+      active: true,
+    });
+  };
+
+  const handleWalletLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !editingWallet) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === 'string') {
+        setEditingWallet((prev) => (prev ? { ...prev, logoUrl: reader.result as string } : null));
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleSaveWallet = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingWallet) return;
+
+    const cleanWallet: PaymentNetworkConfig = {
+      ...editingWallet,
+      name: editingWallet.name.trim(),
+      nameEn: editingWallet.nameEn?.trim() || editingWallet.name.trim(),
+      accountHint: editingWallet.accountHint.trim(),
+      accountHintEn: editingWallet.accountHintEn?.trim() || editingWallet.accountHint.trim(),
+      logoUrl: editingWallet.logoUrl?.trim() || '',
+      active: editingWallet.active !== false,
+    };
+
+    const exists = siteConfigState.payment.ePaymentNetworks.some((w) => w.id === cleanWallet.id);
+    setSiteConfigState((prev) => ({
+      ...prev,
+      payment: {
+        ...prev.payment,
+        ePaymentNetworks: exists
+          ? prev.payment.ePaymentNetworks.map((w) => (w.id === cleanWallet.id ? cleanWallet : w))
+          : [...prev.payment.ePaymentNetworks, cleanWallet],
+      },
+    }));
+
+    recordAudit(
+      'المحافظ الإلكترونية',
+      exists ? 'تحديث بيانات/شعار محفظة إلكترونية' : 'إضافة محفظة إلكترونية جديدة',
+      cleanWallet.name
+    );
+    setEditingWallet(null);
+    setSavedNotice(
+      lang === 'ar'
+        ? 'تم حفظ بيانات المحفظة وشعارها وتحديث صفحة الدفع والفوتر فوراً.'
+        : 'Wallet & logo saved and synced to Checkout & Footer.'
+    );
+  };
+
+  const handleToggleWallet = (walletId: string) => {
+    const target = siteConfigState.payment.ePaymentNetworks.find((w) => w.id === walletId);
+    setSiteConfigState((prev) => ({
+      ...prev,
+      payment: {
+        ...prev.payment,
+        ePaymentNetworks: prev.payment.ePaymentNetworks.map((w) =>
+          w.id === walletId ? { ...w, active: w.active === false } : w
+        ),
+      },
+    }));
+    if (target) {
+      recordAudit('المحافظ الإلكترونية', 'تبديل تفعيل محفظة', target.name);
+    }
+  };
+
+  const handleDeleteWallet = (walletId: string) => {
+    const target = siteConfigState.payment.ePaymentNetworks.find((w) => w.id === walletId);
+    setSiteConfigState((prev) => ({
+      ...prev,
+      payment: {
+        ...prev.payment,
+        ePaymentNetworks: prev.payment.ePaymentNetworks.filter((w) => w.id !== walletId),
+      },
+    }));
+    if (target) {
+      recordAudit('المحافظ الإلكترونية', 'حذف محفظة إلكترونية', target.name);
+    }
+  };
+
   if (!hasPermission('manage_settings')) {
     return (
       <AdminLayout titleAr="إعدادات النظام وسجل الأنشطة" titleEn="Settings & Audit Log">
@@ -130,8 +239,11 @@ export const AdminSettingsPage: React.FC = () => {
   return (
     <AdminLayout titleAr="إعدادات النظام وسجل الأنشطة" titleEn="Settings & Audit Log">
       {savedNotice && (
-        <div className="bg-emerald-50 border border-emerald-200 text-emerald-900 rounded-xl px-4 py-3 text-xs font-medium">
-          {savedNotice}
+        <div className="bg-emerald-50 border border-emerald-200 text-emerald-900 rounded-xl px-4 py-3 text-xs font-medium flex items-center justify-between gap-2">
+          <span>{savedNotice}</span>
+          <button type="button" onClick={() => setSavedNotice(null)} className="text-emerald-700">
+            <X className="w-3.5 h-3.5" />
+          </button>
         </div>
       )}
 
@@ -376,6 +488,119 @@ export const AdminSettingsPage: React.FC = () => {
         </div>
       </form>
 
+      {/* Electronic Wallets & Custom Logo Management */}
+      <section className="bg-white rounded-xl border border-slate-200 p-5 space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 className="font-display font-bold text-base text-slate-900 flex items-center gap-2">
+              <Wallet className="w-4 h-4 text-[#0F4C5C]" />
+              <span>
+                {lang === 'ar'
+                  ? 'إدارة المحافظ الإلكترونية وشعاراتها (Checkout & Footer)'
+                  : 'Electronic Wallets & Custom Logos'}
+              </span>
+            </h2>
+            <p className="text-xs text-slate-500 mt-0.5">
+              {lang === 'ar'
+                ? 'أضف محافظ دفع جديدة، عدّل أرقام الحسابات، أو ارفع شعاراً مخصصاً (Logo) لكل محفظة ليظهر في صفحة الدفع وتذييل الموقع.'
+                : 'Add new wallets, update account numbers, or attach a custom logo image for Checkout & Footer.'}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={openNewWalletModal}
+            className="px-3.5 py-2 rounded-lg bg-[#0F4C5C] hover:bg-[#093542] text-white text-xs font-semibold inline-flex items-center gap-1.5"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>{lang === 'ar' ? 'إضافة محفظة جديدة' : 'Add New Wallet'}</span>
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {siteConfigState.payment.ePaymentNetworks.map((net) => {
+            const isActive = net.active !== false;
+            return (
+              <div
+                key={net.id}
+                className={`rounded-xl border p-4 flex flex-col justify-between gap-3 ${
+                  isActive ? 'border-slate-200 bg-white' : 'border-slate-200 bg-slate-50 opacity-75'
+                }`}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <WalletBrandIcon
+                      id={net.id}
+                      size="md"
+                      logoUrl={net.logoUrl}
+                      name={net.name}
+                    />
+                    <div className="min-w-0">
+                      <h3 className="font-display font-bold text-sm text-slate-900 truncate">
+                        {net.name}
+                      </h3>
+                      {net.nameEn && (
+                        <span className="text-[11px] text-slate-400 block truncate" dir="ltr">
+                          {net.nameEn}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <span
+                    className={`px-2 py-0.5 rounded border text-[11px] font-medium shrink-0 ${
+                      isActive
+                        ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                        : 'bg-slate-200 text-slate-600 border-slate-300'
+                    }`}
+                  >
+                    {isActive ? 'مفعّلة' : 'معطّلة'}
+                  </span>
+                </div>
+
+                <div className="text-xs text-slate-600 bg-slate-50 rounded-lg px-3 py-2 border border-slate-100">
+                  <span className="block truncate">{net.accountHint}</span>
+                  {net.logoUrl && (
+                    <span className="text-[11px] text-[#0284C7] font-medium block mt-0.5">
+                      شعار مخصص مرفق ✓
+                    </span>
+                  )}
+                </div>
+
+                <div className="flex items-center justify-between gap-2 pt-1 border-t border-slate-100">
+                  <button
+                    type="button"
+                    onClick={() => setEditingWallet({ ...net })}
+                    className="px-2.5 py-1.5 rounded-lg border border-slate-300 text-xs font-semibold text-slate-700 hover:bg-slate-50 inline-flex items-center gap-1"
+                  >
+                    <Edit3 className="w-3.5 h-3.5" />
+                    <span>تعديل / شعار</span>
+                  </button>
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => handleToggleWallet(net.id)}
+                      className="px-2.5 py-1.5 rounded-lg border border-slate-300 text-xs font-medium text-slate-700 hover:bg-slate-50 inline-flex items-center gap-1"
+                    >
+                      {isActive ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                      <span>{isActive ? 'تعطيل' : 'تفعيل'}</span>
+                    </button>
+                    {siteConfigState.payment.ePaymentNetworks.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteWallet(net.id)}
+                        title="حذف المحفظة"
+                        className="p-1.5 rounded-lg border border-red-200 text-red-600 hover:bg-red-50"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
       {/* Audit Log */}
       <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
         <div className="px-5 py-4 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3">
@@ -425,6 +650,162 @@ export const AdminSettingsPage: React.FC = () => {
           </table>
         </div>
       </div>
+
+      {/* Add / Edit Wallet & Logo Modal */}
+      {editingWallet && (
+        <div className="fixed inset-0 z-50 bg-slate-900/50 flex items-center justify-center p-4">
+          <form
+            onSubmit={handleSaveWallet}
+            className="bg-white rounded-xl border border-slate-200 max-w-lg w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto"
+          >
+            <div className="flex items-center justify-between gap-2">
+              <h3 className="font-display font-bold text-lg text-slate-900">
+                {siteConfigState.payment.ePaymentNetworks.some((w) => w.id === editingWallet.id)
+                  ? 'تعديل المحفظة الإلكترونية والشعار'
+                  : 'إضافة محفظة إلكترونية جديدة'}
+              </h3>
+              <WalletBrandIcon
+                id={editingWallet.id}
+                size="md"
+                logoUrl={editingWallet.logoUrl}
+                name={editingWallet.name}
+              />
+            </div>
+
+            <div className="space-y-3 text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">
+                    اسم المحفظة (عربي) *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={editingWallet.name}
+                    onChange={(e) => setEditingWallet({ ...editingWallet, name: e.target.value })}
+                    placeholder="مثال: كاش أو موبايل موني"
+                    className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">
+                    اسم المحفظة (إنجليزي)
+                  </label>
+                  <input
+                    type="text"
+                    dir="ltr"
+                    value={editingWallet.nameEn || ''}
+                    onChange={(e) =>
+                      setEditingWallet({ ...editingWallet, nameEn: e.target.value })
+                    }
+                    placeholder="e.g. Mobile Money"
+                    className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-semibold text-slate-700 mb-1">
+                  رقم الحساب / الوصف بالعربي *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={editingWallet.accountHint}
+                  onChange={(e) =>
+                    setEditingWallet({ ...editingWallet, accountHint: e.target.value })
+                  }
+                  placeholder="حساب رقم: 772070207 — نوديسك كلينك"
+                  className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm"
+                />
+              </div>
+
+              <div>
+                <label className="block font-semibold text-slate-700 mb-1">
+                  رقم الحساب / الوصف بالإنجليزي
+                </label>
+                <input
+                  type="text"
+                  dir="ltr"
+                  value={editingWallet.accountHintEn || ''}
+                  onChange={(e) =>
+                    setEditingWallet({ ...editingWallet, accountHintEn: e.target.value })
+                  }
+                  placeholder="Wallet No: 772070207 — NODISC Clinic"
+                  className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm"
+                />
+              </div>
+
+              {/* Custom Wallet Logo Upload + URL */}
+              <div className="p-3.5 rounded-lg bg-slate-50 border border-slate-200 space-y-2.5">
+                <label className="block font-semibold text-slate-800">
+                  شعار المحفظة (Logo) — اختياري
+                </label>
+                <input
+                  type="url"
+                  dir="ltr"
+                  value={editingWallet.logoUrl || ''}
+                  onChange={(e) =>
+                    setEditingWallet({ ...editingWallet, logoUrl: e.target.value })
+                  }
+                  placeholder="https://example.com/wallet-logo.png أو ارفع صورة من جهازك"
+                  className="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white font-mono"
+                />
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <label className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-dashed border-slate-300 bg-white hover:border-[#0F4C5C] text-xs font-semibold text-slate-700 cursor-pointer">
+                    <Upload className="w-3.5 h-3.5 text-[#0F4C5C]" />
+                    <span>رفع صورة شعار من الجهاز (PNG / JPG / SVG)</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleWalletLogoUpload}
+                      className="sr-only"
+                    />
+                  </label>
+                  {editingWallet.logoUrl && (
+                    <button
+                      type="button"
+                      onClick={() => setEditingWallet({ ...editingWallet, logoUrl: '' })}
+                      className="text-xs font-medium text-red-600 hover:underline"
+                    >
+                      إزالة الشعار
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              <label className="inline-flex items-center gap-2 font-semibold text-slate-700 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={editingWallet.active !== false}
+                  onChange={(e) =>
+                    setEditingWallet({ ...editingWallet, active: e.target.checked })
+                  }
+                  className="w-4 h-4 accent-[#0F4C5C]"
+                />
+                <span>تفعيل المحفظة وإظهارها في صفحة الدفع وتذييل الموقع</span>
+              </label>
+            </div>
+
+            <div className="flex justify-end gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => setEditingWallet(null)}
+                className="px-4 py-2 rounded-lg border border-slate-300 text-xs font-semibold text-slate-700"
+              >
+                إلغاء
+              </button>
+              <button
+                type="submit"
+                className="px-4 py-2 rounded-lg bg-[#0F4C5C] hover:bg-[#093542] text-white text-xs font-semibold inline-flex items-center gap-1.5"
+              >
+                <Check className="w-3.5 h-3.5" />
+                <span>حفظ المحفظة</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
 
       {/* Confirmation Modal for Demo Reset */}
       {confirmResetOpen && (

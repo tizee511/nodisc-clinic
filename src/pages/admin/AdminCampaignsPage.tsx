@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Check, Edit3, Plus, Users } from 'lucide-react';
 import { AdminLayout } from '../../components/admin/AdminLayout';
+import { AdminImageField } from '../../components/admin/AdminImageField';
 import { useDataStore } from '../../context/DataStoreContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { Campaign, CampaignStatus, DepartmentId } from '../../types/clinic';
@@ -259,7 +260,7 @@ export const AdminCampaignsPage: React.FC = () => {
       {/* Edit Campaign Modal */}
       {editingCamp && (
         <div className="fixed inset-0 z-50 bg-slate-900/50 flex items-center justify-center p-4">
-          <form onSubmit={handleSaveCampaign} className="bg-white rounded-xl border border-slate-200 max-w-lg w-full p-6 space-y-4">
+          <form onSubmit={handleSaveCampaign} className="bg-white rounded-xl border border-slate-200 max-w-lg w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
             <h3 className="font-display font-bold text-lg text-slate-900">إعدادات الحملة الطبية</h3>
             <div className="space-y-3 text-xs">
               <div>
@@ -327,6 +328,11 @@ export const AdminCampaignsPage: React.FC = () => {
                   className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm"
                 />
               </div>
+              <AdminImageField
+                label="صورة الحملة الطبية"
+                value={editingCamp.image}
+                onChange={(url) => setEditingCamp({ ...editingCamp, image: url })}
+              />
             </div>
             <div className="flex justify-end gap-2">
               <button type="button" onClick={() => setEditingCamp(null)} className="px-4 py-2 rounded-lg border border-slate-300 text-xs">

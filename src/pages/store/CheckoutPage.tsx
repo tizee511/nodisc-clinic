@@ -1,15 +1,38 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { AlertTriangle, Loader2 } from 'lucide-react';
+import {
+  AlertTriangle,
+  Banknote,
+  Building2,
+  Check,
+  CheckCircle2,
+  Copy,
+  CreditCard,
+  FileText,
+  Layers,
+  Loader2,
+  MapPin,
+  ShieldCheck,
+  Truck,
+  Upload,
+  Wallet,
+  X,
+} from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 import { useClinic } from '../../context/ClinicContext';
 import { Breadcrumbs } from '../../components/Breadcrumbs';
+import { WalletBrandIcon } from '../../components/PaymentMethodIcons';
 import { OrderRecord } from '../../types/clinic';
+
+function extractAccountNumber(hint: string): string {
+  const match = hint.match(/\d{6,}/);
+  return match ? match[0] : hint;
+}
 
 export const CheckoutPage: React.FC = () => {
   const navigate = useNavigate();
   const { lang, t, products, localizedConfig } = useLanguage();
-  const { cart, cartSubtotalYER, formatPrice, clearCart, setLastOrder } = useClinic();
+  const { cart, cartSubtotalYER, currencyCode, formatPrice, clearCart, setLastOrder } = useClinic();
 
   const [customerName, setCustomerName] = useState('');
   const [phone, setPhone] = useState('');
@@ -17,30 +40,57 @@ export const CheckoutPage: React.FC = () => {
   const [address, setAddress] = useState('');
   const [notes, setNotes] = useState('');
 
+  const networks = localizedConfig.payment.ePaymentNetworks;
   const [paymentMode, setPaymentMode] = useState<'cod' | 'epayment' | 'split'>('cod');
-  const [selectedNetwork, setSelectedNetwork] = useState(
-    localizedConfig.payment.ePaymentNetworks[0].id
-  );
-  const [showSplitPreview, setShowSplitPreview] = useState(false);
+  const [selectedNetwork, setSelectedNetwork] = useState(networks[0]?.id || 'kuraimi');
+
+  useEffect(() => {
+    if (networks.length > 0 && !networks.some((n) => n.id === selectedNetwork)) {
+      setSelectedNetwork(networks[0].id);
+    }
+  }, [networks, selectedNetwork]);
+
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [paymentReference, setPaymentReference] = useState('');
+  const [paymentSenderName, setPaymentSenderName] = useState('');
+  const [paymentReceiptName, setPaymentReceiptName] = useState('');
+  const [confirmLaterViaWhatsapp, setConfirmLaterViaWhatsapp] = useState(false);
 
   const deliveryFee =
     deliveryMethod === 'pickup' || cartSubtotalYER >= localizedConfig.payment.freeDeliveryThresholdYER
       ? 0
       : localizedConfig.payment.deliveryFeeYER;
+
   const paymentFee =
     paymentMode === 'cod'
       ? localizedConfig.payment.codFeeYER
       : localizedConfig.payment.ePaymentFeeYER;
+
   const totalYER = cartSubtotalYER + deliveryFee + paymentFee;
+
+  const freeDeliveryThreshold = localizedConfig.payment.freeDeliveryThresholdYER;
+  const remainingForFreeDelivery = Math.max(0, freeDeliveryThreshold - cartSubtotalYER);
+  const freeDeliveryProgress = Math.min(100, Math.round((cartSubtotalYER / freeDeliveryThreshold) * 100));
 
   const [splitMethod1, setSplitMethod1] = useState(localizedConfig.payment.codLabel);
   const [splitAmount1, setSplitAmount1] = useState<string>(String(Math.floor(totalYER / 2)));
-  const [splitMethod2, setSplitMethod2] = useState(
-    localizedConfig.payment.ePaymentNetworks[0].name
-  );
+  const [splitMethod2, setSplitMethod2] = useState(networks[0]?.name || '');
   const [splitAmount2, setSplitAmount2] = useState<string>(
     String(totalYER - Math.floor(totalYER / 2))
   );
+
+  // Keep split amounts balanced automatically when delivery fee / total changes
+  useEffect(() => {
+    const a1 = Number(splitAmount1) || 0;
+    if (a1 >= 0 && a1 <= totalYER) {
+      setSplitAmount2(String(totalYER - a1));
+    } else {
+      const half = Math.floor(totalYER / 2);
+      setSplitAmount1(String(half));
+      setSplitAmount2(String(totalYER - half));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [totalYER]);
 
   const [simulateFail, setSimulateFail] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -60,10 +110,48 @@ export const CheckoutPage: React.FC = () => {
     );
   }
 
+  const activeNetworkObj = networks.find((n) => n.id === selectedNetwork) || networks[0];
+  const activeAccountNumber = activeNetworkObj ? extractAccountNumber(activeNetworkObj.accountHint) : '';
+
   const num1 = Number(splitAmount1) || 0;
   const num2 = Number(splitAmount2) || 0;
   const splitSum = num1 + num2;
   const splitRemaining = totalYER - splitSum;
+
+  const splitElectronicNetwork =
+    networks.find((n) => n.name === splitMethod2) ||
+    networks.find((n) => n.name === splitMethod1) ||
+    null;
+
+  const handleCopyAccount = async (text: string, id: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedId(id);
+      setTimeout(() => setCopiedId((curr) => (curr === id ? null : curr)), 2000);
+    } catch {
+      setCopiedId(id);
+      setTimeout(() => setCopiedId((curr) => (curr === id ? null : curr)), 2000);
+    }
+  };
+
+  const handleReceiptChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setPaymentReceiptName(file.name);
+      setConfirmLaterViaWhatsapp(false);
+    }
+  };
+
+  const handleAutoBalanceSplit = () => {
+    const remaining = Math.max(0, totalYER - num1);
+    setSplitAmount2(String(remaining));
+  };
+
+  const applySplitPreset = (firstAmount: number) => {
+    const clamped = Math.min(totalYER, Math.max(0, firstAmount));
+    setSplitAmount1(String(clamped));
+    setSplitAmount2(String(totalYER - clamped));
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -93,10 +181,6 @@ export const CheckoutPage: React.FC = () => {
         return;
       }
 
-      const networkObj = localizedConfig.payment.ePaymentNetworks.find(
-        (n) => n.id === selectedNetwork
-      );
-
       const order: OrderRecord = {
         orderNumber: `ORD-${Math.floor(100000 + Math.random() * 900000)}`,
         createdAt: new Date().toISOString().slice(0, 16).replace('T', ' '),
@@ -106,7 +190,23 @@ export const CheckoutPage: React.FC = () => {
         address: deliveryMethod === 'delivery' ? address.trim() : undefined,
         notes: notes.trim() || undefined,
         paymentMode,
-        paymentNetwork: paymentMode === 'epayment' ? networkObj?.name : undefined,
+        paymentNetwork: paymentMode === 'epayment' ? activeNetworkObj?.name : undefined,
+        paymentAccountHint:
+          paymentMode === 'epayment'
+            ? activeNetworkObj?.accountHint
+            : paymentMode === 'split' && splitElectronicNetwork
+            ? splitElectronicNetwork.accountHint
+            : undefined,
+        paymentReference:
+          paymentMode !== 'cod' && paymentReference.trim()
+            ? paymentReference.trim()
+            : confirmLaterViaWhatsapp
+            ? lang === 'ar'
+              ? 'سيتم التأكيد عبر واتساب'
+              : 'Confirm via WhatsApp'
+            : undefined,
+        paymentSenderName: paymentMode !== 'cod' ? paymentSenderName.trim() || undefined : undefined,
+        paymentReceiptName: paymentMode !== 'cod' ? paymentReceiptName || undefined : undefined,
         splitDetails:
           paymentMode === 'split'
             ? {
@@ -145,8 +245,15 @@ export const CheckoutPage: React.FC = () => {
       clearCart();
       setIsSubmitting(false);
       navigate('/store/order-result');
-    }, 600);
+    }, 550);
   };
+
+  const codLabel =
+    deliveryMethod === 'pickup'
+      ? lang === 'ar'
+        ? 'الدفع نقدًا في صيدلية المركز'
+        : 'Pay Cash at Clinic Pharmacy'
+      : t('store.checkout.cod');
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 lg:py-12 space-y-8">
@@ -158,9 +265,19 @@ export const CheckoutPage: React.FC = () => {
             { label: t('store.checkout.title') },
           ]}
         />
-        <h1 className="font-display font-bold text-3xl text-slate-900">
-          {t('store.checkout.title')}
-        </h1>
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <h1 className="font-display font-bold text-3xl text-slate-900">
+            {t('store.checkout.title')}
+          </h1>
+          <div className="inline-flex items-center gap-1.5 text-xs text-slate-500">
+            <ShieldCheck className="w-4 h-4 text-[#0F4C5C]" />
+            <span>
+              {lang === 'ar'
+                ? 'وسائل دفع محلية مرنة ومعتمدة لدى نوديسك كلينك'
+                : 'Flexible local payment methods verified by NODISC Clinic'}
+            </span>
+          </div>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit} noValidate className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -175,11 +292,14 @@ export const CheckoutPage: React.FC = () => {
             </div>
           )}
 
-          {/* Contact & Delivery */}
+          {/* 1. Contact & Delivery */}
           <section className="bg-white rounded-xl border border-slate-200 p-6 space-y-5">
-            <h2 className="font-display font-bold text-lg text-slate-900">
-              {t('store.checkout.contactSection')}
-            </h2>
+            <div className="flex items-center gap-2.5 border-b border-slate-100 pb-3">
+              <span className="font-mono text-xs font-bold text-[#0284C7] tabular-nums">01.</span>
+              <h2 className="font-display font-bold text-lg text-slate-900">
+                {t('store.checkout.contactSection')}
+              </h2>
+            </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
@@ -191,6 +311,7 @@ export const CheckoutPage: React.FC = () => {
                   type="text"
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
+                  placeholder={lang === 'ar' ? 'الاسم الكامل للمستلم' : 'Recipient full name'}
                   className={`w-full px-3.5 py-2.5 rounded-lg border text-sm ${
                     errors.customerName ? 'border-red-500' : 'border-slate-300'
                   }`}
@@ -210,6 +331,7 @@ export const CheckoutPage: React.FC = () => {
                   dir="ltr"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
+                  placeholder="+967 77..."
                   className={`w-full px-3.5 py-2.5 rounded-lg border text-sm tabular-nums ${
                     errors.phone ? 'border-red-500' : 'border-slate-300'
                   }`}
@@ -218,16 +340,16 @@ export const CheckoutPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               <span className="block text-sm font-medium text-slate-700">
                 {t('store.checkout.deliveryMethod')}
               </span>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <label
-                  className={`p-3.5 rounded-lg border cursor-pointer flex items-center gap-2.5 text-sm ${
+                  className={`p-4 rounded-xl border cursor-pointer flex items-start gap-3 transition-colors ${
                     deliveryMethod === 'delivery'
-                      ? 'border-[#0F4C5C] bg-sky-50/70 font-semibold text-[#0F4C5C]'
-                      : 'border-slate-300 text-slate-700'
+                      ? 'border-[#0F4C5C] bg-sky-50/60'
+                      : 'border-slate-200 hover:border-slate-300'
                   }`}
                 >
                   <input
@@ -235,14 +357,28 @@ export const CheckoutPage: React.FC = () => {
                     name="deliveryMethod"
                     checked={deliveryMethod === 'delivery'}
                     onChange={() => setDeliveryMethod('delivery')}
+                    className="mt-1"
                   />
-                  <span>{t('store.checkout.deliveryHome')}</span>
+                  <div className="space-y-0.5 text-sm">
+                    <span className="font-semibold text-slate-900 flex items-center gap-1.5">
+                      <Truck className="w-4 h-4 text-[#0F4C5C]" />
+                      <span>{t('store.checkout.deliveryHome')}</span>
+                    </span>
+                    <span className="text-xs text-slate-500 block tabular-nums">
+                      {cartSubtotalYER >= freeDeliveryThreshold
+                        ? t('store.cart.freeDelivery')
+                        : `${formatPrice(localizedConfig.payment.deliveryFeeYER)} (${
+                            lang === 'ar' ? 'مجاني فوق' : 'Free over'
+                          } ${formatPrice(freeDeliveryThreshold)})`}
+                    </span>
+                  </div>
                 </label>
+
                 <label
-                  className={`p-3.5 rounded-lg border cursor-pointer flex items-center gap-2.5 text-sm ${
+                  className={`p-4 rounded-xl border cursor-pointer flex items-start gap-3 transition-colors ${
                     deliveryMethod === 'pickup'
-                      ? 'border-[#0F4C5C] bg-sky-50/70 font-semibold text-[#0F4C5C]'
-                      : 'border-slate-300 text-slate-700'
+                      ? 'border-[#0F4C5C] bg-sky-50/60'
+                      : 'border-slate-200 hover:border-slate-300'
                   }`}
                 >
                   <input
@@ -250,13 +386,22 @@ export const CheckoutPage: React.FC = () => {
                     name="deliveryMethod"
                     checked={deliveryMethod === 'pickup'}
                     onChange={() => setDeliveryMethod('pickup')}
+                    className="mt-1"
                   />
-                  <span>{t('store.checkout.deliveryPickup')}</span>
+                  <div className="space-y-0.5 text-sm">
+                    <span className="font-semibold text-slate-900 flex items-center gap-1.5">
+                      <Building2 className="w-4 h-4 text-[#0F4C5C]" />
+                      <span>{t('store.checkout.deliveryPickup')}</span>
+                    </span>
+                    <span className="text-xs text-emerald-700 font-medium block">
+                      {t('store.checkout.freeLabel')}
+                    </span>
+                  </div>
                 </label>
               </div>
             </div>
 
-            {deliveryMethod === 'delivery' && (
+            {deliveryMethod === 'delivery' ? (
               <div>
                 <label htmlFor="chk-address" className="block text-sm font-medium text-slate-700 mb-1">
                   {t('store.checkout.address')} *
@@ -266,11 +411,29 @@ export const CheckoutPage: React.FC = () => {
                   type="text"
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
+                  placeholder={
+                    lang === 'ar'
+                      ? 'مثال: صنعاء – شارع حدة – جوار...'
+                      : 'e.g., Sana’a – Hadda St. – Near...'
+                  }
                   className={`w-full px-3.5 py-2.5 rounded-lg border text-sm ${
                     errors.address ? 'border-red-500' : 'border-slate-300'
                   }`}
                 />
                 {errors.address && <p className="text-xs text-red-600 mt-1">{errors.address}</p>}
+              </div>
+            ) : (
+              <div className="p-3.5 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-700 flex items-start gap-2.5">
+                <MapPin className="w-4 h-4 text-[#0F4C5C] shrink-0 mt-0.5" />
+                <div>
+                  <strong className="text-slate-900 block">
+                    {lang === 'ar' ? 'عنوان الاستلام المباشر:' : 'Clinic Pickup Address:'}
+                  </strong>
+                  <span>{localizedConfig.contact.address}</span>
+                  <span className="block text-slate-500 mt-0.5">
+                    {localizedConfig.contact.landmark}
+                  </span>
+                </div>
               </div>
             )}
 
@@ -288,122 +451,379 @@ export const CheckoutPage: React.FC = () => {
             </div>
           </section>
 
-          {/* Payment Method */}
+          {/* 2. Payment Method */}
           <section className="bg-white rounded-xl border border-slate-200 p-6 space-y-5">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <h2 className="font-display font-bold text-lg text-slate-900">
-                {t('store.checkout.paymentSection')}
-              </h2>
-
-              {localizedConfig.features.showDualPaymentPreview && (
-                <label className="inline-flex items-center gap-2 text-xs font-medium text-[#0F4C5C] cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={showSplitPreview}
-                    onChange={(e) => {
-                      const next = e.target.checked;
-                      setShowSplitPreview(next);
-                      if (!next && paymentMode === 'split') setPaymentMode('cod');
-                      if (next) setPaymentMode('split');
-                    }}
-                  />
-                  <span>{t('store.checkout.splitToggle')}</span>
-                </label>
-              )}
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
+              <div className="flex items-center gap-2.5">
+                <span className="font-mono text-xs font-bold text-[#0284C7] tabular-nums">02.</span>
+                <h2 className="font-display font-bold text-lg text-slate-900">
+                  {t('store.checkout.paymentSection')}
+                </h2>
+              </div>
+              <span className="text-xs text-slate-500 tabular-nums">
+                {lang === 'ar' ? 'الإجمالي المستحق:' : 'Amount due:'}{' '}
+                <strong className="text-[#0F4C5C]">{formatPrice(totalYER)}</strong>
+              </span>
             </div>
 
             <div className="space-y-3">
+              {/* Option A: Cash on Delivery / Pickup */}
               <label
-                className={`block p-4 rounded-lg border cursor-pointer ${
+                className={`block p-4 rounded-xl border cursor-pointer transition-colors ${
                   paymentMode === 'cod'
-                    ? 'border-[#0F4C5C] bg-sky-50/60'
-                    : 'border-slate-300'
+                    ? 'border-[#0F4C5C] bg-sky-50/55'
+                    : 'border-slate-200 hover:border-slate-300'
                 }`}
               >
-                <div className="flex items-center gap-2.5 text-sm font-semibold text-slate-900">
-                  <input
-                    type="radio"
-                    name="paymentMode"
-                    checked={paymentMode === 'cod'}
-                    onChange={() => setPaymentMode('cod')}
-                  />
-                  <span>{t('store.checkout.cod')}</span>
-                </div>
-              </label>
-
-              <label
-                className={`block p-4 rounded-lg border cursor-pointer space-y-3 ${
-                  paymentMode === 'epayment'
-                    ? 'border-[#0F4C5C] bg-sky-50/60'
-                    : 'border-slate-300'
-                }`}
-              >
-                <div className="flex items-center gap-2.5 text-sm font-semibold text-slate-900">
-                  <input
-                    type="radio"
-                    name="paymentMode"
-                    checked={paymentMode === 'epayment'}
-                    onChange={() => setPaymentMode('epayment')}
-                  />
-                  <span>{t('store.checkout.epayment')}</span>
-                </div>
-
-                {paymentMode === 'epayment' && (
-                  <div className="ps-6 space-y-2">
-                    <label htmlFor="chk-network" className="block text-xs font-medium text-slate-600">
-                      {t('store.checkout.selectNetwork')}
-                    </label>
-                    <select
-                      id="chk-network"
-                      value={selectedNetwork}
-                      onChange={(e) => setSelectedNetwork(e.target.value)}
-                      className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm bg-white"
-                    >
-                      {localizedConfig.payment.ePaymentNetworks.map((net) => (
-                        <option key={net.id} value={net.id}>
-                          {net.name} — {net.accountHint}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                )}
-              </label>
-
-              {/* Split / Dual Payment Preview */}
-              {showSplitPreview && localizedConfig.features.showDualPaymentPreview && (
-                <div
-                  className={`p-4 rounded-lg border space-y-4 ${
-                    paymentMode === 'split'
-                      ? 'border-[#0F4C5C] bg-sky-50/60'
-                      : 'border-slate-300'
-                  }`}
-                >
-                  <label className="flex items-center gap-2.5 text-sm font-semibold text-slate-900 cursor-pointer">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-start gap-3">
                     <input
                       type="radio"
                       name="paymentMode"
-                      checked={paymentMode === 'split'}
-                      onChange={() => setPaymentMode('split')}
+                      checked={paymentMode === 'cod'}
+                      onChange={() => setPaymentMode('cod')}
+                      className="mt-1"
                     />
-                    <span>{t('store.checkout.splitToggle')}</span>
+                    <div className="space-y-1">
+                      <span className="font-semibold text-sm text-slate-900 flex items-center gap-2">
+                        <Banknote className="w-4 h-4 text-[#0F4C5C]" />
+                        <span>{codLabel}</span>
+                      </span>
+                      <p className="text-xs text-slate-500">
+                        {deliveryMethod === 'pickup'
+                          ? lang === 'ar'
+                            ? 'ادفع نقدًا عند استلام طلبك من صيدلية نوديسك كلينك.'
+                            : 'Pay in cash when picking up your order at NODISC Clinic Pharmacy.'
+                          : lang === 'ar'
+                          ? 'ادفع نقدًا للمندوب بعد فحص الطلب والتأكد من استلامه.'
+                          : 'Pay in cash to the courier upon receiving your order.'}
+                      </p>
+                    </div>
+                  </div>
+                  <span className="text-xs font-semibold text-emerald-700 shrink-0 tabular-nums">
+                    {localizedConfig.payment.codFeeYER > 0
+                      ? `+${formatPrice(localizedConfig.payment.codFeeYER)}`
+                      : t('store.checkout.freeLabel')}
+                  </span>
+                </div>
+              </label>
+
+              {/* Option B: Electronic Payment (Yemeni Wallets & Banks) */}
+              <div
+                className={`rounded-xl border transition-colors ${
+                  paymentMode === 'epayment'
+                    ? 'border-[#0F4C5C] bg-sky-50/40'
+                    : 'border-slate-200 hover:border-slate-300'
+                }`}
+              >
+                <label className="p-4 cursor-pointer flex items-start justify-between gap-3">
+                  <div className="flex items-start gap-3">
+                    <input
+                      type="radio"
+                      name="paymentMode"
+                      checked={paymentMode === 'epayment'}
+                      onChange={() => setPaymentMode('epayment')}
+                      className="mt-1"
+                    />
+                    <div className="space-y-1">
+                      <span className="font-semibold text-sm text-slate-900 flex items-center gap-2">
+                        <Wallet className="w-4 h-4 text-[#0F4C5C]" />
+                        <span>{t('store.checkout.epayment')}</span>
+                      </span>
+                      <p className="text-xs text-slate-500">
+                        {lang === 'ar'
+                          ? 'التحويل المباشر عبر الكريمي حاسب، محفظة جوالي، جيب، ون كاش، أو فلوسك.'
+                          : 'Direct transfer via Al-Kuraimi Hasib, Jawali, Jeeb, OneCash, or Flousak.'}
+                      </p>
+                    </div>
+                  </div>
+                  <span className="text-xs font-semibold text-emerald-700 shrink-0 tabular-nums">
+                    {localizedConfig.payment.ePaymentFeeYER > 0
+                      ? `+${formatPrice(localizedConfig.payment.ePaymentFeeYER)}`
+                      : t('store.checkout.freeLabel')}
+                  </span>
+                </label>
+
+                {paymentMode === 'epayment' && (
+                  <div className="px-4 pb-5 pt-2 border-t border-slate-200/80 space-y-5">
+                    {/* Step 1: Select Wallet Card */}
+                    <div className="space-y-2.5">
+                      <span className="block text-xs font-semibold text-slate-700">
+                        1. {t('store.checkout.selectNetwork')}
+                      </span>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                        {networks.map((net) => {
+                          const acct = extractAccountNumber(net.accountHint);
+                          const isSelected = selectedNetwork === net.id;
+                          return (
+                            <button
+                              key={net.id}
+                              type="button"
+                              onClick={() => setSelectedNetwork(net.id)}
+                              className={`text-start p-3 rounded-lg border transition-all flex items-center justify-between gap-2.5 ${
+                                isSelected
+                                  ? 'border-[#0F4C5C] bg-white ring-1 ring-[#0F4C5C]/25'
+                                  : 'border-slate-200 bg-white/80 hover:border-slate-300'
+                              }`}
+                            >
+                              <div className="flex items-center gap-2.5 min-w-0">
+                                <WalletBrandIcon
+                                  id={net.id}
+                                  size="sm"
+                                  logoUrl={net.logoUrl}
+                                  name={net.name}
+                                />
+                                <div className="min-w-0 space-y-0.5">
+                                  <span className="text-xs font-bold text-slate-900 block truncate">
+                                    {net.name}
+                                  </span>
+                                  <span
+                                    className="text-[11px] font-mono text-[#0284C7] block tabular-nums"
+                                    dir="ltr"
+                                  >
+                                    {acct}
+                                  </span>
+                                </div>
+                              </div>
+                              {isSelected && (
+                                <CheckCircle2 className="w-4 h-4 text-[#0F4C5C] shrink-0" />
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Step 2: Account & Transfer Amount Card */}
+                    {activeNetworkObj && (
+                      <div className="bg-white rounded-xl border border-slate-200 p-4 space-y-3">
+                        <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-100">
+                          <div className="flex items-center gap-2.5">
+                            <WalletBrandIcon
+                              id={activeNetworkObj.id}
+                              size="md"
+                              logoUrl={activeNetworkObj.logoUrl}
+                              name={activeNetworkObj.name}
+                            />
+                            <div>
+                              <span className="text-[11px] text-slate-500 block">
+                                2. {lang === 'ar' ? 'حوّل المبلغ إلى الحساب التالي:' : 'Transfer total amount to:'}
+                              </span>
+                              <strong className="text-sm text-slate-900">{activeNetworkObj.name}</strong>
+                            </div>
+                          </div>
+                          <div className="text-end">
+                            <span className="text-[11px] text-slate-500 block">
+                              {lang === 'ar' ? 'المبلغ المطلوب تحويله' : 'Transfer Amount'}
+                            </span>
+                            <span className="text-sm font-bold text-[#0F4C5C] tabular-nums">
+                              {formatPrice(totalYER)}
+                              {currencyCode !== 'YER' && (
+                                <span className="text-xs text-slate-500 ms-1.5">
+                                  ({totalYER.toLocaleString('en-US')} ر.ي)
+                                </span>
+                              )}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="flex flex-wrap items-center justify-between gap-3 bg-slate-50 rounded-lg p-3 border border-slate-200/80">
+                          <div className="min-w-0">
+                            <span className="text-[11px] text-slate-500 block">
+                              {activeNetworkObj.accountHint}
+                            </span>
+                            <span
+                              className="font-mono font-bold text-base text-slate-900 tabular-nums block mt-0.5"
+                              dir="ltr"
+                            >
+                              {activeAccountNumber}
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleCopyAccount(activeAccountNumber, activeNetworkObj.id)}
+                            className="px-3 py-1.5 rounded-lg border border-slate-300 bg-white hover:border-[#0F4C5C] text-xs font-semibold text-slate-800 inline-flex items-center gap-1.5 transition-colors shrink-0"
+                          >
+                            {copiedId === activeNetworkObj.id ? (
+                              <>
+                                <Check className="w-3.5 h-3.5 text-emerald-600" />
+                                <span className="text-emerald-700">{t('store.checkout.copiedAccount')}</span>
+                              </>
+                            ) : (
+                              <>
+                                <Copy className="w-3.5 h-3.5 text-[#0F4C5C]" />
+                                <span>{t('store.checkout.copyAccount')}</span>
+                              </>
+                            )}
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Step 3: Payment Verification Details */}
+                    <div className="space-y-3 bg-white rounded-xl border border-slate-200 p-4">
+                      <span className="block text-xs font-semibold text-slate-700">
+                        3. {lang === 'ar' ? 'تأكيد التحويل (لتسريع مراجعة الصيدلي)' : 'Transfer Verification (Speeds Up Pharmacy Review)'}
+                      </span>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                          <label htmlFor="chk-ref" className="block text-xs font-medium text-slate-600 mb-1">
+                            {t('store.checkout.transferRefLabel')}
+                          </label>
+                          <input
+                            id="chk-ref"
+                            type="text"
+                            dir="ltr"
+                            value={paymentReference}
+                            onChange={(e) => {
+                              setPaymentReference(e.target.value);
+                              if (e.target.value.trim()) setConfirmLaterViaWhatsapp(false);
+                            }}
+                            placeholder={t('store.checkout.transferRefPlaceholder')}
+                            className="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs font-mono"
+                          />
+                        </div>
+
+                        <div>
+                          <label htmlFor="chk-sender" className="block text-xs font-medium text-slate-600 mb-1">
+                            {t('store.checkout.transferSenderLabel')}
+                          </label>
+                          <input
+                            id="chk-sender"
+                            type="text"
+                            value={paymentSenderName}
+                            onChange={(e) => setPaymentSenderName(e.target.value)}
+                            placeholder={lang === 'ar' ? 'اسم صاحب الحساب أو رقمه' : 'Account holder or phone'}
+                            className="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
+                        <div>
+                          <label className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-dashed border-slate-300 hover:border-[#0F4C5C] bg-slate-50 hover:bg-white text-xs font-medium text-slate-700 cursor-pointer transition-colors">
+                            <Upload className="w-3.5 h-3.5 text-[#0F4C5C]" />
+                            <span>{t('store.checkout.transferReceiptLabel')}</span>
+                            <input
+                              type="file"
+                              accept="image/*,.pdf"
+                              onChange={handleReceiptChange}
+                              className="sr-only"
+                            />
+                          </label>
+                          {paymentReceiptName && (
+                            <div className="inline-flex items-center gap-1.5 ms-2 text-xs text-emerald-700 font-medium">
+                              <FileText className="w-3.5 h-3.5" />
+                              <span className="max-w-[160px] truncate">{paymentReceiptName}</span>
+                              <button
+                                type="button"
+                                onClick={() => setPaymentReceiptName('')}
+                                aria-label={t('common.cancel')}
+                                className="text-slate-400 hover:text-red-600"
+                              >
+                                <X className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          )}
+                        </div>
+
+                        <label className="inline-flex items-center gap-2 text-xs text-slate-600 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={confirmLaterViaWhatsapp}
+                            onChange={(e) => setConfirmLaterViaWhatsapp(e.target.checked)}
+                          />
+                          <span>
+                            {lang === 'ar'
+                              ? 'سأرسل إشعار التحويل عبر واتساب بعد تأكيد الطلب'
+                              : 'I will send receipt via WhatsApp after placing order'}
+                          </span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Option C: Split / Dual Payment */}
+              {localizedConfig.features.showDualPaymentPreview && (
+                <div
+                  className={`rounded-xl border transition-colors ${
+                    paymentMode === 'split'
+                      ? 'border-[#0F4C5C] bg-sky-50/40'
+                      : 'border-slate-200 hover:border-slate-300'
+                  }`}
+                >
+                  <label className="p-4 cursor-pointer flex items-start justify-between gap-3">
+                    <div className="flex items-start gap-3">
+                      <input
+                        type="radio"
+                        name="paymentMode"
+                        checked={paymentMode === 'split'}
+                        onChange={() => setPaymentMode('split')}
+                        className="mt-1"
+                      />
+                      <div className="space-y-1">
+                        <span className="font-semibold text-sm text-slate-900 flex items-center gap-2">
+                          <Layers className="w-4 h-4 text-[#0F4C5C]" />
+                          <span>{t('store.checkout.splitToggle')}</span>
+                        </span>
+                        <p className="text-xs text-slate-500">
+                          {lang === 'ar'
+                            ? 'ادفع جزءًا مقدمًا عبر المحفظة الإلكترونية والباقي نقدًا عند الاستلام، أو قسّم المبلغ بين وسيلتين.'
+                            : 'Pay part via local wallet and the rest on delivery, or split across two wallets.'}
+                        </p>
+                      </div>
+                    </div>
                   </label>
 
                   {paymentMode === 'split' && (
-                    <div className="space-y-4 ps-6">
+                    <div className="px-4 pb-5 pt-2 border-t border-slate-200/80 space-y-4">
+                      {/* Quick split presets */}
+                      <div className="flex flex-wrap items-center gap-2 text-xs">
+                        <span className="text-slate-500">
+                          {lang === 'ar' ? 'توزيع سريع:' : 'Quick split:'}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => applySplitPreset(Math.floor(totalYER / 2))}
+                          className="px-2.5 py-1 rounded-md border border-slate-300 bg-white hover:border-[#0F4C5C] text-slate-700 font-medium"
+                        >
+                          50% / 50%
+                        </button>
+                        {totalYER > 5000 && (
+                          <button
+                            type="button"
+                            onClick={() => applySplitPreset(totalYER - 5000)}
+                            className="px-2.5 py-1 rounded-md border border-slate-300 bg-white hover:border-[#0F4C5C] text-slate-700 font-medium tabular-nums"
+                          >
+                            {lang === 'ar' ? 'عربون 5,000 ر.ي بالثانية' : '5,000 YER in second method'}
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          onClick={handleAutoBalanceSplit}
+                          className="px-2.5 py-1 rounded-md bg-[#0F4C5C]/10 hover:bg-[#0F4C5C]/15 text-[#0F4C5C] font-semibold"
+                        >
+                          {t('store.checkout.autoBalance')}
+                        </button>
+                      </div>
+
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div>
-                          <label className="block text-xs text-slate-600 mb-1">
+                        <div className="bg-white p-3.5 rounded-lg border border-slate-200 space-y-2">
+                          <label className="block text-xs font-semibold text-slate-700">
                             {t('store.checkout.splitMethod1')} (YER)
                           </label>
                           <select
                             value={splitMethod1}
                             onChange={(e) => setSplitMethod1(e.target.value)}
-                            className="w-full px-2.5 py-2 rounded border border-slate-300 text-xs bg-white mb-2"
+                            className="w-full px-2.5 py-2 rounded-lg border border-slate-300 text-xs bg-white"
                           >
                             <option value={localizedConfig.payment.codLabel}>
                               {localizedConfig.payment.codLabel}
                             </option>
-                            {localizedConfig.payment.ePaymentNetworks.map((n) => (
+                            {networks.map((n) => (
                               <option key={n.id} value={n.name}>
                                 {n.name}
                               </option>
@@ -414,20 +834,20 @@ export const CheckoutPage: React.FC = () => {
                             min={0}
                             value={splitAmount1}
                             onChange={(e) => setSplitAmount1(e.target.value)}
-                            className="w-full px-3 py-2 rounded border border-slate-300 text-sm tabular-nums bg-white"
+                            className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm tabular-nums bg-white font-semibold"
                           />
                         </div>
 
-                        <div>
-                          <label className="block text-xs text-slate-600 mb-1">
+                        <div className="bg-white p-3.5 rounded-lg border border-slate-200 space-y-2">
+                          <label className="block text-xs font-semibold text-slate-700">
                             {t('store.checkout.splitMethod2')} (YER)
                           </label>
                           <select
                             value={splitMethod2}
                             onChange={(e) => setSplitMethod2(e.target.value)}
-                            className="w-full px-2.5 py-2 rounded border border-slate-300 text-xs bg-white mb-2"
+                            className="w-full px-2.5 py-2 rounded-lg border border-slate-300 text-xs bg-white"
                           >
-                            {localizedConfig.payment.ePaymentNetworks.map((n) => (
+                            {networks.map((n) => (
                               <option key={n.id} value={n.name}>
                                 {n.name}
                               </option>
@@ -441,12 +861,49 @@ export const CheckoutPage: React.FC = () => {
                             min={0}
                             value={splitAmount2}
                             onChange={(e) => setSplitAmount2(e.target.value)}
-                            className="w-full px-3 py-2 rounded border border-slate-300 text-sm tabular-nums bg-white"
+                            className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm tabular-nums bg-white font-semibold"
                           />
                         </div>
                       </div>
 
-                      <div className="p-3 rounded bg-white border border-slate-200 text-xs flex flex-wrap justify-between gap-2 tabular-nums">
+                      {splitElectronicNetwork && (
+                        <div className="bg-white rounded-lg border border-slate-200 p-3.5 flex flex-wrap items-center justify-between gap-3 text-xs">
+                          <div>
+                            <span className="text-slate-500 block">
+                              {splitElectronicNetwork.name}
+                            </span>
+                            <span className="font-mono font-bold text-slate-900 tabular-nums" dir="ltr">
+                              {extractAccountNumber(splitElectronicNetwork.accountHint)}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2 flex-1 sm:flex-initial">
+                            <input
+                              type="text"
+                              dir="ltr"
+                              value={paymentReference}
+                              onChange={(e) => setPaymentReference(e.target.value)}
+                              placeholder={t('store.checkout.transferRefPlaceholder')}
+                              className="px-2.5 py-1.5 rounded border border-slate-300 text-xs font-mono w-full sm:w-44"
+                            />
+                            <button
+                              type="button"
+                              onClick={() =>
+                                handleCopyAccount(
+                                  extractAccountNumber(splitElectronicNetwork.accountHint),
+                                  'split-acct'
+                                )
+                              }
+                              className="px-2.5 py-1.5 rounded border border-slate-300 hover:border-[#0F4C5C] text-xs font-semibold shrink-0"
+                            >
+                              {copiedId === 'split-acct'
+                                ? t('store.checkout.copiedAccount')
+                                : t('store.checkout.copyAccount')}
+                            </button>
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="p-3 rounded-lg bg-white border border-slate-200 text-xs flex flex-wrap justify-between items-center gap-2 tabular-nums">
                         <span>
                           {t('store.checkout.splitSum')}: <strong>{formatPrice(splitSum)}</strong>
                         </span>
@@ -457,7 +914,11 @@ export const CheckoutPage: React.FC = () => {
                               : 'text-emerald-700 font-semibold'
                           }
                         >
-                          {t('store.checkout.splitRemaining')}: {formatPrice(splitRemaining)}
+                          {Math.abs(splitRemaining) <= 0.01
+                            ? lang === 'ar'
+                              ? 'المبلغ مطابق للإجمالي ✓'
+                              : 'Matched to order total ✓'
+                            : `${t('store.checkout.splitRemaining')}: ${formatPrice(splitRemaining)}`}
                         </span>
                       </div>
                       {errors.split && <p className="text-xs text-red-600">{errors.split}</p>}
@@ -467,16 +928,17 @@ export const CheckoutPage: React.FC = () => {
               )}
             </div>
 
-            <p className="text-xs text-slate-500">{localizedConfig.payment.collectionNote}</p>
-
-            <label className="inline-flex items-center gap-2 text-xs text-red-700 cursor-pointer pt-2">
-              <input
-                type="checkbox"
-                checked={simulateFail}
-                onChange={(e) => setSimulateFail(e.target.checked)}
-              />
-              <span>{t('store.checkout.simulateFailToggle')}</span>
-            </label>
+            <div className="pt-2 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
+              <span>{localizedConfig.payment.collectionNote}</span>
+              <label className="inline-flex items-center gap-1.5 text-slate-500 hover:text-red-700 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={simulateFail}
+                  onChange={(e) => setSimulateFail(e.target.checked)}
+                />
+                <span>{t('store.checkout.simulateFailToggle')}</span>
+              </label>
+            </div>
           </section>
         </div>
 
@@ -485,6 +947,34 @@ export const CheckoutPage: React.FC = () => {
           <h2 className="font-display font-bold text-lg text-slate-900 border-b border-slate-100 pb-3">
             {t('booking.summaryTitle')}
           </h2>
+
+          {/* Free delivery progress when Home Delivery is chosen */}
+          {deliveryMethod === 'delivery' && (
+            <div className="p-3 rounded-lg bg-slate-50 border border-slate-200/80 space-y-1.5 text-xs">
+              <div className="flex items-center justify-between gap-2">
+                <span className="font-medium text-slate-700">
+                  {remainingForFreeDelivery === 0
+                    ? lang === 'ar'
+                      ? 'تم تفعيل التوصيل المجاني'
+                      : 'Free delivery unlocked'
+                    : lang === 'ar'
+                    ? `أضف ${formatPrice(remainingForFreeDelivery)} للتوصيل المجاني`
+                    : `Add ${formatPrice(remainingForFreeDelivery)} for free delivery`}
+                </span>
+                <span className="font-mono text-[#0F4C5C] font-semibold tabular-nums">
+                  {freeDeliveryProgress}%
+                </span>
+              </div>
+              <div className="h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                <div
+                  className={`h-full transition-all duration-300 ${
+                    remainingForFreeDelivery === 0 ? 'bg-emerald-600' : 'bg-[#0F4C5C]'
+                  }`}
+                  style={{ width: `${freeDeliveryProgress}%` }}
+                />
+              </div>
+            </div>
+          )}
 
           <ul className="space-y-2.5 text-xs divide-y divide-slate-100">
             {cart.map((item) => {
@@ -514,10 +1004,36 @@ export const CheckoutPage: React.FC = () => {
                 {deliveryFee === 0 ? t('store.cart.freeDelivery') : formatPrice(deliveryFee)}
               </span>
             </div>
+            <div className="flex justify-between">
+              <span className="text-slate-600">{t('store.checkout.paymentFeeLabel')}</span>
+              <span className="tabular-nums">
+                {paymentFee === 0 ? t('store.checkout.freeLabel') : formatPrice(paymentFee)}
+              </span>
+            </div>
             <div className="flex justify-between font-bold text-base text-slate-900 pt-2 border-t border-slate-100">
               <span>{t('store.cart.total')}</span>
               <span className="text-[#0F4C5C] tabular-nums">{formatPrice(totalYER)}</span>
             </div>
+          </div>
+
+          {/* Selected payment method recap */}
+          <div className="p-3 rounded-lg bg-slate-50 border border-slate-200/80 text-xs space-y-1">
+            <span className="text-slate-500 flex items-center gap-1.5">
+              <CreditCard className="w-3.5 h-3.5 text-[#0F4C5C]" />
+              <span>{t('store.checkout.paymentSection')}:</span>
+            </span>
+            <strong className="text-slate-900 block">
+              {paymentMode === 'cod'
+                ? codLabel
+                : paymentMode === 'epayment'
+                ? activeNetworkObj?.name || t('store.checkout.epayment')
+                : t('store.checkout.splitToggle')}
+            </strong>
+            {paymentMode === 'epayment' && paymentReference.trim() && (
+              <span className="text-[#0284C7] font-mono block" dir="ltr">
+                Ref: {paymentReference.trim()}
+              </span>
+            )}
           </div>
 
           <button

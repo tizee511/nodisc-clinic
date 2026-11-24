@@ -263,6 +263,10 @@ export const AdminLayout: React.FC<{
     }))
     .filter((g) => g.items.length > 0);
 
+  const activeGroup = navGroups.find((g) =>
+    g.items.some((item) => item.to === location.pathname)
+  );
+
   const handleQuickSearch = (e: React.FormEvent) => {
     e.preventDefault();
     const q = quickQuery.trim();
@@ -444,30 +448,19 @@ export const AdminLayout: React.FC<{
       {/* Main Content Area */}
       <div className="flex-1 min-w-0 flex flex-col">
         {/* Top Bar */}
-        <header className="sticky top-0 z-30 h-16 bg-white border-b border-slate-200 px-4 sm:px-6 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3 min-w-0">
+        <header className="sticky top-0 z-30 min-h-16 py-2 bg-white border-b border-slate-200 px-3 sm:px-6 flex items-center justify-between gap-2 sm:gap-4">
+          <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
             <button
               type="button"
               onClick={() => setMobileOpen(true)}
               aria-label={lang === 'ar' ? 'فتح القائمة' : 'Open menu'}
-              className="lg:hidden p-2 rounded-lg text-slate-700 hover:bg-slate-100"
+              className="lg:hidden p-2 rounded-lg text-slate-700 hover:bg-slate-100 shrink-0"
             >
               <Menu className="w-5 h-5" />
             </button>
 
-            <div className="min-w-0">
-              <div className="text-[11px] text-slate-500 flex items-center gap-1.5">
-                <Link to="/admin" className="hover:text-[#0F4C5C]">
-                  {lang === 'ar' ? 'الإدارة' : 'Admin'}
-                </Link>
-                {location.pathname !== '/admin' && (
-                  <>
-                    <span>/</span>
-                    <span className="truncate">{lang === 'ar' ? titleAr : titleEn}</span>
-                  </>
-                )}
-              </div>
-              <h1 className="font-display font-bold text-base sm:text-lg text-slate-900 truncate">
+            <div className="flex-1 min-w-0">
+              <h1 className="font-display font-bold text-sm sm:text-lg leading-snug text-slate-900 truncate">
                 {lang === 'ar' ? titleAr : titleEn}
               </h1>
             </div>
@@ -608,7 +601,27 @@ export const AdminLayout: React.FC<{
         </header>
 
         {/* Page Body */}
-        <main className="flex-1 p-4 sm:p-6 max-w-[1440px] w-full mx-auto space-y-6">
+        <main className="flex-1 p-4 sm:p-6 max-w-[1440px] w-full mx-auto space-y-5">
+          {/* Breadcrumb inside page body */}
+          <nav
+            aria-label={lang === 'ar' ? 'مسار التنقل' : 'Breadcrumb'}
+            className="flex flex-wrap items-center gap-1.5 text-xs text-slate-500"
+          >
+            <Link to="/admin" className="hover:text-[#0F4C5C] font-medium">
+              {lang === 'ar' ? 'لوحة الإدارة' : 'Admin'}
+            </Link>
+            {activeGroup && location.pathname !== '/admin' && (
+              <>
+                <span className="text-slate-300">/</span>
+                <span>{lang === 'ar' ? activeGroup.groupAr : activeGroup.groupEn}</span>
+              </>
+            )}
+            <span className="text-slate-300">/</span>
+            <span className="font-semibold text-slate-800">
+              {lang === 'ar' ? titleAr : titleEn}
+            </span>
+          </nav>
+
           {children}
         </main>
       </div>

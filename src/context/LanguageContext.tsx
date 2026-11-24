@@ -158,11 +158,14 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           ...liveCfg.payment,
           codLabel: enTranslations.store.checkout.cod,
           ePaymentLabel: enTranslations.store.checkout.epayment,
-          ePaymentNetworks: liveCfg.payment.ePaymentNetworks.map((net, idx) => ({
-            ...net,
-            name: enSiteText.ePaymentNetworks[idx]?.name || net.name,
-            accountHint: enSiteText.ePaymentNetworks[idx]?.accountHint || net.accountHint,
-          })),
+          ePaymentNetworks: liveCfg.payment.ePaymentNetworks
+            .filter((net) => net.active !== false)
+            .map((net, idx) => ({
+              ...net,
+              name: net.nameEn || enSiteText.ePaymentNetworks[idx]?.name || net.name,
+              accountHint:
+                net.accountHintEn || enSiteText.ePaymentNetworks[idx]?.accountHint || net.accountHint,
+            })),
           collectionNote: enSiteText.collectionNote,
         },
         bookingRules: {
@@ -183,6 +186,10 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       }
     : {
         ...liveCfg,
+        payment: {
+          ...liveCfg.payment,
+          ePaymentNetworks: liveCfg.payment.ePaymentNetworks.filter((net) => net.active !== false),
+        },
         bookingRules: {
           ...liveCfg.bookingRules,
           unavailableDatesDemo: store.scheduleSettings.closedDates,
@@ -241,7 +248,11 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     .sort((a, b) => a.order - b.order);
 
   const productCategories = isEn
-    ? activeCategories.map((c) => ({ ...c, ...(enCategories[c.id] || {}) }))
+    ? activeCategories.map((c) => ({
+        ...c,
+        nameAr: enCategories[c.id]?.nameAr || c.nameEn || c.nameAr,
+        description: enCategories[c.id]?.description || c.description,
+      }))
     : activeCategories;
 
   const activeProducts = store.products.filter((p) => p.visible !== false);

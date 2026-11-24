@@ -20,16 +20,18 @@
   --color-ink-muted: #475569;
 }
 
-html {
-  scroll-behavior: smooth;
-  font-family: var(--font-sans);
-  background-color: var(--color-canvas);
-  color: var(--color-ink);
-}
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    font-family: var(--font-sans);
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+  }
 
-h1, h2, h3, h4, .font-display {
-  font-family: var(--font-display);
-  text-wrap: balance;
+  h1, h2, h3, h4, .font-display {
+    font-family: var(--font-display);
+    text-wrap-style: balance;
+  }
 }
 
 .tabular-nums {

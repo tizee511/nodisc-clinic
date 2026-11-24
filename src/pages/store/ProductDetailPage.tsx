@@ -8,7 +8,7 @@ import { SafeImage } from '../../components/SafeImage';
 
 export const ProductDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
-  const { lang, t, products, productCategories } = useLanguage();
+  const { lang, t, products, productCategories, storeMainSections } = useLanguage();
   const { addToCart, formatPrice } = useClinic();
 
   const product = products.find((p) => p.slug === slug || p.id === slug);
@@ -37,6 +37,12 @@ export const ProductDetailPage: React.FC = () => {
   }
 
   const category = productCategories.find((c) => c.id === product.categoryId);
+  const mainSection = storeMainSections.find((s) => s.id === product.mainSectionId);
+  const hasDiscount =
+    product.originalPriceYER !== undefined && product.originalPriceYER > product.priceYER;
+  const discountPct = hasDiscount
+    ? Math.round(((product.originalPriceYER! - product.priceYER) / product.originalPriceYER!) * 100)
+    : 0;
 
   const handleAdd = () => {
     const res = addToCart(product.id, qty, selectedOption);
@@ -53,6 +59,9 @@ export const ProductDetailPage: React.FC = () => {
         <Breadcrumbs
           items={[
             { label: t('nav.store'), to: '/store' },
+            ...(mainSection
+              ? [{ label: mainSection.nameAr, to: `/store/category/${mainSection.slug}` }]
+              : []),
             ...(category
               ? [{ label: category.nameAr, to: `/store/category/${category.slug}` }]
               : []),
@@ -90,12 +99,30 @@ export const ProductDetailPage: React.FC = () => {
               </p>
             </div>
 
-            <div className="flex flex-wrap items-baseline gap-4 pb-4 border-b border-slate-100">
+            <div className="flex flex-wrap items-baseline gap-3 pb-4 border-b border-slate-100">
               <span className="font-display font-bold text-2xl text-[#0F4C5C] tabular-nums">
                 {formatPrice(product.priceYER)}
               </span>
+              {hasDiscount && (
+                <>
+                  <span className="text-sm text-slate-400 line-through tabular-nums">
+                    {formatPrice(product.originalPriceYER!)}
+                  </span>
+                  <span
+                    dir="ltr"
+                    className="px-2 py-0.5 rounded bg-rose-600 text-white text-xs font-bold tabular-nums"
+                  >
+                    -{discountPct}%
+                  </span>
+                </>
+              )}
+              {product.offerLabelAr && (
+                <span className="text-xs font-semibold text-rose-700">
+                  {product.offerLabelAr}
+                </span>
+              )}
               <span
-                className={`text-xs font-semibold ${
+                className={`text-xs font-semibold ms-auto ${
                   product.inStock ? 'text-emerald-700' : 'text-red-600'
                 }`}
               >

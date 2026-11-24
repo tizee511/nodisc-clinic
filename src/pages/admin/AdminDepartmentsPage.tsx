@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { AlertTriangle, Archive, Check, Edit3, Plus, RotateCcw } from 'lucide-react';
 import { AdminLayout } from '../../components/admin/AdminLayout';
+import { AdminImageField } from '../../components/admin/AdminImageField';
 import { useDataStore } from '../../context/DataStoreContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { Department, DepartmentId, Doctor, MedicalService, PublishStatus } from '../../types/clinic';
@@ -497,6 +498,11 @@ export const AdminDepartmentsPage: React.FC = () => {
                   className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm"
                 />
               </div>
+              <AdminImageField
+                label="صورة القسم"
+                value={editingDept.image}
+                onChange={(url) => setEditingDept({ ...editingDept, image: url })}
+              />
             </div>
             <div className="flex justify-end gap-2 pt-2">
               <button
@@ -574,6 +580,12 @@ export const AdminDepartmentsPage: React.FC = () => {
                   className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm"
                 />
               </div>
+              <AdminImageField
+                label="صورة الطبيب / المختص (اختياري)"
+                value={editingDoc.imageUrl}
+                onChange={(url) => setEditingDoc({ ...editingDoc, imageUrl: url })}
+                onClear={() => setEditingDoc({ ...editingDoc, imageUrl: null })}
+              />
               <div>
                 <label className="block font-semibold text-slate-700 mb-1">حالة النشر</label>
                 <select
@@ -683,6 +695,11 @@ export const AdminDepartmentsPage: React.FC = () => {
                   className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm"
                 />
               </div>
+              <AdminImageField
+                label="صورة الخدمة الطبية"
+                value={editingSrv.image}
+                onChange={(url) => setEditingSrv({ ...editingSrv, image: url })}
+              />
             </div>
             <div className="flex justify-end gap-2 pt-2">
               <button

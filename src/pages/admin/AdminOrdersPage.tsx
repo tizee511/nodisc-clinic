@@ -228,6 +228,13 @@ export const AdminOrdersPage: React.FC = () => {
                 <p className="text-xs text-slate-500">
                   {selectedOrder.phone} · {selectedOrder.address || 'استلام من الصيدلية'}
                 </p>
+                {(selectedOrder.paymentReference || selectedOrder.paymentReceiptName) && (
+                  <p className="text-[11px] text-[#0F4C5C] mt-1 font-medium">
+                    {selectedOrder.paymentReference && `مرجع التحويل: ${selectedOrder.paymentReference}`}
+                    {selectedOrder.paymentSenderName && ` · المحوّل: ${selectedOrder.paymentSenderName}`}
+                    {selectedOrder.paymentReceiptName && ` · مرفق: ${selectedOrder.paymentReceiptName}`}
+                  </p>
+                )}
               </div>
               <div className="flex items-center gap-2">
                 <button

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowDown, ArrowUp, Check, ExternalLink, Eye, EyeOff } from 'lucide-react';
 import { AdminLayout } from '../../components/admin/AdminLayout';
+import { AdminImageField } from '../../components/admin/AdminImageField';
 import { useDataStore } from '../../context/DataStoreContext';
 import { useLanguage } from '../../context/LanguageContext';
 
@@ -268,23 +269,15 @@ export const AdminHomepageEditor: React.FC = () => {
                 className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm"
               />
             </div>
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
-                {lang === 'ar' ? 'صورة الواجهة (من الوسائط)' : 'Hero Image Asset'}
-              </label>
-              <select
+            <div className="sm:col-span-2">
+              <AdminImageField
+                label={lang === 'ar' ? 'صورة الواجهة (رفع مباشر أو من الوسائط)' : 'Hero Banner Image'}
                 value={homeHero.heroImage}
-                onChange={(e) => setHomeHero((prev) => ({ ...prev, heroImage: e.target.value }))}
-                className="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white"
-              >
-                {mediaAssets
+                onChange={(url) => setHomeHero((prev) => ({ ...prev, heroImage: url }))}
+                presets={mediaAssets
                   .filter((m) => m.type === 'image')
-                  .map((m) => (
-                    <option key={m.id} value={m.url}>
-                      {m.title}
-                    </option>
-                  ))}
-              </select>
+                  .map((m) => ({ label: m.title, url: m.url }))}
+              />
             </div>
           </div>
 

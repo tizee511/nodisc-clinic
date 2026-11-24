@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Archive, CheckCircle2, Edit3, Eye, FileUp, Image as ImageIcon, Plus } from 'lucide-react';
 import { AdminLayout } from '../../components/admin/AdminLayout';
+import { AdminImageField } from '../../components/admin/AdminImageField';
 import { useDataStore } from '../../context/DataStoreContext';
 import { useLanguage } from '../../context/LanguageContext';
 import {
@@ -589,6 +590,11 @@ export const AdminContentPage: React.FC = () => {
                   <option value="archived">مؤرشف</option>
                 </select>
               </div>
+              <AdminImageField
+                label="الصورة المرفقة للمادة"
+                value={editingLib.image}
+                onChange={(url) => setEditingLib({ ...editingLib, image: url })}
+              />
             </div>
             <div className="flex justify-end gap-2">
               <button type="button" onClick={() => setEditingLib(null)} className="px-4 py-2 rounded-lg border border-slate-300 text-xs">
@@ -605,7 +611,7 @@ export const AdminContentPage: React.FC = () => {
       {/* News Edit Modal */}
       {editingNews && (
         <div className="fixed inset-0 z-50 bg-slate-900/50 flex items-center justify-center p-4">
-          <form onSubmit={handleSaveNews} className="bg-white rounded-xl border border-slate-200 max-w-lg w-full p-6 space-y-4">
+          <form onSubmit={handleSaveNews} className="bg-white rounded-xl border border-slate-200 max-w-lg w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
             <h3 className="font-display font-bold text-lg text-slate-900">تحرير الخبر</h3>
             <div className="space-y-3 text-xs">
               <div>
@@ -628,6 +634,11 @@ export const AdminContentPage: React.FC = () => {
                   className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm"
                 />
               </div>
+              <AdminImageField
+                label="صورة الخبر"
+                value={editingNews.image}
+                onChange={(url) => setEditingNews({ ...editingNews, image: url })}
+              />
             </div>
             <div className="flex justify-end gap-2">
               <button type="button" onClick={() => setEditingNews(null)} className="px-4 py-2 rounded-lg border border-slate-300 text-xs">
@@ -644,7 +655,7 @@ export const AdminContentPage: React.FC = () => {
       {/* Story Edit Modal */}
       {editingStory && (
         <div className="fixed inset-0 z-50 bg-slate-900/50 flex items-center justify-center p-4">
-          <form onSubmit={handleSaveStory} className="bg-white rounded-xl border border-slate-200 max-w-lg w-full p-6 space-y-4">
+          <form onSubmit={handleSaveStory} className="bg-white rounded-xl border border-slate-200 max-w-lg w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
             <h3 className="font-display font-bold text-lg text-slate-900">تحرير قصة نجاح</h3>
             <div className="space-y-3 text-xs">
               <div>
@@ -667,6 +678,11 @@ export const AdminContentPage: React.FC = () => {
                   className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm"
                 />
               </div>
+              <AdminImageField
+                label="صورة القصة"
+                value={editingStory.image}
+                onChange={(url) => setEditingStory({ ...editingStory, image: url })}
+              />
             </div>
             <div className="flex justify-end gap-2">
               <button type="button" onClick={() => setEditingStory(null)} className="px-4 py-2 rounded-lg border border-slate-300 text-xs">

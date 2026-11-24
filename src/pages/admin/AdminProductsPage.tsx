@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Edit3, Eye, EyeOff, Package, Plus, Search } from 'lucide-react';
 import { AdminLayout } from '../../components/admin/AdminLayout';
+import { AdminImageField } from '../../components/admin/AdminImageField';
 import { useDataStore } from '../../context/DataStoreContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { useClinic } from '../../context/ClinicContext';
@@ -27,7 +28,7 @@ export const AdminProductsPage: React.FC = () => {
   const [query, setQuery] = useState(searchParams.get('q') || '');
   const [mainSecFilter, setMainSecFilter] = useState('all');
   const [catFilter, setCatFilter] = useState('all');
-  const [stockFilter, setStockFilter] = useState<'all' | 'low' | 'out'>(
+  const [stockFilter, setStockFilter] = useState<'all' | 'low' | 'out' | 'offers'>(
     searchParams.get('stock') === 'low' ? 'low' : 'all'
   );
 
@@ -47,6 +48,12 @@ export const AdminProductsPage: React.FC = () => {
       if (catFilter !== 'all' && p.categoryId !== catFilter) return false;
       if (stockFilter === 'low' && avail > (p.lowStockThreshold || 3)) return false;
       if (stockFilter === 'out' && avail > 0) return false;
+      if (
+        stockFilter === 'offers' &&
+        !(p.isOnSale || (p.originalPriceYER !== undefined && p.originalPriceYER > p.priceYER))
+      ) {
+        return false;
+      }
       if (
         q &&
         !p.name.toLowerCase().includes(q) &&
@@ -134,10 +141,11 @@ export const AdminProductsPage: React.FC = () => {
 
           <select
             value={stockFilter}
-            onChange={(e) => setStockFilter(e.target.value as 'all' | 'low' | 'out')}
+            onChange={(e) => setStockFilter(e.target.value as 'all' | 'low' | 'out' | 'offers')}
             className="px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white"
           >
-            <option value="all">كل حالات المخزون</option>
+            <option value="all">كل حالات المخزون والعروض</option>
+            <option value="offers">منتجات العروض والتخفيضات</option>
             <option value="low">مخزون منخفض / حرج</option>
             <option value="out">نفد المخزون</option>
           </select>
@@ -225,7 +233,15 @@ export const AdminProductsPage: React.FC = () => {
                       <span className="text-[11px] text-slate-500">{p.supplier || '—'}</span>
                     </td>
                     <td className="px-4 py-3 font-bold text-[#0F4C5C] tabular-nums">
-                      {formatPrice(p.priceYER)}
+                      <span>{formatPrice(p.priceYER)}</span>
+                      {p.originalPriceYER && p.originalPriceYER > p.priceYER && (
+                        <span className="block text-[11px] text-rose-700 font-medium">
+                          <span className="line-through text-slate-400 me-1">
+                            {formatPrice(p.originalPriceYER)}
+                          </span>
+                          -{Math.round(((p.originalPriceYER - p.priceYER) / p.originalPriceYER) * 100)}%
+                        </span>
+                      )}
                     </td>
                     {showWholesalePrices && canManagePrices && (
                       <td className="px-4 py-3 font-mono text-slate-600 tabular-nums">
@@ -366,12 +382,18 @@ export const AdminProductsPage: React.FC = () => {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">القسم الرئيسي</label>
+                  <label className="block font-semibold text-slate-700 mb-1">المجموعة الرئيسية</label>
                   <select
                     value={editingPrd.mainSectionId}
-                    onChange={(e) =>
-                      setEditingPrd({ ...editingPrd, mainSectionId: e.target.value })
-                    }
+                    onChange={(e) => {
+                      const nextSec = e.target.value;
+                      const firstCat = productCategories.find((c) => c.mainSectionId === nextSec);
+                      setEditingPrd({
+                        ...editingPrd,
+                        mainSectionId: nextSec,
+                        categoryId: firstCat?.id || editingPrd.categoryId,
+                      });
+                    }}
                     className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm bg-white"
                   >
                     {storeMainSections.map((s) => (
@@ -388,11 +410,13 @@ export const AdminProductsPage: React.FC = () => {
                     onChange={(e) => setEditingPrd({ ...editingPrd, categoryId: e.target.value })}
                     className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm bg-white"
                   >
-                    {productCategories.map((c) => (
-                      <option key={c.id} value={c.id}>
-                        {c.nameAr}
-                      </option>
-                    ))}
+                    {productCategories
+                      .filter((c) => c.mainSectionId === editingPrd.mainSectionId)
+                      .map((c) => (
+                        <option key={c.id} value={c.id}>
+                          {c.nameAr}
+                        </option>
+                      ))}
                   </select>
                 </div>
               </div>
@@ -460,6 +484,104 @@ export const AdminProductsPage: React.FC = () => {
                   />
                 </div>
               </div>
+
+              {/* Offer / Discount Controls */}
+              <div className="p-3 rounded-lg bg-rose-50/60 border border-rose-200/80 space-y-2.5">
+                <label className="inline-flex items-center gap-2 font-semibold text-rose-900 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    disabled={!canManagePrices}
+                    checked={Boolean(editingPrd.isOnSale)}
+                    onChange={(e) =>
+                      setEditingPrd({ ...editingPrd, isOnSale: e.target.checked })
+                    }
+                    className="w-4 h-4 accent-rose-600"
+                  />
+                  <span>تضمين المنتج في صفحة العروض والتخفيضات</span>
+                </label>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block font-medium text-slate-700 mb-1">
+                      السعر الأصلي قبل الخصم (ر.ي)
+                    </label>
+                    <input
+                      type="number"
+                      min={0}
+                      disabled={!canManagePrices}
+                      value={editingPrd.originalPriceYER || ''}
+                      onChange={(e) =>
+                        setEditingPrd({
+                          ...editingPrd,
+                          originalPriceYER: e.target.value ? Number(e.target.value) : undefined,
+                        })
+                      }
+                      placeholder="اختياري"
+                      className="w-full px-3 py-1.5 rounded-lg border border-slate-300 text-xs tabular-nums bg-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-medium text-slate-700 mb-1">نص شارة العرض</label>
+                    <input
+                      type="text"
+                      value={editingPrd.offerLabelAr || ''}
+                      onChange={(e) =>
+                        setEditingPrd({ ...editingPrd, offerLabelAr: e.target.value })
+                      }
+                      placeholder="مثال: خصم 20%"
+                      className="w-full px-3 py-1.5 rounded-lg border border-slate-300 text-xs bg-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-medium text-slate-700 mb-1">نوع العرض</label>
+                    <select
+                      value={editingPrd.offerType || 'discount'}
+                      onChange={(e) =>
+                        setEditingPrd({
+                          ...editingPrd,
+                          offerType: e.target.value as 'discount' | 'bundle' | 'medical',
+                        })
+                      }
+                      className="w-full px-3 py-1.5 rounded-lg border border-slate-300 text-xs bg-white"
+                    >
+                      <option value="discount">خصم مئوي مباشر</option>
+                      <option value="bundle">باقة / طقم توفير</option>
+                      <option value="medical">عروض الأجهزة والمستلزمات</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block font-medium text-slate-700 mb-1">تاريخ انتهاء العرض</label>
+                    <input
+                      type="date"
+                      dir="ltr"
+                      value={editingPrd.offerExpiresAt || ''}
+                      onChange={(e) =>
+                        setEditingPrd({
+                          ...editingPrd,
+                          offerExpiresAt: e.target.value || undefined,
+                        })
+                      }
+                      className="w-full px-3 py-1.5 rounded-lg border border-slate-300 text-xs bg-white tabular-nums"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <AdminImageField
+                label="صورة المنتج"
+                value={editingPrd.image}
+                onChange={(url) => setEditingPrd({ ...editingPrd, image: url })}
+                presets={[
+                  { label: 'التجميل والبشرة والشعر', url: '/src/assets/images/prod_beauty_skincare_1795548329813.jpg' },
+                  { label: 'الفيتامينات والمكملات', url: '/src/assets/images/prod_family_vitamins_1795548331294.jpg' },
+                  { label: 'الأم والطفل', url: '/src/assets/images/prod_mother_baby_1795548330918.jpg' },
+                  { label: 'مكملات عصبية', url: '/src/assets/images/prod_clinical_supplement_1795286629857.jpg' },
+                  { label: 'دعامات العمود الفقري', url: '/src/assets/images/prod_lumbar_support_1795286630682.jpg' },
+                  { label: 'الوسائد الطبية', url: '/src/assets/images/prod_cervical_pillow_1795286630838.jpg' },
+                  { label: 'أجهزة العلاج الطبيعي', url: '/src/assets/images/prod_tens_therapy_1795286630454.jpg' },
+                ]}
+              />
+
               <div>
                 <label className="block font-semibold text-slate-700 mb-1">الوصف المختصر</label>
                 <textarea

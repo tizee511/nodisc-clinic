@@ -11,11 +11,15 @@ export const StoreCategoryPage: React.FC = () => {
   const { lang, t, storeMainSections, productCategories, products } = useLanguage();
   const { addToCart, formatPrice, cartCount, cartSubtotalYER } = useClinic();
 
-  const currentCat = productCategories.find((c) => c.slug === slug || c.id === slug);
+  const matchedCat = productCategories.find((c) => c.slug === slug || c.id === slug);
+  const matchedSec = !matchedCat
+    ? storeMainSections.find((s) => s.slug === slug || s.id === slug)
+    : undefined;
+
   const [selectedMainSecId, setSelectedMainSecId] = useState<string>(
-    currentCat?.mainSectionId || 'all'
+    matchedCat?.mainSectionId || matchedSec?.id || 'all'
   );
-  const [selectedCatId, setSelectedCatId] = useState<string>(currentCat?.id || 'all');
+  const [selectedCatId, setSelectedCatId] = useState<string>(matchedCat?.id || 'all');
   const [inStockOnly, setInStockOnly] = useState(false);
   const [sortBy, setSortBy] = useState<'featured' | 'price-asc' | 'price-desc'>('featured');
   const [query, setQuery] = useState('');
@@ -23,10 +27,19 @@ export const StoreCategoryPage: React.FC = () => {
 
   // Sync if URL changes
   React.useEffect(() => {
-    const matched = productCategories.find((c) => c.slug === slug || c.id === slug);
-    setSelectedCatId(matched ? matched.id : 'all');
-    if (matched) setSelectedMainSecId(matched.mainSectionId);
-  }, [slug, productCategories]);
+    const cat = productCategories.find((c) => c.slug === slug || c.id === slug);
+    const sec = !cat ? storeMainSections.find((s) => s.slug === slug || s.id === slug) : undefined;
+    if (cat) {
+      setSelectedMainSecId(cat.mainSectionId);
+      setSelectedCatId(cat.id);
+    } else if (sec) {
+      setSelectedMainSecId(sec.id);
+      setSelectedCatId('all');
+    } else {
+      setSelectedMainSecId('all');
+      setSelectedCatId('all');
+    }
+  }, [slug, productCategories, storeMainSections]);
 
   const list = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -51,6 +64,16 @@ export const StoreCategoryPage: React.FC = () => {
   }, [products, selectedMainSecId, selectedCatId, inStockOnly, sortBy, query]);
 
   const activeCategoryObj = productCategories.find((c) => c.id === selectedCatId);
+  const activeSectionObj = storeMainSections.find((s) => s.id === selectedMainSecId);
+
+  const visibleSubCategories = useMemo(() => {
+    if (selectedMainSecId === 'all') return [];
+    return productCategories.filter((c) => c.mainSectionId === selectedMainSecId);
+  }, [productCategories, selectedMainSecId]);
+
+  const pageTitle =
+    activeCategoryObj?.nameAr || activeSectionObj?.nameAr || t('store.allProducts');
+  const pageDescription = activeCategoryObj?.description || activeSectionObj?.description;
 
   const handleQuickAdd = (prdId: string, option?: string) => {
     const res = addToCart(prdId, 1, option);
@@ -61,26 +84,25 @@ export const StoreCategoryPage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 lg:py-12 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 lg:py-12 space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <Breadcrumbs
             items={[
               { label: t('nav.store'), to: '/store' },
-              { label: activeCategoryObj?.nameAr || t('store.allProducts') },
+              ...(activeCategoryObj && activeSectionObj
+                ? [{ label: activeSectionObj.nameAr, to: `/store/category/${activeSectionObj.slug}` }]
+                : []),
+              { label: pageTitle },
             ]}
           />
-          <h1 className="font-display font-bold text-3xl text-slate-900">
-            {activeCategoryObj?.nameAr || t('store.allProducts')}
-          </h1>
-          {activeCategoryObj && (
-            <p className="text-sm text-slate-600 mt-1">{activeCategoryObj.description}</p>
-          )}
+          <h1 className="font-display font-bold text-3xl text-slate-900">{pageTitle}</h1>
+          {pageDescription && <p className="text-sm text-slate-600 mt-1">{pageDescription}</p>}
         </div>
 
         <Link
           to="/store/cart"
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#0F4C5C] text-white text-sm font-semibold tabular-nums"
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#0F4C5C] text-white text-sm font-semibold tabular-nums whitespace-nowrap"
         >
           <ShoppingBag className="w-4 h-4" />
           <span>
@@ -88,6 +110,37 @@ export const StoreCategoryPage: React.FC = () => {
           </span>
         </Link>
       </div>
+
+      {/* Sub-Category Branching Filter Chips when a Main Group is active */}
+      {visibleSubCategories.length > 0 && (
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setSelectedCatId('all')}
+            className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold border transition-colors whitespace-nowrap ${
+              selectedCatId === 'all'
+                ? 'bg-[#0F4C5C] text-white border-[#0F4C5C]'
+                : 'bg-white text-slate-700 border-slate-300 hover:border-[#0F4C5C]'
+            }`}
+          >
+            {lang === 'ar' ? `كل ${activeSectionObj?.nameAr || 'الفروع'}` : 'All Subcategories'}
+          </button>
+          {visibleSubCategories.map((c) => (
+            <button
+              key={c.id}
+              type="button"
+              onClick={() => setSelectedCatId(c.id)}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold border transition-colors whitespace-nowrap ${
+                selectedCatId === c.id
+                  ? 'bg-[#0F4C5C] text-white border-[#0F4C5C]'
+                  : 'bg-white text-slate-700 border-slate-300 hover:border-[#0F4C5C]'
+              }`}
+            >
+              {c.nameAr}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Filter & Sort Controls */}
       <div className="bg-white rounded-xl border border-slate-200 p-4 flex flex-wrap items-center justify-between gap-4">
@@ -104,7 +157,7 @@ export const StoreCategoryPage: React.FC = () => {
           </div>
 
           <select
-            aria-label={lang === 'ar' ? 'القسم الرئيسي' : 'Main Section'}
+            aria-label={lang === 'ar' ? 'المجموعة الرئيسية' : 'Main Group'}
             value={selectedMainSecId}
             onChange={(e) => {
               setSelectedMainSecId(e.target.value);
@@ -112,7 +165,7 @@ export const StoreCategoryPage: React.FC = () => {
             }}
             className="px-3 py-2 rounded-lg border border-slate-300 text-xs sm:text-sm bg-white"
           >
-            <option value="all">{lang === 'ar' ? 'كل الأقسام الرئيسية' : 'All Sections'}</option>
+            <option value="all">{lang === 'ar' ? 'كل المجموعات الرئيسية' : 'All Groups'}</option>
             {storeMainSections.map((s) => (
               <option key={s.id} value={s.id}>
                 {s.nameAr}
@@ -185,13 +238,29 @@ export const StoreCategoryPage: React.FC = () => {
           {list.map((prd) => {
             const cat = productCategories.find((c) => c.id === prd.categoryId);
             const isAdded = justAddedId === prd.id;
+            const hasDiscount =
+              prd.originalPriceYER !== undefined && prd.originalPriceYER > prd.priceYER;
+            const discountPct = hasDiscount
+              ? Math.round(((prd.originalPriceYER! - prd.priceYER) / prd.originalPriceYER!) * 100)
+              : 0;
+
             return (
               <div
                 key={prd.id}
                 className="bg-white rounded-xl border border-slate-200 overflow-hidden flex flex-col justify-between"
               >
                 <Link to={`/store/product/${prd.slug}`} className="group block">
-                  <SafeImage src={prd.image} alt={prd.name} aspectClass="aspect-[4/3]" />
+                  <div className="relative">
+                    <SafeImage src={prd.image} alt={prd.name} aspectClass="aspect-[4/3]" />
+                    {discountPct > 0 && (
+                      <span
+                        dir="ltr"
+                        className="absolute top-3 start-3 px-2 py-0.5 rounded bg-rose-600 text-white text-xs font-bold tabular-nums"
+                      >
+                        -{discountPct}%
+                      </span>
+                    )}
+                  </div>
                   <div className="p-5 space-y-2">
                     <span className="text-xs text-slate-500 block">{cat?.nameAr}</span>
                     <h2 className="font-display font-bold text-base sm:text-lg text-slate-900 group-hover:text-[#0F4C5C]">
@@ -203,17 +272,24 @@ export const StoreCategoryPage: React.FC = () => {
 
                 <div className="px-5 pb-5 pt-3 border-t border-slate-100 flex items-center justify-between gap-3">
                   <div>
-                    <span className="font-bold text-base text-[#0F4C5C] tabular-nums block">
-                      {formatPrice(prd.priceYER)}
-                    </span>
-                    <span className="text-[11px] text-slate-500">{prd.unit}</span>
+                    <div className="flex items-baseline gap-2">
+                      <span className="font-bold text-base text-[#0F4C5C] tabular-nums">
+                        {formatPrice(prd.priceYER)}
+                      </span>
+                      {hasDiscount && (
+                        <span className="text-xs text-slate-400 line-through tabular-nums">
+                          {formatPrice(prd.originalPriceYER!)}
+                        </span>
+                      )}
+                    </div>
+                    <span className="text-[11px] text-slate-500 block">{prd.unit}</span>
                   </div>
 
                   {prd.inStock ? (
                     <button
                       type="button"
                       onClick={() => handleQuickAdd(prd.id, prd.options?.[0])}
-                      className={`px-3.5 py-2 rounded-lg text-xs font-semibold transition-colors inline-flex items-center gap-1.5 ${
+                      className={`px-3.5 py-2 rounded-lg text-xs font-semibold transition-colors inline-flex items-center gap-1.5 whitespace-nowrap shrink-0 ${
                         isAdded
                           ? 'bg-emerald-600 text-white'
                           : 'bg-slate-100 hover:bg-[#0F4C5C] text-slate-800 hover:text-white'
@@ -229,7 +305,7 @@ export const StoreCategoryPage: React.FC = () => {
                       </span>
                     </button>
                   ) : (
-                    <span className="text-xs font-semibold text-red-600">
+                    <span className="text-xs font-semibold text-red-600 whitespace-nowrap shrink-0">
                       {t('store.product.outOfStock')}
                     </span>
                   )}

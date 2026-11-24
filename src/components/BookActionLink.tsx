@@ -10,6 +10,7 @@ interface BookActionButtonProps {
   sourceLabel?: string;
   children: React.ReactNode;
   className?: string;
+  style?: React.CSSProperties;
 }
 
 export const BookActionButton: React.FC<BookActionButtonProps> = ({
@@ -19,6 +20,7 @@ export const BookActionButton: React.FC<BookActionButtonProps> = ({
   sourceLabel,
   children,
   className = '',
+  style,
 }) => {
   const navigate = useNavigate();
   const { setBookingPrefill } = useClinic();
@@ -34,7 +36,7 @@ export const BookActionButton: React.FC<BookActionButtonProps> = ({
   };
 
   return (
-    <button type="button" onClick={handleClick} className={className}>
+    <button type="button" onClick={handleClick} style={style} className={className}>
       {children}
     </button>
   );

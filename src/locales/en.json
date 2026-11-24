@@ -2,8 +2,8 @@
   "brand": {
     "name": "NODISC Clinic",
     "nameEn": "نوديسك كلينك",
-    "tagline": "Specialized Center for Neurosurgery, Pain Management, Rehabilitation & Pharmacy",
-    "prototypeNotice": "Interactive prototype with replaceable demo data — all bookings, orders, payments, SMS, and comments are local simulations."
+    "tagline": "Specialized Center for Neurosurgery, Spine Surgery, Pain Management, Rehabilitation & Pharmacy — Sana’a",
+    "prototypeNotice": "Official NODISC Clinic Sana’a physician, address, and contact data integrated — bookings, store orders, and payments run in local preview simulation."
   },
   "nav": {
     "home": "Home",
@@ -24,6 +24,7 @@
     "careers": "Careers",
     "survey": "Site Experience Survey",
     "prescriptionOrder": "Order by Prescription",
+    "offers": "Offers & Discounts",
     "menu": "Menu",
     "closeMenu": "Close menu",
     "languageLabel": "Language"
@@ -51,9 +52,9 @@
     "tryAgain": "Try different keywords or browse our main departments."
   },
   "home": {
-    "heroKicker": "Integrated Spine, Neurological & Mobility Care",
-    "heroTitle": "NODISC Clinic — Precision Diagnosis & Coordinated Spine & Nerve Care",
-    "heroSubtitle": "Combining neurosurgery consultations, interventional pain management, physiotherapy and rehabilitation, and clinical pharmacy services in one coordinated medical setting.",
+    "heroKicker": "Sana’a — Ibn Sina Medical Diagnostic Center · Led by Dr. Mohammed Abdullah Al-Jurbani",
+    "heroTitle": "NODISC Clinic — Specialized Neurosurgery, Spine Care, Pain Management & Rehabilitation",
+    "heroSubtitle": "Specialized care that begins by listening to your condition, reviewing imaging, and choosing the safest pathway across Neurosurgery, Mayo Clinic-standard Pain Care, Digital Spinal Rehabilitation, and Clinical Pharmacy.",
     "activeCampaignBadge": "Open Medical Campaign",
     "remainingSeats": "Remaining Seats",
     "seatsOf": "out of",
@@ -98,7 +99,7 @@
     "focusAreas": "Areas of Focus",
     "linkedServices": "Associated Services",
     "linkedLibrary": "Related Medical Materials",
-    "editableNote": "Prototype Note: Qualifications, numbers, and portrait fields are structured for immediate replacement with officially approved credentials."
+    "editableNote": "Profile details and portrait reflect the official NODISC Clinic Sana’a profile of Dr. Mohammed Abdullah Al-Jurbani."
   },
   "booking": {
     "title": "Book Appointment",
@@ -181,6 +182,14 @@
     "categories": "Store Categories",
     "featuredProducts": "Featured Products",
     "allProducts": "All Products",
+    "offers": {
+      "title": "Offers & Discounts",
+      "subtitle": "Seasonal pharmacy savings across medical supports, vitamins, personal care, and mother & baby essentials.",
+      "viewOffers": "Browse Offers & Discounts",
+      "saveAmount": "Save",
+      "allGroups": "All Groups",
+      "empty": "No discounted products are currently listed in this group."
+    },
     "filter": {
       "category": "Category",
       "availability": "Availability",
@@ -216,31 +225,40 @@
       "qtyWarning": "Some item quantities were adjusted to match available stock."
     },
     "checkout": {
-      "title": "Demo Checkout",
+      "title": "Checkout & Payment",
       "contactSection": "Contact & Delivery Details",
       "deliveryMethod": "Fulfillment Method",
       "deliveryHome": "Home Delivery",
       "deliveryPickup": "Clinic Pharmacy Pickup",
       "address": "Detailed Delivery Address",
-      "paymentSection": "Payment Method",
+      "paymentSection": "Select Payment Method",
       "cod": "Cash on Delivery",
-      "epayment": "Demo Electronic Payment",
-      "selectNetwork": "Select Payment Network",
-      "splitToggle": "Preview Split Payment (Two Methods)",
-      "splitMethod1": "Amount via Method 1",
-      "splitMethod2": "Amount via Method 2",
+      "epayment": "Electronic Transfer (Local Wallets & Banks)",
+      "selectNetwork": "Choose Wallet or Bank Account",
+      "splitToggle": "Split Payment (Two Methods)",
+      "splitMethod1": "First Method & Amount",
+      "splitMethod2": "Second Method & Amount",
       "splitSum": "Combined Sum",
       "splitRemaining": "Remaining to Match",
       "splitMismatch": "The combined amount must match the exact order total.",
       "simulateFailToggle": "Simulate Payment / Submission Failure",
-      "placeOrder": "Confirm & Place Demo Order",
-      "paymentFailedError": "Unable to process demo payment (test scenario). Your details are preserved; please adjust and try again."
+      "placeOrder": "Confirm & Place Order",
+      "paymentFailedError": "Unable to process payment (test scenario). Your details are preserved; please adjust and try again.",
+      "copyAccount": "Copy No.",
+      "copiedAccount": "Copied",
+      "transferRefLabel": "Transfer / Reference Number (If Paid)",
+      "transferRefPlaceholder": "e.g., 948271 or receipt ID",
+      "transferSenderLabel": "Sender Name or Wallet Phone (Optional)",
+      "transferReceiptLabel": "Attach Transfer Screenshot (Optional)",
+      "autoBalance": "Auto-balance remaining",
+      "paymentFeeLabel": "Payment Fee",
+      "freeLabel": "Free"
     },
     "orderResult": {
-      "title": "Order Received Successfully (Demo Order)",
-      "orderNumber": "Demo Order Number",
-      "status": "Status: Received for Demo Preparation",
-      "followUpNote": "Our pharmacy team will contact you via phone or demo notification to confirm delivery or pickup readiness.",
+      "title": "Order Received Successfully",
+      "orderNumber": "Order Number",
+      "status": "Status: Pending Pharmacy Review",
+      "followUpNote": "Our NODISC Pharmacy team will contact you via phone or WhatsApp to confirm delivery or pickup readiness.",
       "continueShopping": "Return to Store"
     },
     "prescription": {
@@ -292,6 +310,6 @@
     "quickLinks": "Quick Links",
     "departmentsTitle": "Departments",
     "supportTitle": "Support & Feedback",
-    "legalNote": "Interactive Prototype — NODISC Clinic. All copy, numbers, and assets are configurable from data and settings files."
+    "legalNote": "All rights reserved © 2026 NODISC Clinic — Dr. Mohammed Abdullah Al-Jurbani | Sana’a, Taiz St., 45 Roundabout."
   }
 }

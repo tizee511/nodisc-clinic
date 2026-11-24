@@ -12,40 +12,62 @@ import {
 
 export const enSiteText = {
   shortAbout:
-    'A specialized medical ecosystem uniting neurosurgical assessment, interventional pain management, physiotherapy and rehabilitation, and clinical pharmacy under one roof.',
+    'NODISC Clinic — A specialized medical center uniting Neurosurgery & Spine Surgery, Mayo Clinic-standard Pain Management, computerized spinal decompression & physiotherapy, and Clinical Pharmacy under Dr. Mohammed Abdullah Al-Jurbani at Ibn Sina Medical Diagnostic Center in Sana’a.',
   vision:
-    'Delivering trusted, specialized care for spine, neurological, and chronic pain conditions through an integrated pathway from precision diagnosis to full rehabilitation.',
+    '“Specialized care that starts by listening to your case, evaluating your imaging, and discussing the most suitable treatment options” — combining surgical precision with a commitment to conservative non-surgical recovery whenever possible.',
   mission:
-    'Coordinating neurosurgery, pain management, physical therapy, and pharmacy teams to provide clear, safe, and patient-centered care.',
-  city: 'Sana’a (Replaceable Demo Location)',
-  address: 'South 60th Street — Specialized Medical Center Building (Prototype Placeholder)',
-  landmark: 'Near main intersection — Dedicated patient parking available',
-  workingDays: 'Saturday to Thursday',
+    'Coordinating Neurosurgery, Interventional Pain Management, Digital Rehabilitation & Physiotherapy, and Clinical Pharmacy to deliver safe, evidence-based care for spine and neurological patients.',
+  city: 'Sana’a — Republic of Yemen',
+  address: 'Sana’a – Taiz St. – 45 Roundabout – Above Al-Faisal Pharmacy',
+  landmark: 'Ibn Sina Medical Diagnostic Center (Main Consultant Clinic)',
+  workingDays: 'Saturday to Thursday (Visits confirmed by phone in advance)',
   workingPeriods: [
-    { label: 'Morning Shift', time: '09:00 AM – 01:30 PM' },
-    { label: 'Evening Shift', time: '04:00 PM – 08:30 PM' },
+    { label: 'Morning Shift', time: '09:00 AM – 02:00 PM' },
+    { label: 'Evening Shift', time: '04:00 PM – 09:00 PM' },
   ],
-  phoneLabels: ['Reception & Appointments', 'Pharmacy & Store Orders'],
-  whatsappDisplay: '+967 770 000 000 (Demo Number)',
-  directionsNote: 'Official Google Maps link will be connected once final clinic coordinates are provided.',
-  visitTypes: ['Initial Consultation', 'Follow-up Visit', 'MRI / Imaging Review', 'Therapy / Assessment Session'],
-  periods: ['Morning Shift (09:00 AM – 01:30 PM)', 'Evening Shift (04:00 PM – 08:30 PM)'],
+  phoneLabels: ['Direct Clinic & Appointments Phone', 'NODISC WhatsApp, Store & Rehabilitation'],
+  whatsappDisplay: '+967 772070207',
+  directionsNote: 'Ibn Sina Medical Diagnostic Center — Sana’a, Taiz St., 45 Roundabout, Above Al-Faisal Pharmacy.',
+  visitTypes: ['Initial Consultation', 'Follow-up Visit', 'MRI / Imaging Review', 'Physiotherapy / Rehabilitation Session'],
+  periods: ['Morning Shift (09:00 AM – 02:00 PM)', 'Evening Shift (04:00 PM – 09:00 PM)'],
   capacityPolicyNote:
     'Remaining campaign capacity is automatically calculated from approved slots per campaign day and can be adjusted in clinic settings.',
   prescriptionHelperText: 'Accepted formats: Clear prescription photo (JPG, PNG, WEBP) or PDF up to 10 MB.',
   moderationNotice:
     'All comments and ratings are reviewed by our editorial team prior to publication to protect patient privacy and clinical accuracy.',
   ePaymentNetworks: [
-    { id: 'kuraimi', name: 'Electronic Transfer / Wallet (Configurable Network)', accountHint: 'Demo Account: 1000-2000-30' },
-    { id: 'jawali', name: 'Local Mobile Wallet (Configurable Network)', accountHint: 'Demo Merchant Code: NODISC-01' },
-    { id: 'card', name: 'Demo Bank Card Gateway', accountHint: 'Payment gateway integration placeholder' },
+    {
+      id: 'kuraimi',
+      name: 'Al-Kuraimi Hasib — Al-Kuraimi Islamic Bank',
+      accountHint: 'Account No: 784545908 (Dr. Mohammed Abdullah Al-Jurbani / NODISC)',
+    },
+    {
+      id: 'jawali',
+      name: 'Jawali Wallet (CAC Bank)',
+      accountHint: 'Wallet No: 772070207 (NODISC Clinic — Store Sales)',
+    },
+    {
+      id: 'jeeb',
+      name: 'Jeeb Wallet (Tadhamon Bank)',
+      accountHint: 'Wallet No: 772070207 (NODISC Clinic — Store Sales)',
+    },
+    {
+      id: 'onecash',
+      name: 'OneCash Wallet',
+      accountHint: 'Wallet No: 772070207 (NODISC Clinic — Store Sales)',
+    },
+    {
+      id: 'flousak',
+      name: 'Flousak Wallet (YKB Bank)',
+      accountHint: 'Wallet No: 772070207 (NODISC Clinic — Store Sales)',
+    },
   ],
-  collectionNote: 'Payment network names, fees, and collection accounts can be configured with official clinic details.',
+  collectionNote: 'Store orders and wallet payments run in interactive local simulation mode during preview.',
   galleryCaptions: [
-    'Main Reception & Patient Waiting Lounge (Prototype Visual)',
-    'Neurosurgery & Spine Consultation Suite',
-    'Physical Rehabilitation & Movement Unit',
-    'Clinical Pharmacy & Prescription Counter',
+    'Main Reception at NODISC Clinic — Ibn Sina Medical Diagnostic Center',
+    'Neurosurgery & Spine Consultation Suite — Dr. Mohammed Abdullah Al-Jurbani',
+    'NODISC Rehabilitation & Digital Spinal Traction Unit',
+    'NODISC Medical Pharmacy & Prescription Counter',
   ],
 };
 
@@ -53,46 +75,46 @@ export const enDepartments: Record<string, Partial<Department>> = {
   neurosurgery: {
     nameAr: 'NODISC Neurosurgery',
     nameEn: 'نوديسك لجراحة المخ والأعصاب',
-    shortDesc: 'Precision diagnosis and microscopic surgical care for spine disorders, disc herniation, and nerve conditions.',
+    shortDesc: 'Precision diagnosis and microscopic surgery for spine, disc herniation, brain, and peripheral nerves led by Dr. Mohammed Abdullah Al-Jurbani.',
     fullOverview:
-      'The Neurosurgery Department at NODISC Clinic evaluates spine conditions, cervical and lumbar disc herniations, spinal canal stenosis, and peripheral nerve disorders through thorough clinical examination and detailed MRI review.',
+      'The Neurosurgery & Spine Surgery Department at NODISC Clinic evaluates lumbar and cervical disc herniation, spinal canal stenosis, peripheral nerve compression, and brain conditions using thorough clinical exams and MRI review, prioritizing conservative care before microscopic surgery.',
     scopeItems: [
-      'Consultations for cervical and lumbar disc herniation',
-      'Microscopic and minimally invasive spine interventions',
-      'Evaluation of spinal stenosis and vertebral instability',
-      'Post-operative follow-up coordinated with rehabilitation specialists',
+      'Consultations for cervical and lumbar disc herniation without unnecessary surgery',
+      'Microscopic & minimally invasive spine interventions across 13 sub-specialties',
+      'Evaluation of spinal canal stenosis, spondylolisthesis, and peripheral nerves',
+      'Direct post-operative follow-up coordinated with Pain & Rehabilitation teams',
     ],
-    contactNote: 'Demo Ext: 101 — Available for pre-booked specialist consultations',
-    workingHoursNote: 'Sat – Thu | Morning & Evening Shifts',
+    contactNote: 'Direct Booking: +967 784545908 — Ibn Sina Medical Diagnostic Center, Sana’a',
+    workingHoursNote: 'Sat – Thu | 09:00 AM – 02:00 PM & 04:00 PM – 09:00 PM',
     ctaLabel: 'Book in Neurosurgery Department',
   },
   pain: {
     nameAr: 'NODISC Pain',
     nameEn: 'نوديسك لعلاج الألم',
-    shortDesc: 'Modern non-surgical protocols and targeted interventions to relieve back, neck, joint, and nerve pain.',
+    shortDesc: 'Evidence-based interventional pain protocols aligned with Mayo Clinic Pain Rehabilitation standards without open surgery.',
     fullOverview:
-      'NODISC Pain focuses on evaluating acute and chronic spine, joint, and neuropathic pain using conservative and image-guided non-surgical protocols designed to reduce pain and restore daily mobility.',
+      'NODISC Pain provides specialized assessment and targeted outpatient interventions for chronic spine, joint, sciatic, and neuropathic pain following Mayo Clinic Pain Rehabilitation standards, aiming to relieve inflammation and restore daily function.',
     scopeItems: [
-      'Specialist assessment for chronic back, neck, and sciatic pain',
-      'Targeted local injections and nerve root inflammation relief',
-      'Management programs for myofascial and joint pain',
-      'Integrated medication and rehab planning across clinic departments',
+      'Comprehensive evaluation of acute and chronic spine, neck, and nerve pain',
+      'Targeted guided nerve root and facet joint interventions',
+      'Non-surgical pain programs helping reduce reliance on oral painkillers',
+      'Integrated treatment plans connecting Neurosurgery and Physiotherapy',
     ],
-    contactNote: 'Demo Ext: 102 — Acute & chronic pain evaluation',
-    workingHoursNote: 'Sat – Thu | Morning & Evening Shifts',
+    contactNote: 'Appointments & Pain Unit: +967 784545908 | WhatsApp: +967 772070207',
+    workingHoursNote: 'Sat – Thu | Morning & Evening Shifts (Confirmed by phone)',
     ctaLabel: 'Book in Pain Management Department',
   },
   rehabilitation: {
     nameAr: 'NODISC Rehabilitation',
     nameEn: 'نوديسك للتأهيل والعلاج الطبيعي',
-    shortDesc: 'Dedicated physiotherapy and movement rehabilitation programs for spine health and post-surgical recovery.',
+    shortDesc: 'Computerized digital spinal decompression (traction) and physiotherapy achieving over 85% non-surgical improvement.',
     fullOverview:
-      'The Rehabilitation & Physiotherapy Department provides individualized therapy sessions designed to improve spinal flexibility, strengthen core stabilizers, and guide recovery after surgery or musculoskeletal injury in a calm, well-equipped space.',
+      'NODISC Rehabilitation delivers structured physical therapy and computerized spinal decompression traction programs designed to relieve disc pressure, strengthen core stabilizers, and support recovery after spine surgery or injury.',
     scopeItems: [
-      'Physiotherapy programs for disc herniation, neck, and lower back pain',
-      'Post-surgical spine and joint rehabilitation',
-      'Manual therapy, posture correction, and core stability training',
-      'Electrotherapy, therapeutic ultrasound, and controlled traction',
+      'Computerized digital spinal traction & decompression for cervical and lumbar discs',
+      'Post-operative spine and joint rehabilitation protocols',
+      'Manual therapy, posture correction, and deep core stabilization',
+      'Electrotherapy (TENS/IFC), therapeutic ultrasound, and gait balance training',
     ],
     gallery: [
       {
@@ -106,8 +128,8 @@ export const enDepartments: Record<string, Partial<Department>> = {
     ],
     equipmentList: [
       {
-        name: 'Multi-Position Electric Physiotherapy Tables',
-        purpose: 'Allows therapists to position spinal angles safely and comfortably during manual therapy.',
+        name: 'Computerized Digital Spinal Decompression & Traction Unit',
+        purpose: 'Gently relieves intradiscal pressure on compressed cervical and lumbar nerve roots without surgery.',
       },
       {
         name: 'Electrotherapy & Pain Modulation Units (TENS / IFC)',
@@ -122,23 +144,23 @@ export const enDepartments: Record<string, Partial<Department>> = {
         purpose: 'Restores safe walking mechanics and balance following surgery or injury.',
       },
     ],
-    contactNote: 'Demo Ext: 103 — Scheduled therapy session coordination',
+    contactNote: 'Rehab Scheduling: +967 784545908 | WhatsApp: +967 772070207',
     workingHoursNote: 'Sat – Thu | Morning & Evening Sessions by Appointment',
     ctaLabel: 'Request Rehabilitation & Physiotherapy Assessment',
   },
   pharmacy: {
     nameAr: 'NODISC Pharmacy',
     nameEn: 'نوديسك للصيدلية',
-    shortDesc: 'Specialized medical dispensary for prescriptions, spine braces, nerve supplements, and rehab essentials.',
+    shortDesc: 'Specialized clinical dispensary for neurology/spine prescriptions, orthopedic braces, home devices, and supplements.',
     fullOverview:
-      'NODISC Pharmacy provides accurate prescription dispensing under licensed pharmacist supervision, alongside curated spine supports, ergonomic pillows, home pain-relief devices, and nerve & joint supplements.',
+      'NODISC Pharmacy provides accurate prescription dispensing supervised by licensed pharmacists alongside certified lumbar and cervical braces, orthopedic pillows, TENS therapy units, and nerve & joint supplements.',
     scopeItems: [
-      'Prescription dispensing for neurosurgery and pain management patients',
-      'Certified lumbar and cervical braces and home recovery aids',
+      'Clinical prescription dispensing for neurosurgery and pain patients',
+      'Certified orthopedic braces, cervical collars, and home TENS devices',
       'Online prescription photo intake for pharmacist verification',
-      'Online pharmacy store with clinic pickup or local delivery options',
+      'Local wallets (Al-Kuraimi, Jawali, Jeeb, OneCash, Flousak) and COD support',
     ],
-    contactNote: 'Demo Ext: 104 — Prescription & store order support',
+    contactNote: 'Store & WhatsApp: +967 772070207 | Sana’a — Taiz St. – 45 Roundabout',
     workingHoursNote: 'Sat – Thu | 09:00 AM – 09:00 PM',
     ctaLabel: 'Browse Pharmacy Store',
   },
@@ -146,71 +168,71 @@ export const enDepartments: Record<string, Partial<Department>> = {
 
 export const enDoctors: Record<string, Partial<Doctor>> = {
   'dr-mohammed-aljurbani': {
-    nameAr: 'Dr. Mohammed Al-Jurbani',
-    nameEn: 'د. محمد الجرباني',
-    roleTitle: 'Consultant Neurosurgeon & Spine Specialist (Replaceable Demo Title)',
-    imagePlaceholderNote: 'Dedicated frame for Dr. Mohammed Al-Jurbani’s approved portrait',
-    bio: 'Dr. Mohammed Al-Jurbani leads neurosurgical and diagnostic spine evaluation at NODISC Clinic, emphasizing clear differentiation between cases best served by conservative rehabilitation and cases requiring microscopic surgical intervention.',
+    nameAr: 'Dr. Mohammed Abdullah Al-Jurbani',
+    nameEn: 'د. محمد عبدالله الجرباني',
+    roleTitle: 'Consultant Neurosurgeon & Spine Surgeon — Founder of NODISC Clinic',
+    imagePlaceholderNote: 'Official clinical portrait of Dr. Mohammed Abdullah Al-Jurbani',
+    bio: 'Dr. Mohammed Abdullah Al-Jurbani is a Consultant Neurosurgeon and Spine Surgeon with over 15 years of specialized surgical practice and more than 4,500 operations and clinical cases across 13 neurosurgical sub-specialties. At NODISC Clinic (Ibn Sina Medical Diagnostic Center, Sana’a), his clinical philosophy starts with careful listening and MRI evaluation—prioritizing conservative treatment (>85% non-surgical improvement) and reserving microscopic surgery only when truly indicated.',
     qualifications: [
-      'Specialist Academic Degree in Neurosurgery (Replaceable with approved credentials)',
-      'Advanced Fellowship / Training in Microscopic Spine Surgery (Replaceable field)',
-      'Professional Medical Association Memberships (To be completed by clinic)',
+      'Consultant Neurosurgeon & Spine Surgeon — Over 15 years of specialized clinical and surgical practice',
+      'Over 4,500 successful surgical operations and evaluated spine & neuro cases with a 98% safety & satisfaction rate',
+      'Comprehensive diagnostic coverage spanning 13 neurosurgical and spine sub-specialties',
     ],
     experiences: [
-      'Clinical and surgical experience in cervical and lumbar disc herniation (To be updated with approved figures)',
-      'Coordinated multidisciplinary care planning with Pain and Rehabilitation teams',
-      'Detailed evaluation of MRI and CT spinal imaging studies',
+      'Lead Consultant at NODISC Clinic — Ibn Sina Medical Diagnostic Center, Sana’a (Taiz St., 45 Roundabout)',
+      'Microscopic & minimally invasive decompression for cervical and lumbar disc herniation and spinal stenosis',
+      'Multidisciplinary non-surgical spine pathway integrating NODISC Rehabilitation (>85% improvement rate)',
     ],
     focusAreas: [
-      'Lumbar & Cervical Disc Herniation',
-      'Spinal Canal Stenosis & Nerve Root Compression',
-      'Minimally Invasive Spine Surgery',
-      'Peripheral Nerve Disorders',
+      'Lumbar & Cervical Disc Herniation (Conservative & Microscopic)',
+      'Spinal Canal Stenosis & Vertebral Instability',
+      'Microscopic Brain, Spine & Peripheral Nerve Surgery',
+      'Integrated Pain & Digital Rehabilitation Routing',
     ],
     isProfileEditableNote:
-      'All credentials, experience figures, and portrait fields in this profile are structured placeholders ready for official clinic approval.',
+      'Profile aligned with the official NODISC Clinic Sana’a practice of Dr. Mohammed Abdullah Al-Jurbani.',
   },
   'team-pain-unit': {
-    nameAr: 'Interventional Pain Care Team',
-    nameEn: 'فريق عيادة علاج الألم التداخلي',
-    roleTitle: 'Specialists in Acute & Chronic Pain Assessment (Extensible Team Slot)',
-    imagePlaceholderNote: 'Slot for Pain Management physicians upon final onboarding',
-    bio: 'A dedicated medical team focused on diagnosing neuropathic and musculoskeletal pain sources and delivering targeted non-surgical interventions to restore comfort and daily function.',
+    nameAr: 'NODISC Interventional Pain Team',
+    nameEn: 'فريق نوديسك لعلاج الألم التداخلي',
+    roleTitle: 'Specialists in Acute & Chronic Pain Assessment (Mayo Clinic PRC Standards)',
+    imagePlaceholderNote: 'NODISC Pain Management Team',
+    bio: 'A specialized clinical team dedicated to evaluating chronic back, neck, joint, and neuropathic pain using targeted outpatient interventions aligned with Mayo Clinic Pain Rehabilitation principles.',
     qualifications: [
-      'Specialization in Pain Medicine & Guided Interventions (Replaceable with physician names)',
-      'Certified medication safety & targeted local injection protocols',
+      'Clinical Pain Medicine & Guided Interventional Protocols (Mayo Clinic PRC aligned)',
+      'Multidisciplinary coordination with Neurosurgery and Rehabilitation',
     ],
     experiences: [
-      'Managing chronic pain cases unresponsive to conventional oral analgesics',
-      'Direct coordination with Neurosurgery to avoid surgery whenever safely possible',
+      'Targeted non-surgical relief for chronic spine, sciatic, and facet joint pain',
+      'Helping patients reduce dependency on prolonged oral analgesics',
     ],
     focusAreas: [
       'Targeted Nerve Root Blocks',
       'Facet Joint Pain Management',
       'Chronic Neuropathic Pain Protocols',
     ],
-    isProfileEditableNote: 'Extensible team module ready for individual physician profiles.',
+    isProfileEditableNote: 'Integrated unit within NODISC Clinic Sana’a.',
   },
   'team-rehab-unit': {
-    nameAr: 'Rehabilitation & Physiotherapy Team',
-    nameEn: 'فريق التأهيل والعلاج الطبيعي',
-    roleTitle: 'Licensed Physiotherapists & Movement Specialists (Extensible Team Slot)',
-    imagePlaceholderNote: 'Slot for Rehabilitation specialists’ portraits and names',
-    bio: 'Licensed physiotherapists dedicated to therapeutic exercise programming, post-operative spine rehabilitation, and ergonomic posture restoration using modern clinical modalities.',
+    nameAr: 'NODISC Rehabilitation & Physiotherapy Team',
+    nameEn: 'فريق نوديسك للتأهيل والعلاج الطبيعي',
+    roleTitle: 'Physiotherapy & Computerized Spinal Decompression Specialists',
+    imagePlaceholderNote: 'NODISC Rehabilitation Specialists',
+    bio: 'Licensed rehabilitation specialists delivering individualized exercise programming, computerized digital spinal traction, and post-surgical spine recovery with over 85% conservative improvement.',
     qualifications: [
-      'B.Sc. / Postgraduate Qualifications in Physiotherapy (Replaceable field)',
-      'Specialized training in spinal and neurological rehabilitation',
+      'Specialized Physiotherapy & Spinal Rehabilitation Credentials',
+      'Computerized digital traction and post-operative neurological recovery protocols',
     ],
     experiences: [
-      'Designing individualized session plans matched to patient tolerance',
-      'Ongoing functional mobility and recovery milestone tracking',
+      'Conservative disc rehabilitation avoiding unnecessary surgical intervention',
+      'Structured post-discectomy and posture-restoration mobility plans',
     ],
     focusAreas: [
+      'Digital Spinal Traction & Decompression',
       'Post-Discectomy Rehabilitation',
-      'Manual Therapy & Posture Correction',
-      'Core & Paraspinal Strengthening',
+      'Manual Therapy & Core Stabilization',
     ],
-    isProfileEditableNote: 'Flexible team component ready to split into individual specialist cards.',
+    isProfileEditableNote: 'Integrated unit within NODISC Clinic Sana’a.',
   },
 };
 
@@ -542,9 +564,21 @@ export const enCampaigns: Record<string, Partial<Campaign>> = {
 };
 
 export const enStoreMainSections: Record<string, { nameAr: string; description: string }> = {
+  'sec-beauty-care': {
+    nameAr: 'Beauty & Personal Care',
+    description: 'Pharmacist-curated hair care, dermatological skincare, and oral hygiene essentials.',
+  },
+  'sec-vitamins-supplements': {
+    nameAr: 'Vitamins & Supplements',
+    description: 'Targeted nutritional formulas for nerve health, seniors, children, and women.',
+  },
+  'sec-mother-baby': {
+    nameAr: 'Mother & Baby Care',
+    description: 'Gentle infant nutrition, follow-on formulas, and daily mother & baby skin care.',
+  },
   'sec-medical-supplies': {
-    nameAr: 'Medical Supplies',
-    description: 'Spine braces, neurological vitamins & supplements, and topical post-op care supplies.',
+    nameAr: 'Spine & Medical Supplies',
+    description: 'Spine braces, ergonomic orthopedic pillows, and topical post-op care supplies.',
   },
   'sec-rehab-equipment': {
     nameAr: 'Physiotherapy & Rehabilitation Equipment',
@@ -553,6 +587,42 @@ export const enStoreMainSections: Record<string, { nameAr: string; description: 
 };
 
 export const enCategories: Record<string, Partial<ProductCategory>> = {
+  'cat-hair-care': {
+    nameAr: 'Hair Care',
+    description: 'Sulfate-free medical shampoos and follicle-strengthening anti-hair-loss serums.',
+  },
+  'cat-skin-care': {
+    nameAr: 'Skin Care',
+    description: 'Gentle facial cleansers, high-SPF sunscreens, and barrier-repair moisturizers.',
+  },
+  'cat-oral-care': {
+    nameAr: 'Oral & Dental Care',
+    description: 'Sensitive enamel toothpastes, alcohol-free mouthwashes, and gum care essentials.',
+  },
+  'cat-supplements': {
+    nameAr: 'Nerve & Joint Supplements',
+    description: 'Targeted vitamins and minerals supporting nerve, spine, and joint health.',
+  },
+  'cat-seniors-vitamins': {
+    nameAr: 'Seniors Vitamins (+50)',
+    description: 'Balanced daily formulas supporting bone density, memory, and vitality for seniors.',
+  },
+  'cat-kids-vitamins': {
+    nameAr: 'Children Vitamins',
+    description: 'Kid-friendly immunity and growth syrups enriched with Vitamin D3, C, and Zinc.',
+  },
+  'cat-women-vitamins': {
+    nameAr: "Women's Health Vitamins",
+    description: 'Gentle iron, folate, biotin, and calcium complexes tailored for women.',
+  },
+  'cat-baby-nutrition': {
+    nameAr: 'Baby Nutrition & Formula',
+    description: 'Prebiotic-enriched infant formulas and wholesome iron-fortified baby cereals.',
+  },
+  'cat-baby-care': {
+    nameAr: 'Mother & Baby Essentials',
+    description: 'Fragrance-free baby lotions, tear-free shampoos, and gentle protective creams.',
+  },
   'cat-supports': {
     nameAr: 'Spine Braces & Supports',
     description: 'Lumbar belts, cervical collars, and orthopedic pillows for spinal alignment.',
@@ -561,10 +631,6 @@ export const enCategories: Record<string, Partial<ProductCategory>> = {
     nameAr: 'Physiotherapy & Pain Relief Devices',
     description: 'Home TENS electrotherapy units, hot/cold packs, and rehab tools.',
   },
-  'cat-supplements': {
-    nameAr: 'Nerve & Bone Supplements',
-    description: 'Targeted vitamins and minerals supporting nerve and joint health.',
-  },
   'cat-topical': {
     nameAr: 'Topical Care & Post-Op Supplies',
     description: 'Soothing analgesic gels and sterile post-surgical care packs.',
@@ -572,12 +638,118 @@ export const enCategories: Record<string, Partial<ProductCategory>> = {
 };
 
 export const enProducts: Record<string, Partial<Product>> = {
+  'prd-hair-serum': {
+    name: 'Biotin & Peptide Follicle-Strengthening Hair Serum',
+    unit: '60 ml Bottle',
+    options: ['60 ml', 'Twin Pack 120 ml'],
+    shortDesc: 'Lightweight non-greasy serum nourishing the scalp and supporting fuller hair density.',
+    fullDesc: 'Pharmacy-grade formula with biotin, caffeine, and panthenol to revitalize roots and reduce daily shedding.',
+    offerLabelAr: 'Hair Care Offer -20%',
+  },
+  'prd-hair-shampoo': {
+    name: 'Sulfate-Free Medical Daily Scalp Shampoo',
+    unit: '250 ml Bottle',
+    options: ['250 ml'],
+    shortDesc: 'Gently cleanses sensitive scalps while preserving natural moisture balance.',
+    fullDesc: 'pH-balanced medical shampoo suitable for frequent washing and dry or treated hair.',
+  },
+  'prd-skin-sunscreen': {
+    name: 'Hydra-Defense SPF50+ Sensitive Skin Sunscreen',
+    unit: '50 ml Tube',
+    options: ['Invisible Fluid', 'Light Tint'],
+    shortDesc: 'Broad-spectrum UVA/UVB protection with zero white cast or pore congestion.',
+    fullDesc: 'Enriched with hyaluronic acid and niacinamide to hydrate while protecting skin against pigmentation.',
+    offerLabelAr: 'Sun Care -20%',
+  },
+  'prd-skin-cleanser': {
+    name: 'Ceramide & Hyaluronic Hydrating Facial Cleanser',
+    unit: '200 ml Bottle',
+    options: ['200 ml'],
+    shortDesc: 'Deeply cleanses without stripping while reinforcing the skin moisture barrier.',
+    fullDesc: 'Soap-free, fragrance-free formula ideal for dry and sensitive skin.',
+  },
+  'prd-oral-kit': {
+    name: 'Sensitive Enamel & Gum Oral Care Kit',
+    unit: '2-Piece Set',
+    options: ['Mild Mint'],
+    shortDesc: 'Dual enamel protection toothpaste with alcohol-free soothing mouthwash.',
+    fullDesc: 'Combines enamel repair and gentle antiseptic mouthwash for everyday oral wellness.',
+    offerLabelAr: 'Oral Care Bundle',
+  },
+  'prd-bcomplex-neuro': {
+    name: 'Neuro B-Complex Nerve Support Supplement',
+    unit: 'Bottle (60 Capsules)',
+    options: ['60 Capsules'],
+    shortDesc: 'Balanced B1 / B6 / B12 formula supporting peripheral nerve nourishment.',
+    fullDesc: 'Dietary supplement supporting peripheral nerve function, used as advised by your physician or pharmacist (demo product).',
+  },
+  'prd-seniors-multi': {
+    name: 'Seniors 50+ Complete Vitality Multivitamin',
+    unit: 'Bottle (60 Tablets)',
+    options: ['60 Tablets', '90 Tablets'],
+    shortDesc: 'Balanced Calcium, Vitamin D3, B12, Zinc, and Lutein for active aging.',
+    fullDesc: 'Specially calibrated for adults over 50 to support bone density, cognitive clarity, and daily energy.',
+    offerLabelAr: 'Seniors Offer -20%',
+  },
+  'prd-kids-syrup': {
+    name: 'Kids Immunity & Growth Multivitamin Syrup',
+    unit: '150 ml Bottle',
+    options: ['Natural Orange', 'Strawberry'],
+    shortDesc: 'Supports children immunity, healthy bones, and appetite with kid-friendly taste.',
+    fullDesc: 'Dye-free liquid multivitamin formulated with Zinc, Vitamin C, and Vitamin D3.',
+  },
+  'prd-women-complete': {
+    name: "Women's Health Iron, Folate & Biotin Complex",
+    unit: 'Bottle (60 Capsules)',
+    options: ['60 Capsules'],
+    shortDesc: 'Supports iron levels, daily energy, hair strength, and bone health for women.',
+    fullDesc: 'Gentle-on-stomach formula combining chelated iron, folic acid, calcium, and biotin.',
+    offerLabelAr: "Women's Wellness Deal",
+  },
+  'prd-magnesium-glycinate': {
+    name: 'Magnesium Glycinate Muscle & Nerve Support',
+    unit: 'Bottle (90 Tablets)',
+    options: ['90 Tablets'],
+    shortDesc: 'High-absorption gentle magnesium supporting muscle relaxation and nerve balance.',
+    fullDesc: 'Supports relief from nighttime muscle tightness as part of balanced care (demo product).',
+  },
+  'prd-vitd-calcium': {
+    name: 'Vitamin D3 + Calcium Bone & Spine Formula',
+    unit: 'Bottle (60 Tablets)',
+    options: ['60 Tablets'],
+    shortDesc: 'Balanced mineral and vitamin support for bone and vertebral density.',
+    fullDesc: 'Supports bone and joint strength alongside physical rehabilitation; consult your pharmacist for dosing (demo product).',
+  },
+  'prd-baby-formula': {
+    name: 'Prebiotic Follow-On Infant Milk Formula (Stage 2)',
+    unit: '400g Tin',
+    options: ['Stage 1 (0-6m)', 'Stage 2 (6-12m)', 'Stage 3 (1-3y)'],
+    shortDesc: 'Easy-to-digest formula fortified with iron, DHA, and prebiotics.',
+    fullDesc: 'Balanced follow-on infant nutrition supporting immune and cognitive development.',
+  },
+  'prd-baby-cereal': {
+    name: 'Organic Oat & Iron-Fortified Baby Cereal (6m+)',
+    unit: '250g Pack',
+    options: ['Oat & Milk', 'Wheat & Apple'],
+    shortDesc: 'No-added-sugar wholesome complementary cereal gentle on baby digestion.',
+    fullDesc: 'Provides essential iron, Vitamin B1, and Vitamin C for the weaning stage.',
+    offerLabelAr: 'Save 19%',
+  },
+  'prd-baby-lotion-kit': {
+    name: 'Mother & Baby Gentle 3-Piece Skin Care Set',
+    unit: '3-Piece Set',
+    options: ['Chamomile Sensitive Set'],
+    shortDesc: 'Paraben-free soothing lotion, tear-free wash, and protective barrier cream.',
+    fullDesc: 'Dermatologist-tested gentle kit designed for delicate infant skin and everyday maternal care.',
+    offerLabelAr: '20% Off Set',
+  },
   'prd-lumbar-brace': {
     name: 'Dual-Strap Ergonomic Lumbar Support Brace',
     unit: 'Piece',
     options: ['Size M', 'Size L', 'Size XL'],
     shortDesc: 'Breathable mesh lower-back brace with dual tension straps for lumbar stability.',
     fullDesc: 'Designed to provide gentle lower-back stabilization and reduce muscular strain during standing or walking during recovery (demo product).',
+    offerLabelAr: 'Rehab Offer',
   },
   'prd-cervical-pillow': {
     name: 'Contoured Memory Foam Orthopedic Cervical Pillow',
@@ -592,13 +764,7 @@ export const enProducts: Record<string, Partial<Product>> = {
     options: ['Dual Channel', 'Dual Channel + Extra Pads'],
     shortDesc: 'Gentle nerve stimulation unit with multi-mode programs for muscle and nerve comfort.',
     fullDesc: 'Helps calm localized muscle spasms and pain signals in the back, neck, and joints under physiotherapist guidance (demo data).',
-  },
-  'prd-bcomplex-neuro': {
-    name: 'Neuro B-Complex Nerve Support Supplement',
-    unit: 'Bottle (60 Capsules)',
-    options: ['60 Capsules'],
-    shortDesc: 'Balanced B1 / B6 / B12 formula supporting peripheral nerve nourishment.',
-    fullDesc: 'Dietary supplement supporting peripheral nerve function, used as advised by your physician or pharmacist (demo product).',
+    offerLabelAr: 'Save 5,500 YER',
   },
   'prd-coccyx-cushion': {
     name: 'Ergonomic Cut-Out Coccyx & Spine Seat Cushion',
@@ -627,20 +793,6 @@ export const enProducts: Record<string, Partial<Product>> = {
     options: ['Wide Back Size'],
     shortDesc: 'Dual hot/cold gel compress with securing strap for back or neck comfort.',
     fullDesc: 'Use cold to soothe acute swelling or warm to relax tight muscles prior to stretching (demo product).',
-  },
-  'prd-magnesium-glycinate': {
-    name: 'Magnesium Glycinate Muscle & Nerve Support',
-    unit: 'Bottle (90 Tablets)',
-    options: ['90 Tablets'],
-    shortDesc: 'High-absorption gentle magnesium supporting muscle relaxation and nerve balance.',
-    fullDesc: 'Supports relief from nighttime muscle tightness as part of balanced care (demo product).',
-  },
-  'prd-vitd-calcium': {
-    name: 'Vitamin D3 + Calcium Bone & Spine Formula',
-    unit: 'Bottle (60 Tablets)',
-    options: ['60 Tablets'],
-    shortDesc: 'Balanced mineral and vitamin support for bone and vertebral density.',
-    fullDesc: 'Supports bone and joint strength alongside physical rehabilitation; consult your pharmacist for dosing (demo product).',
   },
   'prd-soothing-gel': {
     name: 'Topical Muscle & Joint Soothing Gel',

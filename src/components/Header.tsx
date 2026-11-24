@@ -258,6 +258,7 @@ export const Header: React.FC = () => {
                 { to: '/library', label: t('nav.library') },
                 { to: '/campaigns', label: t('nav.campaigns') },
                 { to: '/store', label: t('nav.store') },
+                { to: '/store/offers', label: t('nav.offers') },
                 { to: '/contact', label: t('nav.contact') },
               ].map((item) => (
                 <NavLink

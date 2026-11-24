@@ -19,7 +19,7 @@ export const FloatingContactButton: React.FC = () => {
         >
           <div className="flex items-center justify-between border-b border-slate-100 pb-2">
             <h3 className="font-display font-bold text-sm text-slate-900">
-              {lang === 'ar' ? 'التواصل السريع (إعدادات النموذج)' : 'Quick Contact (Demo Settings)'}
+              {lang === 'ar' ? 'التواصل السريع — نوديسك كلينك' : 'Quick Contact — NODISC Clinic'}
             </h3>
             <button
               type="button"
@@ -32,28 +32,45 @@ export const FloatingContactButton: React.FC = () => {
           </div>
 
           <div className="space-y-2 text-xs">
-            <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-100">
+            <a
+              href={`tel:${localizedConfig.contact.phones[0].value.replace(/\s+/g, '')}`}
+              className="block p-2.5 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-100 transition-colors"
+            >
               <span className="text-slate-500 block">{localizedConfig.contact.phones[0].label}</span>
-              <span className="font-mono font-semibold text-slate-900 block mt-0.5" dir="ltr">
+              <span className="font-mono font-semibold text-slate-900 block mt-0.5 tabular-nums" dir="ltr">
                 {localizedConfig.contact.phones[0].value}
               </span>
-            </div>
+            </a>
 
-            <div className="p-2.5 rounded-lg bg-sky-50/70 border border-sky-100">
-              <span className="text-[#0F4C5C] font-medium block">
-                {lang === 'ar' ? 'واتساب المركز (حالة توضيحية)' : 'Clinic WhatsApp (Demo State)'}
-              </span>
-              <span className="font-mono text-slate-700 block mt-0.5" dir="ltr">
-                {localizedConfig.contact.whatsappDisplay}
-              </span>
-              {!localizedConfig.contact.whatsappUrl && (
+            {localizedConfig.contact.whatsappUrl ? (
+              <a
+                href={localizedConfig.contact.whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block p-2.5 rounded-lg bg-emerald-50/75 hover:bg-emerald-50 border border-emerald-200/80 transition-colors"
+              >
+                <span className="text-emerald-900 font-semibold block">
+                  {lang === 'ar' ? 'محادثة واتساب المباشرة' : 'Direct Clinic WhatsApp'}
+                </span>
+                <span className="font-mono font-semibold text-emerald-800 block mt-0.5 tabular-nums" dir="ltr">
+                  {localizedConfig.contact.whatsappDisplay}
+                </span>
+              </a>
+            ) : (
+              <div className="p-2.5 rounded-lg bg-sky-50/70 border border-sky-100">
+                <span className="text-[#0F4C5C] font-medium block">
+                  {lang === 'ar' ? 'واتساب المركز (حالة توضيحية)' : 'Clinic WhatsApp (Demo State)'}
+                </span>
+                <span className="font-mono text-slate-700 block mt-0.5" dir="ltr">
+                  {localizedConfig.contact.whatsappDisplay}
+                </span>
                 <p className="text-[11px] text-slate-500 mt-1">
                   {lang === 'ar'
                     ? 'سيتم تفعيل الرابط المباشر عند تزويدنا برقم واتساب المركز الرسمي.'
                     : 'Direct link activates once the official WhatsApp number is provided.'}
                 </p>
-              )}
-            </div>
+              </div>
+            )}
           </div>
 
           <div className="grid grid-cols-2 gap-2 pt-1">

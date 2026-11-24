@@ -7,12 +7,28 @@ export const ClinicLogoMark: React.FC<{ compact?: boolean }> = ({ compact = fals
 
   if (localizedConfig.brand.logoUrl) {
     return (
-      <img
-        src={localizedConfig.brand.logoUrl}
-        alt={localizedConfig.brand.nameAr}
-        referrerPolicy="no-referrer"
-        className="h-9 w-auto object-contain"
-      />
+      <span className="inline-flex items-center gap-2.5 shrink-0">
+        <img
+          src={localizedConfig.brand.logoUrl}
+          alt={localizedConfig.brand.nameAr}
+          referrerPolicy="no-referrer"
+          className="h-9 w-9 rounded-lg object-contain bg-white border border-slate-200/80 p-0.5 shrink-0"
+        />
+        <span className="flex flex-col leading-tight">
+          <span className="font-display font-bold text-base sm:text-lg text-slate-900 whitespace-nowrap">
+            {localizedConfig.brand.nameAr}
+          </span>
+          {!compact && (
+            <span
+              className="text-[11px] font-medium whitespace-nowrap"
+              style={{ color: 'var(--color-petrol)' }}
+              dir="ltr"
+            >
+              {localizedConfig.brand.nameEn}
+            </span>
+          )}
+        </span>
+      </span>
     );
   }
 
@@ -59,16 +75,18 @@ export const DoctorPortraitFrame: React.FC<DoctorPortraitFrameProps> = ({
   size = 'md',
 }) => {
   const { lang } = useLanguage();
-  const dimensions = size === 'lg' ? 'w-full aspect-[4/4] max-w-xs' : 'w-full aspect-[4/3]';
+  const [imgError, setImgError] = React.useState(false);
+  const dimensions = size === 'lg' ? 'w-full aspect-[3/4] max-w-sm' : 'w-full aspect-[4/4]';
 
-  if (imageUrl) {
+  if (imageUrl && !imgError) {
     return (
-      <div className={`${dimensions} rounded-xl overflow-hidden border border-slate-200 bg-slate-100`}>
+      <div className={`${dimensions} rounded-2xl overflow-hidden border border-slate-200 bg-slate-100`}>
         <img
           src={imageUrl}
           alt={name}
           referrerPolicy="no-referrer"
-          className="w-full h-full object-cover"
+          onError={() => setImgError(true)}
+          className="w-full h-full object-cover object-top transition-transform duration-500 ease-out group-hover:scale-[1.03]"
         />
       </div>
     );
@@ -76,7 +94,7 @@ export const DoctorPortraitFrame: React.FC<DoctorPortraitFrameProps> = ({
 
   return (
     <div
-      className={`${dimensions} rounded-xl border border-slate-200 bg-gradient-to-b from-sky-50/80 to-slate-100 flex flex-col items-center justify-center p-6 text-center`}
+      className={`${dimensions} rounded-2xl border border-slate-200 bg-gradient-to-b from-sky-50/80 to-slate-100 flex flex-col items-center justify-center p-6 text-center`}
     >
       <div className="w-20 h-20 rounded-full bg-white border border-slate-200 flex items-center justify-center text-[#0F4C5C] mb-3 shadow-xs">
         <Stethoscope className="w-9 h-9" strokeWidth={1.5} />

@@ -1,9 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Banknote, ExternalLink, Mail, Phone, ShieldCheck } from 'lucide-react';
 import { siteConfig } from '../config/siteConfig';
 import { useLanguage } from '../context/LanguageContext';
 import { useClinic } from '../context/ClinicContext';
 import { ClinicLogoMark } from './ClinicLogoMark';
+import { getShortWalletLabel, WalletBrandIcon } from './PaymentMethodIcons';
 
 export const Footer: React.FC = () => {
   const { lang, setLang, t, localizedConfig, departments } = useLanguage();
@@ -21,6 +23,73 @@ export const Footer: React.FC = () => {
             <p className="text-sm text-slate-300 leading-relaxed">
               {localizedConfig.brand.shortAbout}
             </p>
+            <div className="space-y-1.5 text-xs text-slate-300">
+              {localizedConfig.contact.phones[0] && (
+                <a
+                  href={`tel:${localizedConfig.contact.phones[0].value.replace(/\s+/g, '')}`}
+                  className="flex items-center gap-2 hover:text-sky-300 transition-colors"
+                >
+                  <Phone className="w-3.5 h-3.5 text-sky-400 shrink-0" />
+                  <span className="font-mono tabular-nums" dir="ltr">
+                    {localizedConfig.contact.phones[0].value}
+                  </span>
+                </a>
+              )}
+              <a
+                href={`mailto:${localizedConfig.contact.email}`}
+                className="flex items-center gap-2 hover:text-sky-300 transition-colors"
+              >
+                <Mail className="w-3.5 h-3.5 text-sky-400 shrink-0" />
+                <span className="font-mono" dir="ltr">
+                  {localizedConfig.contact.email}
+                </span>
+              </a>
+            </div>
+            {(localizedConfig.contact.whatsappUrl || localizedConfig.contact.socialLinks) && (
+              <div className="flex flex-wrap items-center gap-2 pt-1 text-xs">
+                {localizedConfig.contact.whatsappUrl && (
+                  <a
+                    href={localizedConfig.contact.whatsappUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-emerald-900/50 hover:bg-emerald-800/70 border border-emerald-700/60 text-emerald-200 transition-colors"
+                  >
+                    <span>{lang === 'ar' ? 'واتساب' : 'WhatsApp'}</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                )}
+                {localizedConfig.contact.socialLinks?.facebook && (
+                  <a
+                    href={localizedConfig.contact.socialLinks.facebook}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 transition-colors"
+                  >
+                    <span>Facebook</span>
+                  </a>
+                )}
+                {localizedConfig.contact.socialLinks?.instagram && (
+                  <a
+                    href={localizedConfig.contact.socialLinks.instagram}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 transition-colors"
+                  >
+                    <span>Instagram</span>
+                  </a>
+                )}
+                {localizedConfig.contact.socialLinks?.youtube && (
+                  <a
+                    href={localizedConfig.contact.socialLinks.youtube}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 transition-colors"
+                  >
+                    <span>YouTube</span>
+                  </a>
+                )}
+              </div>
+            )}
             <div className="pt-2 space-y-2">
               <div className="flex items-center gap-2 text-xs">
                 <label htmlFor="footer-currency" className="text-slate-400">
@@ -132,6 +201,11 @@ export const Footer: React.FC = () => {
                 </Link>
               </li>
               <li>
+                <Link to="/store/offers" className="hover:text-sky-300 transition-colors">
+                  {t('nav.offers')}
+                </Link>
+              </li>
+              <li>
                 <Link to="/store/prescription" className="hover:text-sky-300 transition-colors">
                   {t('nav.prescriptionOrder')}
                 </Link>
@@ -169,7 +243,43 @@ export const Footer: React.FC = () => {
           </div>
         </div>
 
-        <div className="mt-12 pt-6 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
+        {/* Electronic Payment Methods Strip */}
+        <div className="mt-10 pt-6 border-t border-slate-800 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div className="flex items-center gap-2 text-xs text-slate-300 font-medium shrink-0">
+            <ShieldCheck className="w-4 h-4 text-sky-400 shrink-0" />
+            <span>
+              {lang === 'ar' ? 'وسائل الدفع الإلكتروني المعتمدة:' : 'Accepted Electronic Payments:'}
+            </span>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2.5">
+            {localizedConfig.payment.ePaymentNetworks.map((net) => (
+              <div
+                key={net.id}
+                title={`${net.name} — ${net.accountHint}`}
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-800/75 border border-slate-700/80 text-xs text-slate-100"
+              >
+                <WalletBrandIcon id={net.id} size="sm" logoUrl={net.logoUrl} name={net.name} />
+                <span className="font-medium whitespace-nowrap">
+                  {getShortWalletLabel(net.id, lang, net.name)}
+                </span>
+              </div>
+            ))}
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-800/50 border border-slate-700/60 text-xs text-slate-300">
+              <span
+                className="w-7 h-7 rounded-lg bg-slate-700/70 border border-slate-600/80 text-slate-200 inline-flex items-center justify-center shrink-0"
+                aria-hidden="true"
+              >
+                <Banknote className="w-3.5 h-3.5" />
+              </span>
+              <span className="font-medium whitespace-nowrap">
+                {lang === 'ar' ? 'نقدًا عند الاستلام' : 'Cash on Delivery'}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-6 pt-6 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
           <p>{t('footer.legalNote')}</p>
           <p dir="ltr">© 2026 {localizedConfig.brand.nameEn}</p>
         </div>

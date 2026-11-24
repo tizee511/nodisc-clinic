@@ -1,3 +1,13 @@
+export interface PaymentNetworkConfig {
+  id: string;
+  name: string;
+  nameEn?: string;
+  accountHint: string;
+  accountHintEn?: string;
+  logoUrl?: string;
+  active?: boolean;
+}
+
 export interface SiteConfig {
   brand: {
     nameAr: string;
@@ -30,6 +40,11 @@ export interface SiteConfig {
     workingPeriods: { label: string; time: string }[];
     directionsUrl: string | null;
     directionsNote: string;
+    socialLinks?: {
+      facebook?: string;
+      instagram?: string;
+      youtube?: string;
+    };
   };
   currency: {
     code: string;
@@ -43,7 +58,7 @@ export interface SiteConfig {
     freeDeliveryThresholdYER: number;
     ePaymentLabel: string;
     ePaymentFeeYER: number;
-    ePaymentNetworks: { id: string; name: string; accountHint: string }[];
+    ePaymentNetworks: PaymentNetworkConfig[];
     collectionNote: string;
   };
   bookingRules: {
@@ -74,33 +89,34 @@ export const siteConfig: SiteConfig = {
   brand: {
     nameAr: 'نوديسك كلينك',
     nameEn: 'NODISC Clinic',
-    tagline: 'مركز تخصصي متكامل لجراحة المخ والأعصاب وعلاج الألم والتأهيل والصيدلية',
+    tagline:
+      'الصرح الطبي التخصصي لجراحة المخ والأعصاب والعمود الفقري وعلاج الألم والتأهيل بصنعاء',
     shortAbout:
-      'منظومة طبية متخصصة تجمع التقييم الجراحي الدقيق، وعلاج الألم التداخلي، وبرامج التأهيل والعلاج الطبيعي، والصيدلية الطبية تحت سقف واحد.',
+      'نوديسك كلينك (NODISC Clinic) — صرح طبي تخصصي متكامل لجراحة المخ والأعصاب والعمود الفقري وعلاج الألم والتأهيل الحركي المتقدم والصيدلية السريرية، بإشراف د. محمد عبدالله الجرباني في مركز ابن سيناء الطبي التشخيصي بصنعاء.',
     vision:
-      'تقديم رعاية تخصصية موثوقة لمشكلات العمود الفقري والأعصاب والألم المزمن وفق مسار علاجي متكامل يبدأ بالتشخيص الدقيق وينتهي بالتأهيل.',
+      '«رعاية متخصصة تبدأ بالاستماع إلى حالتك وتقييم الفحوصات ومناقشة الخيارات العلاجية المناسبة» — الجمع بين الدقة الجراحية العالية والحرص على تجنب الجراحة متى أمكن العلاج التحفظي والتأهيلي.',
     mission:
-      'تنسيق الجهود بين جراحة المخ والأعصاب وعلاج الألم والعلاج الطبيعي والصيدلية لتوفير تجربة علاجية واضحة وآمنة للمريض.',
-    logoUrl: null, // ضع مسار الشعار الرسمي هنا عند اعتماده
+      'تنسيق الجهود بين جراحة المخ والأعصاب وعلاج الألم وفق معايير Mayo Clinic والتأهيل الحركي والصيدلية لتوفير تجربة علاجية واضحة وآمنة للمريض.',
+    logoUrl: '/src/assets/images/nodisc_full_logo.jpg',
     prototypeNotice:
-      'نموذج تصوري تفاعلي ببيانات تجريبية قابلة للاستبدال — جميع الطلبات والمدفوعات ورسائل SMS والتعليقات محاكاة محلية.',
+      'موقع نوديسك كلينك التفاعلي (محاكاة تجريبية للطلبات والمواعيد والدفع داخل الجلسة — مع بيانات العيادة المعتمدة بصنعاء).',
     heroImage: '/src/assets/images/hero_nodisc_clinic_1795286630066.jpg',
     clinicGallery: [
       {
         url: '/src/assets/images/hero_nodisc_clinic_1795286630066.jpg',
-        caption: 'الاستقبال الرئيسي وصالة انتظار المراجعين (صورة تصورية)',
+        caption: 'الاستقبال الرئيسي في نوديسك كلينك — مركز ابن سيناء الطبي التشخيصي',
       },
       {
         url: '/src/assets/images/dept_neurosurgery_suite_1795286629702.jpg',
-        caption: 'عيادة استشارات جراحة المخ والأعصاب والعمود الفقري',
+        caption: 'عيادة استشارات جراحة المخ والأعصاب والعمود الفقري — د. محمد عبدالله الجرباني',
       },
       {
         url: '/src/assets/images/dept_rehab_gym_1795286629619.jpg',
-        caption: 'وحدة التأهيل الحركي والعلاج الطبيعي',
+        caption: 'مركز نوديسك للتأهيل الحركي والشد الرقمي والعلاج الطبيعي',
       },
       {
         url: '/src/assets/images/dept_pharmacy_counter_1795286630165.jpg',
-        caption: 'الصيدلية الطبية ومنفذ صرف الوصفات',
+        caption: 'صيدلية ومتجر نوديسك الطبي ومنفذ صرف الوصفات',
       },
     ],
   },
@@ -112,23 +128,28 @@ export const siteConfig: SiteConfig = {
     note: 'لوحة ألوان مبدئية (أزرق بترولي وسماوي) قابلة للتعديل بعد اعتماد الشعار النهائي.',
   },
   contact: {
-    city: 'صنعاء (عنوان تجريبي قابل للاستبدال)',
-    address: 'شارع الستين الجنوبي — مبنى المركز الطبي التخصصي (موقع تجريبي للمعاينة)',
-    landmark: 'جوار التقاطع الرئيسي — تتوفر مواقف للمراجعين',
+    city: 'صنعاء — الجمهورية اليمنية',
+    address: 'صنعاء – شارع تعز – جولة 45 – فوق صيدلية الفيصل',
+    landmark: 'مركز ابن سيناء الطبي التشخيصي (العيادة الاستشارية الرئيسية)',
     phones: [
-      { label: 'الاستقبال والمواعيد', value: '+967 1 000 100', isDemoPlaceholder: true },
-      { label: 'قسم الصيدلية والطلبات', value: '+967 1 000 200', isDemoPlaceholder: true },
+      { label: 'الهاتف المباشر للعيادة والحجوزات', value: '+967 784545908', isDemoPlaceholder: false },
+      { label: 'واتساب نوديسك والمتجر والتأهيل', value: '+967 772070207', isDemoPlaceholder: false },
     ],
-    whatsappDisplay: '+967 770 000 000 (رقم تجريبي)',
-    whatsappUrl: null,
-    email: 'info@nodisc-clinic.example',
-    workingDays: 'السبت إلى الخميس',
+    whatsappDisplay: '+967 772070207',
+    whatsappUrl: 'https://wa.me/967772070207',
+    email: 'info@nodisc-clinic.com',
+    workingDays: 'السبت إلى الخميس (تُؤكَّد الأيام والزيارات هاتفياً مسبقاً)',
     workingPeriods: [
-      { label: 'الفترة الصباحية', time: '09:00 صباحًا – 01:30 ظهرًا' },
-      { label: 'الفترة المسائية', time: '04:00 عصرًا – 08:30 مساءً' },
+      { label: 'الفترة الصباحية', time: '09:00 صباحًا – 02:00 ظهرًا' },
+      { label: 'الفترة المسائية', time: '04:00 عصرًا – 09:00 مساءً' },
     ],
     directionsUrl: null,
-    directionsNote: 'سيتم ربط رابط خرائط Google المعتمد عند تزويدنا بالإحداثيات النهائية من المركز.',
+    directionsNote: 'مركز ابن سيناء الطبي التشخيصي — صنعاء، شارع تعز، جولة 45، فوق صيدلية الفيصل.',
+    socialLinks: {
+      facebook: 'https://www.facebook.com/profile.php?id=100094729868998',
+      instagram: 'https://www.instagram.com/neurospine1j/',
+      youtube: 'https://www.youtube.com/channel/UCWkvXXy17cm--SVUqVrJFbg',
+    },
   },
   currency: {
     code: 'YER',
@@ -144,18 +165,60 @@ export const siteConfig: SiteConfig = {
     codFeeYER: 0,
     deliveryFeeYER: 1500,
     freeDeliveryThresholdYER: 35000,
-    ePaymentLabel: 'دفع إلكتروني تجريبي',
+    ePaymentLabel: 'دفع إلكتروني (محافظ وبنوك محلية)',
     ePaymentFeeYER: 0,
     ePaymentNetworks: [
-      { id: 'kuraimi', name: 'حوالة / محفظة إلكترونية (اسم شبكة قابل للإعداد)', accountHint: 'حساب تجريبي: 1000-2000-30' },
-      { id: 'jawali', name: 'محفظة دفع محلية (اسم شبكة قابل للإعداد)', accountHint: 'رمز تاجر تجريبي: NODISC-01' },
-      { id: 'card', name: 'بطاقة بنكية تجريبية', accountHint: 'بوابة دفع إلكتروني قيد الربط' },
+      {
+        id: 'kuraimi',
+        name: 'الكريمي حاسب — بنك الكريمي الإسلامي',
+        nameEn: 'Al-Kuraimi Hasib — Al-Kuraimi Islamic Bank',
+        accountHint: 'حساب رقم: 784545908 (د. محمد عبدالله الجرباني / نوديسك)',
+        accountHintEn: 'Account No: 784545908 (Dr. Mohammed Abdullah Al-Jurbani / NODISC)',
+        logoUrl: '',
+        active: true,
+      },
+      {
+        id: 'jawali',
+        name: 'محفظة جوالي — Jawali (كاك بنك)',
+        nameEn: 'Jawali Wallet (CAC Bank)',
+        accountHint: 'رقم المحفظة: 772070207 (نوديسك كلينك — مبيعات المتجر)',
+        accountHintEn: 'Wallet No: 772070207 (NODISC Clinic — Store Sales)',
+        logoUrl: '',
+        active: true,
+      },
+      {
+        id: 'jeeb',
+        name: 'محفظة جيب — Jeeb (بنك التضامن)',
+        nameEn: 'Jeeb Wallet (Tadhamon Bank)',
+        accountHint: 'رقم المحفظة: 772070207 (نوديسك كلينك — مبيعات المتجر)',
+        accountHintEn: 'Wallet No: 772070207 (NODISC Clinic — Store Sales)',
+        logoUrl: '',
+        active: true,
+      },
+      {
+        id: 'onecash',
+        name: 'محفظة ون كاش — OneCash',
+        nameEn: 'OneCash Wallet',
+        accountHint: 'رقم المحفظة: 772070207 (نوديسك كلينك — مبيعات المتجر)',
+        accountHintEn: 'Wallet No: 772070207 (NODISC Clinic — Store Sales)',
+        logoUrl: '',
+        active: true,
+      },
+      {
+        id: 'flousak',
+        name: 'محفظة فلوسك — Flousak (بنك اليمن والكويت)',
+        nameEn: 'Flousak Wallet (YKB Bank)',
+        accountHint: 'رقم المحفظة: 772070207 (نوديسك كلينك — مبيعات المتجر)',
+        accountHintEn: 'Wallet No: 772070207 (NODISC Clinic — Store Sales)',
+        logoUrl: '',
+        active: true,
+      },
     ],
-    collectionNote: 'أسماء شبكات الدفع والرسوم وأرقام التحصيل قابلة للاستبدال ببيانات المركز المعتمدة.',
+    collectionNote: 'الطلب والتحصيل الإلكتروني عبر هذه المحافظ يعملان بنمط محاكاة محلية داخل المعاينة.',
   },
   bookingRules: {
-    visitTypes: ['استشارة أولى', 'متابعة حالة', 'مراجعة أشعة وتقارير', 'جلسة علاجية / تقييم'],
-    periods: ['الفترة الصباحية (09:00 – 01:30)', 'الفترة المسائية (04:00 – 08:30)'],
+    visitTypes: ['استشارة أولى', 'متابعة حالة', 'مراجعة أشعة الرنين المغناطيسي', 'جلسة علاج طبيعي / تأهيل'],
+    periods: ['الفترة الصباحية (09:00 ص – 02:00 م)', 'الفترة المسائية (04:00 م – 09:00 م)'],
     unavailableDatesDemo: ['2026-11-27', '2026-12-04'], // أمثلة لأيام غير متاحة (الجمعة / إجازة تجريبية)
     capacityPolicyNote:
       'تُحتسب السعة المتبقية للحملات تلقائيًا من عدد المقاعد المعتمدة لكل يوم حملة، ويمكن تعديل قاعدة الاحتساب من إعدادات المركز.',

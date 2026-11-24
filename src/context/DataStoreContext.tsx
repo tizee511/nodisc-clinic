@@ -76,10 +76,10 @@ export interface HomeHeroOverride {
 }
 
 const initialHomeHero: HomeHeroOverride = {
-  kickerAr: 'رعاية عصبية وحركية متكاملة تحت سقف واحد',
-  titleAr: 'نوديسك كلينك — تشخيص دقيق ومسار علاجي متكامل للعمود الفقري والأعصاب',
+  kickerAr: 'صنعاء — مركز ابن سيناء الطبي التشخيصي · بإشراف د. محمد عبدالله الجرباني',
+  titleAr: 'نوديسك كلينك — رعاية متخصصة لجراحة المخ والأعصاب والعمود الفقري وعلاج الألم والتأهيل',
   subtitleAr:
-    'نجمع في نوديسك كلينك بين استشارات جراحة المخ والأعصاب، وعلاج الألم التداخلي، وبرامج التأهيل والعلاج الطبيعي، والصيدلية الطبية في تجربة علاجية منظمة ومريحة.',
+    'رعاية طبية متكاملة تبدأ بالاستماع إلى حالتك وتقييم الفحوصات ومناقشة الخيارات العلاجية المناسبة، عبر أربعة أقسام مترابطة: جراحة المخ والأعصاب، وعلاج الألم وفق معايير Mayo Clinic، والتأهيل والشد الرقمي للعمود الفقري، والصيدلية السريرية.',
   primaryCtaAr: 'طلب موعد',
   secondaryCtaAr: 'تعرّف على أقسامنا',
   heroImage: initialSiteConfig.brand.heroImage,
@@ -568,29 +568,43 @@ export const DataStoreProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const addOrder = (order: OrderRecord) => {
     setOrders((prev) => [order, ...prev]);
     if (order.paymentMode === 'epayment') {
+      const refCode = order.paymentReference?.trim()
+        ? order.paymentReference.trim()
+        : `TRN-${Math.floor(10000 + Math.random() * 90000)}`;
       setOrderPayments((prev) => [
         {
           id: `PAY-${Date.now().toString().slice(-4)}`,
           orderNumber: order.orderNumber,
-          methodLabel: order.paymentNetwork || 'دفع إلكتروني تجريبي',
+          methodLabel: order.paymentNetwork || 'دفع إلكتروني',
           methodType: 'epayment',
           amountYER: order.total,
-          reference: `TRN-${Math.floor(10000 + Math.random() * 90000)}`,
+          reference: refCode,
           timestamp: nowStamp(),
           reviewStatus: 'pending',
-          reviewerName: 'بانتظار المراجعة',
+          reviewerName: order.paymentSenderName
+            ? `بانتظار المراجعة (${order.paymentSenderName})`
+            : 'بانتظار المراجعة',
         },
         ...prev,
       ]);
     } else if (order.paymentMode === 'split' && order.splitDetails) {
+      const isCod1 =
+        order.splitDetails.method1.includes('نقد') ||
+        order.splitDetails.method1.toLowerCase().includes('cash');
+      const isCod2 =
+        order.splitDetails.method2.includes('نقد') ||
+        order.splitDetails.method2.toLowerCase().includes('cash');
       setOrderPayments((prev) => [
         {
           id: `PAY-${Date.now().toString().slice(-4)}-A`,
           orderNumber: order.orderNumber,
           methodLabel: order.splitDetails!.method1,
-          methodType: 'cod',
+          methodType: isCod1 ? 'cod' : 'epayment',
           amountYER: order.splitDetails!.amount1,
-          reference: `SPL1-${order.orderNumber}`,
+          reference:
+            !isCod1 && order.paymentReference?.trim()
+              ? order.paymentReference.trim()
+              : `SPL1-${order.orderNumber}`,
           timestamp: nowStamp(),
           reviewStatus: 'pending',
           reviewerName: 'بانتظار المراجعة',
@@ -599,9 +613,12 @@ export const DataStoreProvider: React.FC<{ children: React.ReactNode }> = ({ chi
           id: `PAY-${Date.now().toString().slice(-4)}-B`,
           orderNumber: order.orderNumber,
           methodLabel: order.splitDetails!.method2,
-          methodType: 'epayment',
+          methodType: isCod2 ? 'cod' : 'epayment',
           amountYER: order.splitDetails!.amount2,
-          reference: `SPL2-${order.orderNumber}`,
+          reference:
+            !isCod2 && order.paymentReference?.trim()
+              ? order.paymentReference.trim()
+              : `SPL2-${order.orderNumber}`,
           timestamp: nowStamp(),
           reviewStatus: 'pending',
           reviewerName: 'بانتظار المراجعة',

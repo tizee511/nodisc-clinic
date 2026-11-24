@@ -151,6 +151,7 @@ export interface StoreMainSection {
   nameAr: string;
   nameEn: string;
   description: string;
+  image?: string;
   order: number;
   visible: boolean;
 }
@@ -177,6 +178,12 @@ export interface Product {
   supplier?: string;
   unit: string;
   priceYER: number;
+  originalPriceYER?: number;
+  isOnSale?: boolean;
+  offerLabelAr?: string;
+  offerLabelEn?: string;
+  offerExpiresAt?: string;
+  offerType?: 'discount' | 'bundle' | 'medical';
   wholesalePriceYER?: number;
   inStock: boolean;
   stockQty: number;
@@ -283,6 +290,10 @@ export interface OrderRecord {
   notes?: string;
   paymentMode: 'cod' | 'epayment' | 'split';
   paymentNetwork?: string;
+  paymentAccountHint?: string;
+  paymentReference?: string;
+  paymentSenderName?: string;
+  paymentReceiptName?: string;
   splitDetails?: {
     method1: string;
     amount1: number;

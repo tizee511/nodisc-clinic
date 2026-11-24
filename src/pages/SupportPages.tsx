@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { CheckCircle2, Clock, MapPin, Phone, Search } from 'lucide-react';
+import { CheckCircle2, Clock, ExternalLink, Mail, MapPin, MessageSquare, Phone, Search } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useClinic } from '../context/ClinicContext';
 import { useDataStore } from '../context/DataStoreContext';
@@ -69,16 +69,79 @@ export const ContactPage: React.FC = () => {
               </p>
               <div className="space-y-1.5 pt-1">
                 {localizedConfig.contact.phones.map((ph, i) => (
-                  <p key={i} className="flex items-center gap-2.5">
+                  <p key={i} className="flex items-center gap-2.5 flex-wrap">
                     <Phone className="w-4 h-4 text-[#0F4C5C] shrink-0" />
                     <span>{ph.label}: </span>
-                    <span className="font-mono font-semibold text-slate-900 tabular-nums" dir="ltr">
+                    <a
+                      href={`tel:${ph.value.replace(/\s+/g, '')}`}
+                      className="font-mono font-semibold text-slate-900 hover:text-[#0F4C5C] tabular-nums"
+                      dir="ltr"
+                    >
                       {ph.value}
-                    </span>
+                    </a>
                   </p>
                 ))}
+                <p className="flex items-center gap-2.5 flex-wrap">
+                  <Mail className="w-4 h-4 text-[#0F4C5C] shrink-0" />
+                  <span>{lang === 'ar' ? 'البريد الإلكتروني' : 'Email'}: </span>
+                  <a
+                    href={`mailto:${localizedConfig.contact.email}`}
+                    className="font-mono font-semibold text-slate-900 hover:text-[#0F4C5C]"
+                    dir="ltr"
+                  >
+                    {localizedConfig.contact.email}
+                  </a>
+                </p>
               </div>
               <p className="text-xs text-[#0284C7] pt-1">{localizedConfig.contact.directionsNote}</p>
+              {(localizedConfig.contact.whatsappUrl || localizedConfig.contact.socialLinks) && (
+                <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-100">
+                  {localizedConfig.contact.whatsappUrl && (
+                    <a
+                      href={localizedConfig.contact.whatsappUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 text-xs font-semibold transition-colors"
+                    >
+                      <MessageSquare className="w-3.5 h-3.5" />
+                      <span>{lang === 'ar' ? 'واتساب المباشر' : 'WhatsApp Chat'}</span>
+                    </a>
+                  )}
+                  {localizedConfig.contact.socialLinks?.facebook && (
+                    <a
+                      href={localizedConfig.contact.socialLinks.facebook}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-medium transition-colors"
+                    >
+                      <span>Facebook</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  )}
+                  {localizedConfig.contact.socialLinks?.instagram && (
+                    <a
+                      href={localizedConfig.contact.socialLinks.instagram}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-medium transition-colors"
+                    >
+                      <span>Instagram</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  )}
+                  {localizedConfig.contact.socialLinks?.youtube && (
+                    <a
+                      href={localizedConfig.contact.socialLinks.youtube}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-medium transition-colors"
+                    >
+                      <span>YouTube</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  )}
+                </div>
+              )}
             </div>
           </div>
 
