@@ -5,6 +5,7 @@ import { Footer } from './Footer';
 import { StoreHeader } from './store/StoreHeader';
 import { StoreFooter } from './store/StoreFooter';
 import { FloatingContactButton } from './FloatingContactButton';
+import { MobileBottomNav } from './MobileBottomNav';
 
 export const Layout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
   const { pathname } = useLocation();
@@ -15,11 +16,12 @@ export const Layout: React.FC<{ children?: React.ReactNode }> = ({ children }) =
   }, [pathname]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
+    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 pb-20 lg:pb-0">
       {isStoreRoute ? <StoreHeader /> : <Header />}
       <main className="flex-1">{children ?? <Outlet />}</main>
       {isStoreRoute ? <StoreFooter /> : <Footer />}
       <FloatingContactButton />
+      <MobileBottomNav />
     </div>
   );
 };

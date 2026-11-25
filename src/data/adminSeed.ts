@@ -158,7 +158,7 @@ export const homepageSectionsSeed: HomepageSectionConfig[] = [
   { id: 'hero', labelAr: 'الواجهة الأولى (Hero)', labelEn: 'Hero Banner', visible: true, order: 1 },
   { id: 'campaign', labelAr: 'بطاقة الحملة النشطة', labelEn: 'Active Campaign Banner', visible: true, order: 2 },
   { id: 'departments', labelAr: 'الأقسام الأربعة', labelEn: 'Four Departments', visible: true, order: 3 },
-  { id: 'doctor', labelAr: 'التعريف بالدكتور محمد الجرباني والفريق', labelEn: 'Lead Physician & Team', visible: true, order: 4 },
+  { id: 'doctor', labelAr: 'التعريف بالدكتور محمد الجرباني', labelEn: 'Lead Physician', visible: true, order: 4 },
   { id: 'services', labelAr: 'الخدمات المختارة', labelEn: 'Featured Services', visible: true, order: 5 },
   { id: 'stories', labelAr: 'قصص النجاح المختارة', labelEn: 'Success Stories', visible: true, order: 6 },
   { id: 'library', labelAr: 'المقالات والفيديو البارز', labelEn: 'Library & Featured Video', visible: true, order: 7 },

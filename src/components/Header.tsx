@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import {
   ArrowLeft,
@@ -19,6 +19,7 @@ import { useClinic } from '../context/ClinicContext';
 import { ClinicLogoMark } from './ClinicLogoMark';
 import { SearchModal } from './SearchModal';
 import { SafeImage } from './SafeImage';
+import { AnnouncementTicker, TickerItem } from './AnnouncementTicker';
 
 export const Header: React.FC = () => {
   const {
@@ -28,6 +29,7 @@ export const Header: React.FC = () => {
     t,
     localizedConfig,
     departments,
+    campaigns,
   } = useLanguage();
   const { cartCount, wishlistCount } = useClinic();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -36,8 +38,72 @@ export const Header: React.FC = () => {
   const [searchOpen, setSearchOpen] = useState(false);
   const location = useLocation();
 
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMobileMenuOpen(false);
+    };
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [mobileMenuOpen]);
+
   const ArrowIcon = isRTL ? ArrowLeft : ArrowRight;
   const isDepartmentActive = location.pathname.startsWith('/departments');
+
+  const clinicTickerItems = useMemo<TickerItem[]>(() => {
+    const activeCampaign = campaigns[0];
+    return [
+      {
+        id: 'non-surgical',
+        badge: lang === 'ar' ? 'تخصصنا' : 'Care',
+        text:
+          lang === 'ar'
+            ? 'علاج الانزلاق الغضروفي وآلام العمود الفقري والمفاصل بدون جراحة'
+            : 'Non-surgical spine, disc herniation & joint rehabilitation care',
+        to: '/services',
+      },
+      ...(activeCampaign
+        ? [
+            {
+              id: `camp-${activeCampaign.id}`,
+              badge: lang === 'ar' ? 'حملة' : 'Campaign',
+              text: activeCampaign.title,
+              to: `/campaigns/${activeCampaign.slug}`,
+            },
+          ]
+        : []),
+      {
+        id: 'doctor',
+        text:
+          lang === 'ar'
+            ? 'إشراف طبي مباشر: د. محمد عبدالله الجرباني — استشاري جراحة العظام والعمود الفقري'
+            : 'Led by Dr. Mohammed Al-Jurbani — Consultant Orthopedic & Spine Specialist',
+        to: '/doctors',
+      },
+      {
+        id: 'instant-book',
+        badge: lang === 'ar' ? 'احجز الآن' : 'Book',
+        text:
+          lang === 'ar'
+            ? 'احجز موعدك إلكترونياً خلال ثوانٍ في عيادات نوديسك بصنعاء'
+            : 'Book your consultation online in seconds at NODISC Clinic Sana’a',
+        to: '/book',
+      },
+      {
+        id: 'store-link',
+        text:
+          lang === 'ar'
+            ? 'اكتشف متجر صيدلية نوديسك للدعامات الطبية وأجهزة التأهيل المنزلي'
+            : 'Explore NODISC Pharmacy Store for orthopedic braces & rehab devices',
+        to: '/store',
+      },
+    ];
+  }, [lang, campaigns]);
 
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
     `text-sm font-medium whitespace-nowrap shrink-0 py-1.5 border-b-2 transition-colors ${
@@ -71,10 +137,6 @@ export const Header: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-4 ms-auto">
-            <span className="hidden xl:inline text-sky-200/90">
-              {localizedConfig.brand.prototypeNotice}
-            </span>
-
             <Link
               to="/admin"
               className="px-2.5 py-0.5 rounded bg-white/10 hover:bg-white/20 text-white text-[11px] font-semibold transition-colors whitespace-nowrap"
@@ -294,142 +356,184 @@ export const Header: React.FC = () => {
           </div>
         </div>
 
-        {/* Mobile Prototype Notice Bar */}
-        <div className="xl:hidden bg-sky-50/90 border-t border-sky-100 px-4 py-1 text-[11px] text-[#093542] text-center truncate">
-          {localizedConfig.brand.prototypeNotice}
-        </div>
+      </header>
 
-        {/* Mobile Navigation Drawer with Collapsible Hierarchical Accordions */}
-        {mobileMenuOpen && (
-          <div className="lg:hidden bg-white border-t border-slate-200 max-h-[80vh] overflow-y-auto px-4 py-4 space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <span className="text-xs font-medium text-slate-500 inline-flex items-center gap-1.5">
-                <Globe className="w-3.5 h-3.5" />
-                {t('nav.languageLabel')}
+      {/* Eye-Catching Moving Highlights Strip Under Clinic Header */}
+      <AnnouncementTicker
+        variant="clinic"
+        ariaLabel={lang === 'ar' ? 'أبرز خدمات وعروض نوديسك كلينك' : 'NODISC Clinic Highlights'}
+        items={clinicTickerItems}
+      />
+
+      {/* Full-Height Half-Width Mobile Navigation Drawer with Smooth Slide */}
+      <div
+        className={`fixed inset-0 z-50 lg:hidden flex transition-opacity duration-350 ease-out ${
+          mobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
+        role="dialog"
+        aria-modal="true"
+        aria-hidden={!mobileMenuOpen}
+        aria-label={lang === 'ar' ? 'قائمة الجوال' : 'Mobile Navigation'}
+      >
+        <aside
+          className={`relative z-10 w-1/2 h-full bg-gradient-to-b from-white via-white to-sky-50/45 border-e border-[#0F4C5C]/20 shadow-2xl flex flex-col overflow-hidden transition-all duration-350 ease-[cubic-bezier(0.22,1.18,0.36,1)] ${
+            mobileMenuOpen
+              ? 'translate-x-0 scale-100 opacity-100'
+              : `${isRTL ? 'translate-x-full' : '-translate-x-full'} scale-[0.96] opacity-90`
+          }`}
+        >
+            {/* Drawer Header */}
+            <div className="px-3 py-3 border-b border-slate-200 bg-[#093542] text-white flex items-center justify-between gap-2 shrink-0">
+              <span className="font-display font-bold text-xs sm:text-sm truncate">
+                {lang === 'ar' ? 'القائمة الرئيسية' : 'Main Menu'}
               </span>
-              <div className="inline-flex rounded-lg bg-slate-100 p-0.5">
-                <button
-                  type="button"
-                  onClick={() => setLang('ar')}
-                  className={`px-3 py-1 rounded-md text-xs font-medium ${
-                    lang === 'ar' ? 'bg-white text-[#0F4C5C] shadow-xs' : 'text-slate-600'
-                  }`}
-                >
-                  العربية
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setLang('en')}
-                  className={`px-3 py-1 rounded-md text-xs font-medium ${
-                    lang === 'en' ? 'bg-white text-[#0F4C5C] shadow-xs' : 'text-slate-600'
-                  }`}
-                >
-                  English
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={() => setMobileMenuOpen(false)}
+                aria-label={t('nav.closeMenu')}
+                className="w-9 h-9 rounded-lg bg-white/10 hover:bg-white/20 text-white inline-flex items-center justify-center shrink-0 transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
 
-            <nav className="space-y-1.5" aria-label={lang === 'ar' ? 'قائمة الجوال' : 'Mobile Navigation'}>
-              {[
-                { to: '/', label: t('nav.home') },
-                { to: '/about', label: t('nav.about') },
-                { to: '/doctors', label: t('nav.doctors') },
-                { to: '/services', label: t('nav.services') },
-                { to: '/library', label: t('nav.library') },
-                { to: '/campaigns', label: t('nav.campaigns') },
-                { to: '/store', label: t('nav.store') },
-              ].map((item) => (
+            {/* Scrollable Drawer Content */}
+            <div className="flex-1 overflow-y-auto px-3 py-3 space-y-4">
+              <div className="flex items-center justify-between gap-1.5 pb-3 border-b border-slate-100">
+                <Globe className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+                <div className="inline-flex rounded-lg bg-slate-100 p-0.5 flex-1">
+                  <button
+                    type="button"
+                    onClick={() => setLang('ar')}
+                    className={`flex-1 py-1 rounded-md text-[11px] font-medium transition-colors ${
+                      lang === 'ar' ? 'bg-white text-[#0F4C5C] shadow-xs' : 'text-slate-600'
+                    }`}
+                  >
+                    العربية
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setLang('en')}
+                    className={`flex-1 py-1 rounded-md text-[11px] font-medium transition-colors ${
+                      lang === 'en' ? 'bg-white text-[#0F4C5C] shadow-xs' : 'text-slate-600'
+                    }`}
+                  >
+                    EN
+                  </button>
+                </div>
+              </div>
+
+              <nav className="space-y-1" aria-label={lang === 'ar' ? 'قائمة الجوال' : 'Mobile Navigation'}>
+                {[
+                  { to: '/', label: t('nav.home') },
+                  { to: '/about', label: t('nav.about') },
+                  { to: '/doctors', label: t('nav.doctors') },
+                  { to: '/services', label: t('nav.services') },
+                  { to: '/library', label: t('nav.library') },
+                  { to: '/campaigns', label: t('nav.campaigns') },
+                  { to: '/store', label: t('nav.store') },
+                ].map((item) => (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    end={item.to === '/'}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={({ isActive }) =>
+                      `min-h-[42px] flex items-center px-2.5 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
+                        isActive ? 'bg-sky-50 text-[#0F4C5C] font-semibold' : 'text-slate-700 hover:bg-slate-50'
+                      }`
+                    }
+                  >
+                    <span className="truncate">{item.label}</span>
+                  </NavLink>
+                ))}
+
+                {/* Collapsible Mobile Accordion: Medical Departments */}
+                <div className="rounded-xl border border-slate-200/80 overflow-hidden bg-slate-50/50">
+                  <button
+                    type="button"
+                    aria-expanded={mobileDeptOpen}
+                    onClick={() => setMobileDeptOpen((curr) => !curr)}
+                    className="w-full min-h-[42px] px-2.5 py-2 flex items-center justify-between gap-1.5 text-xs sm:text-sm font-semibold text-slate-800 hover:bg-slate-100/70"
+                  >
+                    <span className="truncate">
+                      {t('nav.departments')} ({departments.length})
+                    </span>
+                    <ChevronDown
+                      className={`w-3.5 h-3.5 text-slate-500 shrink-0 transition-transform duration-200 ${
+                        mobileDeptOpen ? 'rotate-180' : ''
+                      }`}
+                    />
+                  </button>
+                  {mobileDeptOpen && (
+                    <div className="px-2 pb-2 space-y-1 border-t border-slate-200/60 pt-2 animate-accordion-reveal">
+                      {departments.map((dept) => (
+                        <NavLink
+                          key={dept.id}
+                          to={`/departments/${dept.slug}`}
+                          onClick={() => setMobileMenuOpen(false)}
+                          className={({ isActive }) =>
+                            `flex items-center gap-2 px-2 py-2 rounded-lg text-xs font-medium ${
+                              isActive
+                                ? 'bg-white border border-[#0F4C5C]/30 text-[#0F4C5C] font-semibold'
+                                : 'text-slate-700 hover:bg-white'
+                            }`
+                          }
+                        >
+                          <img
+                            src={dept.image}
+                            alt={dept.nameAr}
+                            className="w-6 h-6 rounded object-cover border border-slate-200 shrink-0"
+                          />
+                          <span className="truncate">{dept.nameAr}</span>
+                        </NavLink>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
                 <NavLink
-                  key={item.to}
-                  to={item.to}
-                  end={item.to === '/'}
+                  to="/contact"
                   onClick={() => setMobileMenuOpen(false)}
                   className={({ isActive }) =>
-                    `block px-3 py-2.5 rounded-lg text-sm font-medium ${
+                    `min-h-[42px] flex items-center px-2.5 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
                       isActive ? 'bg-sky-50 text-[#0F4C5C] font-semibold' : 'text-slate-700 hover:bg-slate-50'
                     }`
                   }
                 >
-                  {item.label}
+                  <span className="truncate">{t('nav.contact')}</span>
                 </NavLink>
-              ))}
+              </nav>
+            </div>
 
-              {/* Collapsible Mobile Accordion: Medical Departments */}
-              <div className="rounded-xl border border-slate-200/80 overflow-hidden bg-slate-50/50">
-                <button
-                  type="button"
-                  aria-expanded={mobileDeptOpen}
-                  onClick={() => setMobileDeptOpen((curr) => !curr)}
-                  className="w-full px-3.5 py-2.5 flex items-center justify-between text-sm font-semibold text-slate-800 hover:bg-slate-100/70"
-                >
-                  <span>
-                    {t('nav.departments')} ({departments.length})
-                  </span>
-                  <ChevronDown
-                    className={`w-4 h-4 text-slate-500 transition-transform duration-200 ${
-                      mobileDeptOpen ? 'rotate-180' : ''
-                    }`}
-                  />
-                </button>
-                {mobileDeptOpen && (
-                  <div className="px-2.5 pb-2.5 space-y-1 border-t border-slate-200/60 pt-2">
-                    {departments.map((dept) => (
-                      <NavLink
-                        key={dept.id}
-                        to={`/departments/${dept.slug}`}
-                        onClick={() => setMobileMenuOpen(false)}
-                        className={({ isActive }) =>
-                          `flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-xs font-medium ${
-                            isActive
-                              ? 'bg-white border border-[#0F4C5C]/30 text-[#0F4C5C] font-semibold'
-                              : 'text-slate-700 hover:bg-white'
-                          }`
-                        }
-                      >
-                        <img
-                          src={dept.image}
-                          alt={dept.nameAr}
-                          className="w-8 h-8 rounded object-cover border border-slate-200 shrink-0"
-                        />
-                        <span className="truncate">{dept.nameAr}</span>
-                      </NavLink>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              <NavLink
-                to="/contact"
-                onClick={() => setMobileMenuOpen(false)}
-                className={({ isActive }) =>
-                  `block px-3 py-2.5 rounded-lg text-sm font-medium ${
-                    isActive ? 'bg-sky-50 text-[#0F4C5C] font-semibold' : 'text-slate-700 hover:bg-slate-50'
-                  }`
-                }
-              >
-                {t('nav.contact')}
-              </NavLink>
-            </nav>
-
-            <div className="pt-2 border-t border-slate-100 flex flex-col gap-2">
+            {/* Pinned Bottom Actions */}
+            <div className="p-3 border-t border-slate-200 bg-slate-50/70 flex flex-col gap-2 shrink-0">
               <Link
                 to="/book"
                 onClick={() => setMobileMenuOpen(false)}
-                className="w-full py-3 px-4 rounded-lg bg-[#0F4C5C] text-white text-sm font-semibold text-center"
+                className="w-full py-2.5 px-3 rounded-lg bg-[#0F4C5C] hover:bg-[#093542] text-white text-xs font-semibold text-center truncate"
               >
                 {t('nav.bookAppointment')}
               </Link>
               <Link
                 to="/store/prescription"
                 onClick={() => setMobileMenuOpen(false)}
-                className="w-full py-2.5 px-4 rounded-lg border border-slate-200 text-slate-700 text-sm font-medium text-center"
+                className="w-full py-2 px-3 rounded-lg border border-slate-200 bg-white text-slate-700 hover:text-[#0F4C5C] text-xs font-medium text-center truncate"
               >
                 {t('nav.prescriptionOrder')}
               </Link>
             </div>
-          </div>
-        )}
-      </header>
+          </aside>
+
+          {/* Remaining Half Backdrop */}
+          <div
+            className={`flex-1 bg-[#06222B]/55 backdrop-blur-sm transition-opacity duration-350 ${
+              mobileMenuOpen ? 'opacity-100' : 'opacity-0'
+            }`}
+            onClick={() => setMobileMenuOpen(false)}
+            aria-hidden="true"
+          />
+        </div>
 
       <SearchModal isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
     </>

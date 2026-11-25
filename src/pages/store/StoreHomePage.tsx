@@ -47,67 +47,12 @@ export const StoreHomePage: React.FC = () => {
   }, [searchQuery, products, productCategories, storeMainSections, activeMainSection]);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 lg:py-10 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 lg:py-8 space-y-8">
       <div className="space-y-4">
         <Breadcrumbs items={[{ label: t('nav.store') }]} />
+        <h1 className="sr-only">{t('store.title')}</h1>
 
-        {/* Store Title Header + Quick Actions */}
-        <div className="bg-white rounded-xl border border-slate-200 p-5 sm:p-6">
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-            <div className="space-y-1">
-              <h1 className="font-display font-bold text-3xl text-slate-900">{t('store.title')}</h1>
-              <p className="text-sm sm:text-base text-slate-600 max-w-2xl">{t('store.subtitle')}</p>
-            </div>
-            <div className="flex flex-wrap items-center gap-2.5 shrink-0">
-              <Link
-                to="/store/offers"
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-800 text-sm font-semibold transition-colors whitespace-nowrap"
-              >
-                <Percent className="w-4 h-4 text-rose-600" />
-                <span>{t('nav.offers')}</span>
-                {offersCount > 0 && (
-                  <span className="px-1.5 py-0.5 rounded bg-rose-600 text-white text-[11px] font-bold tabular-nums">
-                    {offersCount}
-                  </span>
-                )}
-              </Link>
-              <Link
-                to="/store/wishlist"
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-slate-300 bg-white hover:border-rose-300 hover:bg-rose-50 text-slate-700 hover:text-rose-700 text-sm font-semibold transition-colors whitespace-nowrap"
-              >
-                <Heart
-                  className={`w-4 h-4 ${
-                    wishlistCount > 0 ? 'fill-rose-500 text-rose-600' : 'text-rose-600'
-                  }`}
-                />
-                <span>{lang === 'ar' ? 'المفضلة' : 'Favorites'}</span>
-                {wishlistCount > 0 && (
-                  <span className="px-1.5 py-0.5 rounded bg-rose-600 text-white text-[11px] font-bold tabular-nums">
-                    {wishlistCount}
-                  </span>
-                )}
-              </Link>
-              <Link
-                to="/store/prescription"
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-[#0F4C5C] text-[#0F4C5C] hover:bg-sky-50 text-sm font-semibold transition-colors whitespace-nowrap"
-              >
-                <FileUp className="w-4 h-4" />
-                <span>{t('nav.prescriptionOrder')}</span>
-              </Link>
-              <Link
-                to="/store/cart"
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#0F4C5C] hover:bg-[#093542] text-white text-sm font-semibold transition-colors tabular-nums whitespace-nowrap"
-              >
-                <ShoppingBag className="w-4 h-4" />
-                <span>
-                  {t('nav.cart')} ({cartCount}) · {formatPrice(cartSubtotalYER)}
-                </span>
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        {/* Auto-Sliding Offers Carousel directly under the Store Title */}
+        {/* Auto-Sliding Offers Carousel at the very head of the Store Page */}
         <StoreOffersCarousel />
 
         {/* Prominent Store Main Groups Filter Bar + Search */}
@@ -228,6 +173,64 @@ export const StoreHomePage: React.FC = () => {
               </span>
               <ArrowIcon className="w-4 h-4" />
             </Link>
+          </div>
+
+          {/* Relocated Store Info & Quick Actions Footer Card */}
+          <div className="bg-white rounded-xl border border-slate-200 p-5 sm:p-6">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+              <div className="space-y-1">
+                <h2 className="font-display font-bold text-xl sm:text-2xl text-slate-900">
+                  {t('store.title')}
+                </h2>
+                <p className="text-xs sm:text-sm text-slate-600 max-w-2xl">{t('store.subtitle')}</p>
+              </div>
+              <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+                <Link
+                  to="/store/offers"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-800 text-sm font-semibold transition-colors whitespace-nowrap"
+                >
+                  <Percent className="w-4 h-4 text-rose-600" />
+                  <span>{t('nav.offers')}</span>
+                  {offersCount > 0 && (
+                    <span className="px-1.5 py-0.5 rounded bg-rose-600 text-white text-[11px] font-bold tabular-nums">
+                      {offersCount}
+                    </span>
+                  )}
+                </Link>
+                <Link
+                  to="/store/wishlist"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-slate-300 bg-white hover:border-rose-300 hover:bg-rose-50 text-slate-700 hover:text-rose-700 text-sm font-semibold transition-colors whitespace-nowrap"
+                >
+                  <Heart
+                    className={`w-4 h-4 ${
+                      wishlistCount > 0 ? 'fill-rose-500 text-rose-600' : 'text-rose-600'
+                    }`}
+                  />
+                  <span>{lang === 'ar' ? 'المفضلة' : 'Favorites'}</span>
+                  {wishlistCount > 0 && (
+                    <span className="px-1.5 py-0.5 rounded bg-rose-600 text-white text-[11px] font-bold tabular-nums">
+                      {wishlistCount}
+                    </span>
+                  )}
+                </Link>
+                <Link
+                  to="/store/prescription"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-[#0F4C5C] text-[#0F4C5C] hover:bg-sky-50 text-sm font-semibold transition-colors whitespace-nowrap"
+                >
+                  <FileUp className="w-4 h-4" />
+                  <span>{t('nav.prescriptionOrder')}</span>
+                </Link>
+                <Link
+                  to="/store/cart"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#0F4C5C] hover:bg-[#093542] text-white text-sm font-semibold transition-colors tabular-nums whitespace-nowrap"
+                >
+                  <ShoppingBag className="w-4 h-4" />
+                  <span>
+                    {t('nav.cart')} ({cartCount}) · {formatPrice(cartSubtotalYER)}
+                  </span>
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       )}

@@ -12,7 +12,7 @@ export const FloatingContactButton: React.FC = () => {
   if (!localizedConfig.features.showFloatingContactButton) return null;
 
   return (
-    <div className="fixed bottom-4 end-4 z-30">
+    <div className="fixed bottom-20 lg:bottom-4 end-3 sm:end-4 z-30">
       {open && (
         <div
           className="mb-3 w-72 bg-white rounded-xl border border-slate-200 shadow-xl p-4 space-y-3"

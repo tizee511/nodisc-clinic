@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import {
   ArrowLeft,
@@ -18,6 +18,7 @@ import { siteConfig } from '../../config/siteConfig';
 import { useLanguage } from '../../context/LanguageContext';
 import { useClinic } from '../../context/ClinicContext';
 import { SearchModal } from '../SearchModal';
+import { AnnouncementTicker, TickerItem } from '../AnnouncementTicker';
 
 export const StoreHeader: React.FC = () => {
   const { lang, isRTL, setLang, t, localizedConfig, storeMainSections, products } = useLanguage();
@@ -25,6 +26,20 @@ export const StoreHeader: React.FC = () => {
     useClinic();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMobileMenuOpen(false);
+    };
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [mobileMenuOpen]);
 
   const BackIcon = isRTL ? ArrowRight : ArrowLeft;
 
@@ -34,6 +49,46 @@ export const StoreHeader: React.FC = () => {
         (p) => p.isOnSale || (p.originalPriceYER !== undefined && p.originalPriceYER > p.priceYER)
       ).length,
     [products]
+  );
+
+  const storeTickerItems = useMemo<TickerItem[]>(
+    () => [
+      {
+        id: 'store-offers',
+        badge: offersCount > 0 ? (lang === 'ar' ? `${offersCount} عرض` : `${offersCount} Deals`) : undefined,
+        text:
+          lang === 'ar'
+            ? 'عروض وتخفيضات حصرية متجددة على مستلزمات التأهيل والفيتامينات والعناية'
+            : 'Exclusive seasonal savings across rehab gear, vitamins & daily care',
+        to: '/store/offers',
+      },
+      {
+        id: 'store-rx',
+        badge: lang === 'ar' ? 'وصفة' : 'Rx',
+        text:
+          lang === 'ar'
+            ? 'ارفع صورة وصفتك الطبية بضغطة زر ليجهزها لك الصيدلي المختص فوراً'
+            : 'Upload your prescription photo in one tap for instant pharmacist prep',
+        to: '/store/prescription',
+      },
+      {
+        id: 'store-verified',
+        text:
+          lang === 'ar'
+            ? 'جميع الدعامات الطبية والمكملات أصلية ومختارة بإشراف صيدلاني موثوق'
+            : '100% authentic medical braces & supplements curated by licensed pharmacists',
+        to: '/store/category/all',
+      },
+      {
+        id: 'store-payments',
+        text:
+          lang === 'ar'
+            ? 'دفع إلكتروني مرن عبر المحافظ المعتمدة أو نقداً عند الاستلام'
+            : 'Flexible e-wallets & Cash on Delivery across all orders',
+        to: '/store/cart',
+      },
+    ],
+    [lang, offersCount]
   );
 
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
@@ -252,122 +307,174 @@ export const StoreHeader: React.FC = () => {
           </div>
         </div>
 
-        {/* Mobile Store Navigation Drawer */}
-        {mobileMenuOpen && (
-          <div className="lg:hidden bg-white border-t border-slate-200 max-h-[82vh] overflow-y-auto px-4 py-4 space-y-4">
-            <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-100">
-              <div className="flex items-center gap-2">
-                <Globe className="w-3.5 h-3.5 text-slate-500" />
-                <div className="inline-flex rounded-lg bg-slate-100 p-0.5">
-                  <button
-                    type="button"
-                    onClick={() => setLang('ar')}
-                    className={`px-3 py-1 rounded-md text-xs font-medium ${
-                      lang === 'ar' ? 'bg-white text-[#0F4C5C] shadow-xs' : 'text-slate-600'
-                    }`}
+      </header>
+
+      {/* Eye-Catching Moving Highlights Strip Under Store Header */}
+      <AnnouncementTicker
+        variant="store"
+        ariaLabel={lang === 'ar' ? 'عروض ومزايا متجر صيدلية نوديسك' : 'NODISC Store Highlights'}
+        items={storeTickerItems}
+      />
+
+      {/* Full-Height Half-Width Mobile Store Navigation Drawer with Smooth Slide */}
+      <div
+        className={`fixed inset-0 z-50 lg:hidden flex transition-opacity duration-350 ease-out ${
+          mobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
+        role="dialog"
+        aria-modal="true"
+        aria-hidden={!mobileMenuOpen}
+        aria-label={lang === 'ar' ? 'قائمة المتجر للجوال' : 'Mobile Store Navigation'}
+      >
+        <aside
+          className={`relative z-10 w-1/2 h-full bg-gradient-to-b from-white via-white to-sky-50/45 border-e border-[#0F4C5C]/20 shadow-2xl flex flex-col overflow-hidden transition-all duration-350 ease-[cubic-bezier(0.22,1.18,0.36,1)] ${
+            mobileMenuOpen
+              ? 'translate-x-0 scale-100 opacity-100'
+              : `${isRTL ? 'translate-x-full' : '-translate-x-full'} scale-[0.96] opacity-90`
+          }`}
+        >
+            {/* Drawer Header */}
+            <div className="px-3 py-3 border-b border-slate-200 bg-[#062B35] text-white flex items-center justify-between gap-2 shrink-0">
+              <span className="font-display font-bold text-xs sm:text-sm truncate">
+                {lang === 'ar' ? 'قائمة المتجر' : 'Store Menu'}
+              </span>
+              <button
+                type="button"
+                onClick={() => setMobileMenuOpen(false)}
+                aria-label={t('nav.closeMenu')}
+                className="w-9 h-9 rounded-lg bg-white/10 hover:bg-white/20 text-white inline-flex items-center justify-center shrink-0 transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Scrollable Drawer Content */}
+            <div className="flex-1 overflow-y-auto px-3 py-3 space-y-4">
+              {/* Language & Currency */}
+              <div className="space-y-2 pb-3 border-b border-slate-100">
+                <div className="flex items-center justify-between gap-1.5">
+                  <Globe className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+                  <div className="inline-flex rounded-lg bg-slate-100 p-0.5 flex-1">
+                    <button
+                      type="button"
+                      onClick={() => setLang('ar')}
+                      className={`flex-1 py-1 rounded-md text-[11px] font-medium transition-colors ${
+                        lang === 'ar' ? 'bg-white text-[#0F4C5C] shadow-xs' : 'text-slate-600'
+                      }`}
+                    >
+                      العربية
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setLang('en')}
+                      className={`flex-1 py-1 rounded-md text-[11px] font-medium transition-colors ${
+                        lang === 'en' ? 'bg-white text-[#0F4C5C] shadow-xs' : 'text-slate-600'
+                      }`}
+                    >
+                      EN
+                    </button>
+                  </div>
+                </div>
+
+                <select
+                  aria-label={t('common.currencyLabel')}
+                  value={currencyCode}
+                  onChange={(e) => setCurrencyCode(e.target.value)}
+                  className="w-full px-2.5 py-1.5 rounded-lg border border-slate-200 bg-slate-50 text-[11px] font-medium text-slate-800"
+                >
+                  {Object.entries(siteConfig.currency.exchangeRatesFromYER).map(([code, info]) => (
+                    <option key={code} value={code}>
+                      {info.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Primary Store Links */}
+              <nav
+                className="space-y-1"
+                aria-label={lang === 'ar' ? 'قائمة المتجر للجوال' : 'Mobile Store Navigation'}
+              >
+                {[
+                  { to: '/store', label: lang === 'ar' ? 'رئيسية المتجر' : 'Store Home', end: true },
+                  { to: '/store/category/all', label: t('store.allProducts') },
+                  { to: '/store/offers', label: `${t('nav.offers')} (${offersCount})` },
+                  { to: '/store/prescription', label: t('nav.prescriptionOrder') },
+                  { to: '/store/wishlist', label: `${lang === 'ar' ? 'المفضلة' : 'Favorites'} (${wishlistCount})` },
+                  { to: '/store/cart', label: `${t('nav.cart')} (${cartCount})` },
+                ].map((item) => (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    end={item.end}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={({ isActive }) =>
+                      `min-h-[42px] flex items-center px-2.5 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
+                        isActive ? 'bg-sky-50 text-[#0F4C5C] font-semibold' : 'text-slate-700 hover:bg-slate-50'
+                      }`
+                    }
                   >
-                    العربية
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setLang('en')}
-                    className={`px-3 py-1 rounded-md text-xs font-medium ${
-                      lang === 'en' ? 'bg-white text-[#0F4C5C] shadow-xs' : 'text-slate-600'
-                    }`}
-                  >
-                    English
-                  </button>
+                    <span className="truncate">{item.label}</span>
+                  </NavLink>
+                ))}
+              </nav>
+
+              {/* Quick Links to Store Main Groups */}
+              <div className="pt-2 border-t border-slate-100 space-y-2">
+                <p className="text-[11px] font-bold text-slate-500 px-1">
+                  {lang === 'ar' ? 'أقسام المتجر الرئيسية' : 'Store Main Groups'}
+                </p>
+                <div className="grid grid-cols-1 gap-1.5">
+                  {storeMainSections.map((sec) => (
+                    <Link
+                      key={sec.id}
+                      to={`/store/category/${sec.slug}`}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center gap-2 px-2.5 py-2 rounded-lg bg-slate-50 hover:bg-sky-50 text-xs font-semibold text-slate-800 hover:text-[#0F4C5C] transition-colors"
+                    >
+                      {sec.image && (
+                        <img
+                          src={sec.image}
+                          alt={sec.nameAr}
+                          referrerPolicy="no-referrer"
+                          className="w-6 h-6 rounded object-cover border border-slate-200 shrink-0"
+                        />
+                      )}
+                      <span className="truncate">{sec.nameAr}</span>
+                    </Link>
+                  ))}
                 </div>
               </div>
-
-              <select
-                aria-label={t('common.currencyLabel')}
-                value={currencyCode}
-                onChange={(e) => setCurrencyCode(e.target.value)}
-                className="px-2.5 py-1.5 rounded-lg border border-slate-200 bg-slate-50 text-xs font-medium text-slate-800"
-              >
-                {Object.entries(siteConfig.currency.exchangeRatesFromYER).map(([code, info]) => (
-                  <option key={code} value={code}>
-                    {info.label}
-                  </option>
-                ))}
-              </select>
             </div>
 
-            <nav
-              className="space-y-1.5"
-              aria-label={lang === 'ar' ? 'قائمة المتجر للجوال' : 'Mobile Store Navigation'}
-            >
-              {[
-                { to: '/store', label: lang === 'ar' ? 'رئيسية المتجر' : 'Store Home', end: true },
-                { to: '/store/category/all', label: t('store.allProducts') },
-                { to: '/store/offers', label: `${t('nav.offers')} (${offersCount})` },
-                { to: '/store/prescription', label: t('nav.prescriptionOrder') },
-                { to: '/store/wishlist', label: `${lang === 'ar' ? 'المفضلة' : 'Favorites'} (${wishlistCount})` },
-                { to: '/store/cart', label: `${t('nav.cart')} (${cartCount})` },
-              ].map((item) => (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  end={item.end}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={({ isActive }) =>
-                    `block px-3 py-2.5 rounded-lg text-sm font-medium ${
-                      isActive ? 'bg-sky-50 text-[#0F4C5C] font-semibold' : 'text-slate-700 hover:bg-slate-50'
-                    }`
-                  }
-                >
-                  {item.label}
-                </NavLink>
-              ))}
-            </nav>
-
-            {/* Quick Links to Store Main Groups */}
-            <div className="pt-2 border-t border-slate-100 space-y-2">
-              <p className="text-xs font-bold text-slate-500 px-1">
-                {lang === 'ar' ? 'أقسام المتجر الرئيسية' : 'Store Main Groups'}
-              </p>
-              <div className="grid grid-cols-1 gap-1.5">
-                {storeMainSections.map((sec) => (
-                  <Link
-                    key={sec.id}
-                    to={`/store/category/${sec.slug}`}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-2.5 px-3 py-2 rounded-lg bg-slate-50 hover:bg-sky-50 text-xs font-semibold text-slate-800 hover:text-[#0F4C5C]"
-                  >
-                    {sec.image && (
-                      <img
-                        src={sec.image}
-                        alt={sec.nameAr}
-                        referrerPolicy="no-referrer"
-                        className="w-7 h-7 rounded object-cover border border-slate-200 shrink-0"
-                      />
-                    )}
-                    <span className="truncate">{sec.nameAr}</span>
-                  </Link>
-                ))}
-              </div>
-            </div>
-
-            <div className="pt-2 border-t border-slate-100 flex flex-col gap-2">
+            {/* Pinned Bottom Actions */}
+            <div className="p-3 border-t border-slate-200 bg-slate-50/70 flex flex-col gap-2 shrink-0">
               <Link
                 to="/store/cart"
                 onClick={() => setMobileMenuOpen(false)}
-                className="w-full py-3 px-4 rounded-lg bg-[#0F4C5C] text-white text-sm font-semibold text-center tabular-nums"
+                className="w-full py-2.5 px-3 rounded-lg bg-[#0F4C5C] hover:bg-[#093542] text-white text-xs font-semibold text-center tabular-nums truncate"
               >
                 {t('nav.cart')} ({cartCount}) · {formatPrice(cartSubtotalYER)}
               </Link>
               <Link
                 to="/"
                 onClick={() => setMobileMenuOpen(false)}
-                className="w-full py-2.5 px-4 rounded-lg border border-slate-200 text-slate-700 text-sm font-medium text-center"
+                className="w-full py-2 px-3 rounded-lg border border-slate-200 bg-white text-slate-700 hover:text-[#0F4C5C] text-xs font-medium text-center truncate"
               >
-                {lang === 'ar' ? 'العودة إلى موقع المركز الطبي' : 'Return to Clinic Website'}
+                {lang === 'ar' ? 'العودة إلى المركز الطبي' : 'Return to Clinic'}
               </Link>
             </div>
-          </div>
-        )}
-      </header>
+          </aside>
+
+          {/* Remaining Half Backdrop */}
+          <div
+            className={`flex-1 bg-[#06222B]/55 backdrop-blur-sm transition-opacity duration-350 ${
+              mobileMenuOpen ? 'opacity-100' : 'opacity-0'
+            }`}
+            onClick={() => setMobileMenuOpen(false)}
+            aria-hidden="true"
+          />
+        </div>
 
       <SearchModal isOpen={searchOpen} onClose={() => setSearchOpen(false)} storeOnly />
     </>

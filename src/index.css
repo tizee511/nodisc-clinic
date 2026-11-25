@@ -44,6 +44,122 @@
   outline-offset: 2px;
 }
 
+@keyframes dockModeEnter {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.96);
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(-2px) scale(1.01);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes tabSpringIn {
+  0% {
+    opacity: 0;
+    transform: translateY(14px) scale(0.88);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes iconPopBounce {
+  0% {
+    transform: translateY(0) scale(0.85);
+  }
+  55% {
+    transform: translateY(-5px) scale(1.18);
+  }
+  100% {
+    transform: translateY(-2px) scale(1.1);
+  }
+}
+
+@keyframes ctaSheen {
+  0%, 72% {
+    transform: translateX(-140%) skewX(-18deg);
+    opacity: 0;
+  }
+  78% {
+    opacity: 0.45;
+  }
+  100% {
+    transform: translateX(220%) skewX(-18deg);
+    opacity: 0;
+  }
+}
+
+@keyframes badgePop {
+  0% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  65% {
+    opacity: 1;
+    transform: scale(1.22);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes accordionReveal {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-dock-enter {
+  animation: dockModeEnter 360ms cubic-bezier(0.22, 1.25, 0.36, 1) both;
+}
+
+.animate-tab-spring {
+  animation: tabSpringIn 380ms cubic-bezier(0.22, 1.25, 0.36, 1) both;
+}
+
+.animate-icon-bounce {
+  animation: iconPopBounce 380ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.animate-cta-sheen {
+  animation: ctaSheen 4.2s ease-in-out infinite;
+}
+
+.animate-badge-pop {
+  animation: badgePop 320ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.animate-accordion-reveal {
+  animation: accordionReveal 260ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes tickerScroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-ticker-scroll {
+  animation: tickerScroll 32s linear infinite;
+  will-change: transform;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
