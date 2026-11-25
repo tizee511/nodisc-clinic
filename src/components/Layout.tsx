@@ -16,9 +16,9 @@ export const Layout: React.FC<{ children?: React.ReactNode }> = ({ children }) =
   }, [pathname]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 pb-20 lg:pb-0">
+    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 pb-20 lg:pb-0 overflow-x-clip">
       {isStoreRoute ? <StoreHeader /> : <Header />}
-      <main className="flex-1">{children ?? <Outlet />}</main>
+      <main className="flex-1 min-w-0">{children ?? <Outlet />}</main>
       {isStoreRoute ? <StoreFooter /> : <Footer />}
       <FloatingContactButton />
       <MobileBottomNav />

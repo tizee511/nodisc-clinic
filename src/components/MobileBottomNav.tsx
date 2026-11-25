@@ -8,12 +8,11 @@ import {
   Home,
   Percent,
   ShoppingBag,
-  ShoppingCart,
-  Store,
   User,
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useClinic } from '../context/ClinicContext';
+import { StoreGlyph } from './store/StoreLogoMark';
 
 interface NavTabItem {
   to: string;
@@ -61,7 +60,7 @@ export const MobileBottomNav: React.FC = () => {
       to: '/store',
       labelAr: 'المتجر',
       labelEn: 'Store',
-      icon: ShoppingCart,
+      icon: StoreGlyph,
       isActivePath: (p) => p.startsWith('/store'),
     },
     {
@@ -78,7 +77,7 @@ export const MobileBottomNav: React.FC = () => {
       to: '/store',
       labelAr: 'المتجر',
       labelEn: 'Store',
-      icon: Store,
+      icon: StoreGlyph,
       end: true,
     },
     {
@@ -140,7 +139,7 @@ export const MobileBottomNav: React.FC = () => {
               style={{ animationDelay: `${idx * 45}ms` }}
               className={({ isActive }) => {
                 const active = customActive !== undefined ? customActive : isActive;
-                return `group relative min-h-[48px] flex flex-col items-center justify-center gap-1 rounded-xl px-1 animate-tab-spring transition-all duration-200 ease-[cubic-bezier(0.22,1.25,0.36,1)] active:scale-90 ${
+                return `group relative min-w-0 min-h-[48px] flex flex-col items-center justify-center gap-1 rounded-xl px-0.5 sm:px-1 animate-tab-spring transition-all duration-200 ease-[cubic-bezier(0.22,1.25,0.36,1)] active:scale-90 ${
                   active
                     ? 'text-[#7DD3FC] font-bold'
                     : 'text-slate-200/80 hover:text-white font-medium'
@@ -153,19 +152,19 @@ export const MobileBottomNav: React.FC = () => {
                   <>
                     <span
                       aria-hidden="true"
-                      className={`absolute top-0 w-8 h-1 rounded-full bg-[#38BDF8] shadow-[0_2px_10px_rgba(56,189,248,0.85)] transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
+                      className={`absolute top-0 w-7 sm:w-8 h-1 rounded-full bg-[#38BDF8] shadow-[0_2px_10px_rgba(56,189,248,0.85)] transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
                         active ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0'
                       }`}
                     />
                     <span
-                      className={`relative inline-flex items-center justify-center px-3 py-1 rounded-full transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
+                      className={`relative inline-flex items-center justify-center px-2 sm:px-3 py-1 rounded-full transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
                         active
                           ? 'bg-[#38BDF8]/20 ring-1 ring-[#38BDF8]/50 shadow-[0_0_16px_rgba(56,189,248,0.35)] animate-icon-bounce'
                           : 'group-hover:-translate-y-0.5 group-hover:bg-white/10'
                       }`}
                     >
                       <Icon
-                        className={`w-[20px] h-[20px] transition-transform duration-200 ${
+                        className={`w-[19px] h-[19px] sm:w-[20px] sm:h-[20px] transition-transform duration-200 ${
                           active ? 'text-[#7DD3FC]' : 'text-slate-100/90 group-hover:text-white'
                         }`}
                       />
@@ -179,7 +178,7 @@ export const MobileBottomNav: React.FC = () => {
                         </span>
                       )}
                     </span>
-                    <span className="text-[10.5px] leading-tight whitespace-nowrap truncate max-w-full transition-colors duration-200">
+                    <span className="text-[10px] sm:text-[10.5px] leading-tight whitespace-nowrap truncate max-w-full transition-colors duration-200">
                       {lang === 'ar' ? item.labelAr : item.labelEn}
                     </span>
                   </>
@@ -195,7 +194,7 @@ export const MobileBottomNav: React.FC = () => {
             to="/store/cart"
             style={{ animationDelay: '180ms' }}
             className={({ isActive }) =>
-              `relative overflow-hidden -mt-4 min-h-[58px] rounded-2xl px-1.5 py-2 flex flex-col items-center justify-center gap-1 text-white animate-tab-spring transition-all duration-250 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:-translate-y-1 active:scale-90 ${
+              `relative overflow-hidden min-w-0 -mt-4 min-h-[58px] rounded-2xl px-1 sm:px-1.5 py-2 flex flex-col items-center justify-center gap-1 text-white animate-tab-spring transition-all duration-250 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:-translate-y-1 active:scale-90 ${
                 isActive
                   ? 'bg-gradient-to-br from-[#38BDF8] via-[#0284C7] to-[#0F4C5C] ring-2 ring-white/60 shadow-[0_10px_24px_-3px_rgba(56,189,248,0.65)] -translate-y-0.5'
                   : 'bg-gradient-to-br from-[#38BDF8] via-[#0EA5E9] to-[#0284C7] ring-1 ring-white/30 shadow-[0_8px_22px_-3px_rgba(14,165,233,0.58)]'
@@ -207,7 +206,7 @@ export const MobileBottomNav: React.FC = () => {
               className="pointer-events-none absolute inset-y-0 w-10 bg-gradient-to-r from-transparent via-white/45 to-transparent animate-cta-sheen"
             />
             <span className="relative z-10 inline-flex items-center justify-center">
-              <ShoppingBag className="w-[21px] h-[21px]" />
+              <ShoppingBag className="w-[20px] h-[20px] sm:w-[21px] sm:h-[21px]" />
               {cartCount > 0 && (
                 <span
                   key={cartCount}
@@ -217,7 +216,7 @@ export const MobileBottomNav: React.FC = () => {
                 </span>
               )}
             </span>
-            <span className="relative z-10 text-[11px] font-bold leading-tight whitespace-nowrap">
+            <span className="relative z-10 text-[10.5px] sm:text-[11px] font-bold leading-tight whitespace-nowrap truncate max-w-full">
               {lang === 'ar' ? 'السلة' : 'Cart'}
             </span>
           </NavLink>
@@ -226,7 +225,7 @@ export const MobileBottomNav: React.FC = () => {
             to="/book"
             style={{ animationDelay: '180ms' }}
             className={({ isActive }) =>
-              `relative overflow-hidden -mt-4 min-h-[58px] rounded-2xl px-1.5 py-2 flex flex-col items-center justify-center gap-1 text-white animate-tab-spring transition-all duration-250 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:-translate-y-1 active:scale-90 ${
+              `relative overflow-hidden min-w-0 -mt-4 min-h-[58px] rounded-2xl px-1 sm:px-1.5 py-2 flex flex-col items-center justify-center gap-1 text-white animate-tab-spring transition-all duration-250 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:-translate-y-1 active:scale-90 ${
                 isActive
                   ? 'bg-gradient-to-br from-[#38BDF8] via-[#0284C7] to-[#0F4C5C] ring-2 ring-white/60 shadow-[0_10px_24px_-3px_rgba(56,189,248,0.65)] -translate-y-0.5'
                   : 'bg-gradient-to-br from-[#38BDF8] via-[#0EA5E9] to-[#0284C7] ring-1 ring-white/30 shadow-[0_8px_22px_-3px_rgba(14,165,233,0.58)]'
@@ -237,8 +236,8 @@ export const MobileBottomNav: React.FC = () => {
               aria-hidden="true"
               className="pointer-events-none absolute inset-y-0 w-10 bg-gradient-to-r from-transparent via-white/45 to-transparent animate-cta-sheen"
             />
-            <Calendar className="relative z-10 w-[21px] h-[21px]" />
-            <span className="relative z-10 text-[11px] font-bold leading-tight whitespace-nowrap">
+            <Calendar className="relative z-10 w-[20px] h-[20px] sm:w-[21px] sm:h-[21px]" />
+            <span className="relative z-10 text-[10.5px] sm:text-[11px] font-bold leading-tight whitespace-nowrap truncate max-w-full">
               {lang === 'ar' ? 'حجز موعد' : 'Book'}
             </span>
           </NavLink>

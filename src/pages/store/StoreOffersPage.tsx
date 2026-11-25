@@ -15,6 +15,7 @@ import { Breadcrumbs } from '../../components/Breadcrumbs';
 import { SafeImage } from '../../components/SafeImage';
 import { getFilterTabClass, ScrollableFilterBar } from '../../components/ScrollableFilterBar';
 import { Product } from '../../types/clinic';
+import { StockStatusBadge } from '../../components/store/StockStatusBadge';
 
 type OfferTypeFilter = 'all' | 'discount' | 'bundle' | 'medical';
 
@@ -78,9 +79,12 @@ const OfferCard: React.FC<OfferCardProps> = ({
         </Link>
 
         <div className="p-5 space-y-2.5">
-          <div className="text-[11px] text-slate-500">
-            {sectionName}
-            {categoryName ? ` · ${categoryName}` : ''}
+          <div className="flex items-center justify-between gap-2">
+            <div className="text-[11px] text-slate-500 truncate">
+              {sectionName}
+              {categoryName ? ` · ${categoryName}` : ''}
+            </div>
+            <StockStatusBadge product={product} />
           </div>
 
           <Link to={`/store/product/${product.slug}`} className="block">

@@ -3,15 +3,14 @@ import { Link, NavLink } from 'react-router-dom';
 import {
   ArrowLeft,
   ArrowRight,
-  Clock,
+  FileUp,
   Globe,
   Heart,
+  LayoutGrid,
   Menu,
   Percent,
-  Phone,
   Search,
   ShoppingBag,
-  Store,
   X,
 } from 'lucide-react';
 import { siteConfig } from '../../config/siteConfig';
@@ -19,6 +18,7 @@ import { useLanguage } from '../../context/LanguageContext';
 import { useClinic } from '../../context/ClinicContext';
 import { SearchModal } from '../SearchModal';
 import { AnnouncementTicker, TickerItem } from '../AnnouncementTicker';
+import { StoreGlyph, StoreLogoMark } from './StoreLogoMark';
 
 export const StoreHeader: React.FC = () => {
   const { lang, isRTL, setLang, t, localizedConfig, storeMainSections, products } = useLanguage();
@@ -94,42 +94,71 @@ export const StoreHeader: React.FC = () => {
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
     `text-sm font-medium whitespace-nowrap shrink-0 py-1.5 border-b-2 transition-colors inline-flex items-center gap-1.5 ${
       isActive
-        ? 'text-[#0F4C5C] border-[#0F4C5C] font-semibold'
-        : 'text-slate-700 border-transparent hover:text-[#0F4C5C] hover:border-slate-300'
+        ? 'text-[#7DD3FC] border-[#38BDF8] font-bold'
+        : 'text-slate-100/90 border-transparent hover:text-white hover:border-sky-300/50'
     }`;
 
   return (
     <>
-      {/* Store Top Utility Strip */}
-      <div className="bg-[#062B35] text-slate-100 text-xs border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-2 flex flex-wrap items-center justify-between gap-x-6 gap-y-1.5">
-          <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-slate-200">
+      {/* Slim Sticky Store Header */}
+      <header className="sticky top-0 z-40 bg-gradient-to-r from-[#06222B]/80 via-[#062B35]/80 to-[#0B414F]/80 backdrop-blur-md backdrop-saturate-150 text-white border-b border-sky-400/25 shadow-md">
+        <div className="max-w-7xl mx-auto px-2.5 sm:px-6 h-14 sm:h-16 flex items-center justify-between gap-2 sm:gap-4 lg:gap-8">
+          {/* Zone 1: Dedicated Store Brand Mark */}
+          <Link
+            to="/store"
+            className="inline-flex items-center min-w-0 focus-visible:rounded-lg"
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            <StoreLogoMark tone="dark" />
+          </Link>
+
+          {/* Zone 2: Dedicated Store Navigation Links */}
+          <nav
+            className="hidden lg:flex items-center gap-4 xl:gap-6"
+            aria-label={lang === 'ar' ? 'قائمة المتجر' : 'Store Navigation'}
+          >
+            <NavLink to="/store" end className={navLinkClass}>
+              <StoreGlyph className="w-3.5 h-3.5 hidden xl:inline-block shrink-0 text-sky-300/90" />
+              <span>{lang === 'ar' ? 'رئيسية المتجر' : 'Store Home'}</span>
+            </NavLink>
+
+            <NavLink to="/store/category/all" className={navLinkClass}>
+              <LayoutGrid className="w-3.5 h-3.5 hidden xl:inline-block shrink-0 text-sky-300/90" />
+              <span>{t('store.allProducts')}</span>
+            </NavLink>
+
+            <NavLink to="/store/offers" className={navLinkClass}>
+              <Percent className="w-3.5 h-3.5 text-rose-400" />
+              <span>{t('nav.offers')}</span>
+              {offersCount > 0 && (
+                <span className="px-1.5 py-0.5 rounded bg-rose-500 text-white text-[10px] font-bold tabular-nums leading-none">
+                  {offersCount}
+                </span>
+              )}
+            </NavLink>
+
+            <NavLink to="/store/prescription" className={navLinkClass}>
+              <FileUp className="w-3.5 h-3.5 hidden xl:inline-block shrink-0 text-sky-300/90" />
+              <span>{t('nav.prescriptionOrder')}</span>
+            </NavLink>
+
+            <NavLink to="/store/wishlist" className={navLinkClass}>
+              <Heart className="w-3.5 h-3.5 hidden xl:inline-block shrink-0 text-sky-300/90" />
+              <span>{lang === 'ar' ? 'المفضلة' : 'Favorites'}</span>
+            </NavLink>
+
             <Link
               to="/"
-              className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded bg-white/10 hover:bg-white/20 text-sky-200 hover:text-white font-semibold transition-colors whitespace-nowrap"
+              className="text-sm font-medium whitespace-nowrap shrink-0 py-1.5 text-sky-200 hover:text-white transition-colors inline-flex items-center gap-1"
             >
               <BackIcon className="w-3.5 h-3.5 shrink-0" />
-              <span>{lang === 'ar' ? 'العودة إلى المركز الطبي' : 'Back to Clinic'}</span>
+              <span>{lang === 'ar' ? 'المركز الطبي' : 'Clinic'}</span>
             </Link>
+          </nav>
 
-            <span className="hidden sm:inline-flex items-center gap-1.5">
-              <Phone className="w-3.5 h-3.5 text-sky-300 shrink-0" />
-              <span dir="ltr" className="tabular-nums">
-                {localizedConfig.contact.phones[0].value}
-              </span>
-            </span>
-
-            <span className="hidden lg:inline-flex items-center gap-1.5 text-slate-300">
-              <Clock className="w-3.5 h-3.5 text-sky-300 shrink-0" />
-              <span>
-                {lang === 'ar' ? 'توصيل واستلام صيدلاني موثوق' : 'Verified Pharmacy Fulfillment'}
-              </span>
-            </span>
-          </div>
-
-          <div className="flex items-center gap-3 ms-auto">
-            {/* Currency Switcher inside Store Header */}
-            <div className="hidden sm:inline-flex items-center gap-1.5">
+          {/* Zone 3: Store Search, Language, Currency, Wishlist, Cart Primary CTA */}
+          <div className="flex items-center gap-0.5 sm:gap-2 shrink-0">
+            <div className="hidden md:block">
               <label htmlFor="store-header-currency" className="sr-only">
                 {t('common.currencyLabel')}
               </label>
@@ -137,7 +166,7 @@ export const StoreHeader: React.FC = () => {
                 id="store-header-currency"
                 value={currencyCode}
                 onChange={(e) => setCurrencyCode(e.target.value)}
-                className="bg-white/10 hover:bg-white/15 border border-white/15 rounded px-2 py-0.5 text-[11px] font-medium text-white focus:outline-none"
+                className="bg-white/10 hover:bg-white/15 border border-white/15 rounded-lg px-2 py-1 text-xs font-medium text-white focus:outline-none"
               >
                 {Object.entries(siteConfig.currency.exchangeRatesFromYER).map(([code, info]) => (
                   <option key={code} value={code} className="text-slate-900">
@@ -146,134 +175,45 @@ export const StoreHeader: React.FC = () => {
                 ))}
               </select>
             </div>
-
-            <Link
-              to="/admin/products"
-              className="px-2.5 py-0.5 rounded bg-white/10 hover:bg-white/20 text-white text-[11px] font-semibold transition-colors whitespace-nowrap"
-            >
-              {lang === 'ar' ? 'إدارة المتجر' : 'Store Admin'}
-            </Link>
-
-            {/* Language Switcher */}
-            <div
-              className="inline-flex items-center bg-white/10 rounded-md p-0.5"
-              role="group"
-              aria-label={t('nav.languageLabel')}
-            >
-              <button
-                type="button"
-                onClick={() => setLang('ar')}
-                className={`px-2 py-0.5 rounded text-[11px] font-medium transition-colors whitespace-nowrap ${
-                  lang === 'ar' ? 'bg-white text-[#062B35]' : 'text-slate-200 hover:text-white'
-                }`}
-              >
-                العربية
-              </button>
-              <button
-                type="button"
-                onClick={() => setLang('en')}
-                className={`px-2 py-0.5 rounded text-[11px] font-medium transition-colors whitespace-nowrap ${
-                  lang === 'en' ? 'bg-white text-[#062B35]' : 'text-slate-200 hover:text-white'
-                }`}
-              >
-                EN
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Slim Sticky Store Header */}
-      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4 lg:gap-8">
-          {/* Zone 1: Store Brand Mark */}
-          <Link
-            to="/store"
-            className="inline-flex items-center gap-2.5 shrink-0 focus-visible:rounded-lg"
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            {localizedConfig.brand.logoUrl ? (
-              <img
-                src={localizedConfig.brand.logoUrl}
-                alt={lang === 'ar' ? 'متجر نوديسك' : 'NODISC Store'}
-                referrerPolicy="no-referrer"
-                className="h-9 w-9 rounded-lg object-contain bg-white border border-slate-200 p-0.5 shrink-0"
-              />
-            ) : (
-              <span
-                className="w-9 h-9 rounded-lg bg-[#0F4C5C] text-white flex items-center justify-center shrink-0"
-                aria-hidden="true"
-              >
-                <Store className="w-5 h-5" />
-              </span>
-            )}
-            <span className="flex flex-col leading-tight">
-              <span className="font-display font-bold text-base sm:text-lg text-slate-900 whitespace-nowrap">
-                {lang === 'ar' ? 'متجر نوديسك' : 'NODISC Store'}
-              </span>
-              <span className="text-[11px] font-medium text-[#0F4C5C] whitespace-nowrap">
-                {lang === 'ar' ? 'الصيدلية والمستلزمات الطبية' : 'Pharmacy & Medical Store'}
-              </span>
-            </span>
-          </Link>
-
-          {/* Zone 2: Dedicated Store Navigation Links */}
-          <nav
-            className="hidden lg:flex items-center gap-6"
-            aria-label={lang === 'ar' ? 'قائمة المتجر' : 'Store Navigation'}
-          >
-            <NavLink to="/store" end className={navLinkClass}>
-              {lang === 'ar' ? 'رئيسية المتجر' : 'Store Home'}
-            </NavLink>
-
-            <NavLink to="/store/category/all" className={navLinkClass}>
-              {t('store.allProducts')}
-            </NavLink>
-
-            <NavLink to="/store/offers" className={navLinkClass}>
-              <Percent className="w-3.5 h-3.5 text-rose-600" />
-              <span>{t('nav.offers')}</span>
-              {offersCount > 0 && (
-                <span className="px-1.5 py-0.5 rounded bg-rose-600 text-white text-[10px] font-bold tabular-nums leading-none">
-                  {offersCount}
-                </span>
-              )}
-            </NavLink>
-
-            <NavLink to="/store/prescription" className={navLinkClass}>
-              {t('nav.prescriptionOrder')}
-            </NavLink>
-
-            <NavLink to="/store/wishlist" className={navLinkClass}>
-              {lang === 'ar' ? 'المفضلة' : 'Favorites'}
-            </NavLink>
-          </nav>
-
-          {/* Zone 3: Store Search, Wishlist, Cart Primary CTA */}
-          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             <button
               type="button"
               onClick={() => setSearchOpen(true)}
               aria-label={t('store.searchPlaceholder')}
               title={t('store.searchPlaceholder')}
-              className="p-2 rounded-lg text-slate-600 hover:text-[#0F4C5C] hover:bg-slate-100 transition-colors"
+              className="p-1.5 sm:p-2 rounded-lg text-slate-100 hover:text-[#7DD3FC] hover:bg-white/10 transition-colors"
             >
               <Search className="w-4 h-4 sm:w-5 sm:h-5" />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setLang(lang === 'ar' ? 'en' : 'ar')}
+              aria-label={lang === 'ar' ? 'Switch to English' : 'التبديل إلى العربية'}
+              title={lang === 'ar' ? 'Switch to English' : 'التبديل إلى العربية'}
+              className="relative p-1.5 sm:p-2 rounded-lg text-slate-100 hover:text-[#7DD3FC] hover:bg-white/10 transition-colors inline-flex items-center justify-center gap-1"
+            >
+              <Globe className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="hidden md:inline text-[11px] font-bold uppercase tracking-wide">
+                {lang === 'ar' ? 'EN' : 'AR'}
+              </span>
+              <span className="md:hidden absolute -bottom-0.5 -end-0.5 px-1 rounded bg-[#04181F] border border-sky-300/35 text-[8px] font-extrabold text-[#7DD3FC] leading-tight uppercase">
+                {lang === 'ar' ? 'EN' : 'AR'}
+              </span>
             </button>
 
             <Link
               to="/store/wishlist"
               aria-label={lang === 'ar' ? 'القائمة المفضلة' : 'Favorites'}
               title={lang === 'ar' ? 'القائمة المفضلة' : 'Favorites'}
-              className="relative p-2 rounded-lg text-slate-600 hover:text-rose-600 hover:bg-rose-50 transition-colors inline-flex items-center gap-1"
+              className="relative p-1.5 sm:p-2 rounded-lg text-slate-100 hover:text-rose-300 hover:bg-white/10 transition-colors inline-flex items-center justify-center"
             >
               <Heart
                 className={`w-4 h-4 sm:w-5 sm:h-5 ${
-                  wishlistCount > 0 ? 'text-rose-600 fill-rose-500/20' : ''
+                  wishlistCount > 0 ? 'text-rose-400 fill-rose-400/25' : ''
                 }`}
               />
               {wishlistCount > 0 && (
-                <span className="min-w-[1.25rem] h-5 px-1 rounded-full bg-rose-600 text-white text-[11px] font-semibold flex items-center justify-center tabular-nums">
+                <span className="absolute -top-0.5 -end-0.5 min-w-[16px] h-4 px-1 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center tabular-nums leading-none ring-2 ring-[#062B35]">
                   {wishlistCount}
                 </span>
               )}
@@ -282,14 +222,15 @@ export const StoreHeader: React.FC = () => {
             <Link
               to="/store/cart"
               aria-label={t('nav.cart')}
-              className="inline-flex items-center justify-center gap-2 px-3.5 sm:px-4 py-2 rounded-lg bg-[#0F4C5C] hover:bg-[#093542] text-white text-xs sm:text-sm font-semibold whitespace-nowrap shrink-0 transition-colors tabular-nums"
+              className="inline-flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-lg bg-gradient-to-r from-[#38BDF8] to-[#0284C7] hover:from-[#7DD3FC] hover:to-[#0EA5E9] text-[#04181F] text-xs sm:text-sm font-bold whitespace-nowrap shrink-0 transition-all tabular-nums shadow-sm"
             >
               <ShoppingBag className="w-4 h-4 shrink-0" />
-              <span>
+              <span className="sm:hidden">{cartCount}</span>
+              <span className="hidden sm:inline">
                 {t('nav.cart')} ({cartCount})
               </span>
               {cartCount > 0 && (
-                <span className="hidden sm:inline text-sky-200 font-medium">
+                <span className="hidden md:inline text-[#06222B]/80 font-semibold">
                   · {formatPrice(cartSubtotalYER)}
                 </span>
               )}
@@ -300,7 +241,7 @@ export const StoreHeader: React.FC = () => {
               onClick={() => setMobileMenuOpen((prev) => !prev)}
               aria-label={mobileMenuOpen ? t('nav.closeMenu') : t('nav.menu')}
               aria-expanded={mobileMenuOpen}
-              className="lg:hidden p-2 rounded-lg text-slate-700 hover:bg-slate-100 transition-colors"
+              className="lg:hidden p-1.5 sm:p-2 rounded-lg text-white hover:bg-white/10 transition-colors"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -316,7 +257,7 @@ export const StoreHeader: React.FC = () => {
         items={storeTickerItems}
       />
 
-      {/* Full-Height Half-Width Mobile Store Navigation Drawer with Smooth Slide */}
+      {/* Full-Height Half-Width Mobile Store Navigation Drawer with Solid Deep Pharmacy Background */}
       <div
         className={`fixed inset-0 z-50 lg:hidden flex transition-opacity duration-350 ease-out ${
           mobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
@@ -327,63 +268,39 @@ export const StoreHeader: React.FC = () => {
         aria-label={lang === 'ar' ? 'قائمة المتجر للجوال' : 'Mobile Store Navigation'}
       >
         <aside
-          className={`relative z-10 w-1/2 h-full bg-gradient-to-b from-white via-white to-sky-50/45 border-e border-[#0F4C5C]/20 shadow-2xl flex flex-col overflow-hidden transition-all duration-350 ease-[cubic-bezier(0.22,1.18,0.36,1)] ${
+          className={`relative z-10 w-1/2 min-w-0 h-full bg-[#06222B] bg-gradient-to-b from-[#041B22] via-[#062B35] to-[#0C4452] border-e border-sky-400/25 shadow-2xl flex flex-col overflow-hidden transition-all duration-350 ease-[cubic-bezier(0.22,1.18,0.36,1)] ${
             mobileMenuOpen
               ? 'translate-x-0 scale-100 opacity-100'
               : `${isRTL ? 'translate-x-full' : '-translate-x-full'} scale-[0.96] opacity-90`
           }`}
         >
             {/* Drawer Header */}
-            <div className="px-3 py-3 border-b border-slate-200 bg-[#062B35] text-white flex items-center justify-between gap-2 shrink-0">
-              <span className="font-display font-bold text-xs sm:text-sm truncate">
+            <div className="px-2.5 sm:px-3 py-3 border-b border-white/10 bg-[#04181F] text-white flex items-center justify-between gap-1.5 shrink-0">
+              <span className="font-display font-bold text-xs sm:text-sm truncate text-white">
                 {lang === 'ar' ? 'قائمة المتجر' : 'Store Menu'}
               </span>
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen(false)}
                 aria-label={t('nav.closeMenu')}
-                className="w-9 h-9 rounded-lg bg-white/10 hover:bg-white/20 text-white inline-flex items-center justify-center shrink-0 transition-colors"
+                className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-white/10 hover:bg-white/20 text-white inline-flex items-center justify-center shrink-0 transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             {/* Scrollable Drawer Content */}
-            <div className="flex-1 overflow-y-auto px-3 py-3 space-y-4">
-              {/* Language & Currency */}
-              <div className="space-y-2 pb-3 border-b border-slate-100">
-                <div className="flex items-center justify-between gap-1.5">
-                  <Globe className="w-3.5 h-3.5 text-slate-500 shrink-0" />
-                  <div className="inline-flex rounded-lg bg-slate-100 p-0.5 flex-1">
-                    <button
-                      type="button"
-                      onClick={() => setLang('ar')}
-                      className={`flex-1 py-1 rounded-md text-[11px] font-medium transition-colors ${
-                        lang === 'ar' ? 'bg-white text-[#0F4C5C] shadow-xs' : 'text-slate-600'
-                      }`}
-                    >
-                      العربية
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setLang('en')}
-                      className={`flex-1 py-1 rounded-md text-[11px] font-medium transition-colors ${
-                        lang === 'en' ? 'bg-white text-[#0F4C5C] shadow-xs' : 'text-slate-600'
-                      }`}
-                    >
-                      EN
-                    </button>
-                  </div>
-                </div>
-
+            <div className="flex-1 overflow-y-auto overflow-x-hidden px-2.5 sm:px-3 py-3 space-y-4">
+              {/* Currency Selector */}
+              <div className="pb-3 border-b border-white/10">
                 <select
                   aria-label={t('common.currencyLabel')}
                   value={currencyCode}
                   onChange={(e) => setCurrencyCode(e.target.value)}
-                  className="w-full px-2.5 py-1.5 rounded-lg border border-slate-200 bg-slate-50 text-[11px] font-medium text-slate-800"
+                  className="w-full px-2.5 py-1.5 rounded-lg border border-white/20 bg-[#04181F] text-[11px] font-medium text-white focus:outline-none focus:border-sky-400"
                 >
                   {Object.entries(siteConfig.currency.exchangeRatesFromYER).map(([code, info]) => (
-                    <option key={code} value={code}>
+                    <option key={code} value={code} className="text-slate-900 bg-white">
                       {info.label}
                     </option>
                   ))}
@@ -392,36 +309,79 @@ export const StoreHeader: React.FC = () => {
 
               {/* Primary Store Links */}
               <nav
-                className="space-y-1"
+                className="space-y-1.5"
                 aria-label={lang === 'ar' ? 'قائمة المتجر للجوال' : 'Mobile Store Navigation'}
               >
                 {[
-                  { to: '/store', label: lang === 'ar' ? 'رئيسية المتجر' : 'Store Home', end: true },
-                  { to: '/store/category/all', label: t('store.allProducts') },
-                  { to: '/store/offers', label: `${t('nav.offers')} (${offersCount})` },
-                  { to: '/store/prescription', label: t('nav.prescriptionOrder') },
-                  { to: '/store/wishlist', label: `${lang === 'ar' ? 'المفضلة' : 'Favorites'} (${wishlistCount})` },
-                  { to: '/store/cart', label: `${t('nav.cart')} (${cartCount})` },
-                ].map((item) => (
-                  <NavLink
-                    key={item.to}
-                    to={item.to}
-                    end={item.end}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className={({ isActive }) =>
-                      `min-h-[42px] flex items-center px-2.5 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
-                        isActive ? 'bg-sky-50 text-[#0F4C5C] font-semibold' : 'text-slate-700 hover:bg-slate-50'
-                      }`
-                    }
-                  >
-                    <span className="truncate">{item.label}</span>
-                  </NavLink>
-                ))}
+                  {
+                    to: '/store',
+                    label: lang === 'ar' ? 'رئيسية المتجر' : 'Store Home',
+                    end: true,
+                    icon: StoreGlyph,
+                  },
+                  {
+                    to: '/store/category/all',
+                    label: t('store.allProducts'),
+                    icon: LayoutGrid,
+                  },
+                  {
+                    to: '/store/offers',
+                    label: `${t('nav.offers')} (${offersCount})`,
+                    icon: Percent,
+                  },
+                  {
+                    to: '/store/prescription',
+                    label: t('nav.prescriptionOrder'),
+                    icon: FileUp,
+                  },
+                  {
+                    to: '/store/wishlist',
+                    label: `${lang === 'ar' ? 'المفضلة' : 'Favorites'} (${wishlistCount})`,
+                    icon: Heart,
+                  },
+                  {
+                    to: '/store/cart',
+                    label: `${t('nav.cart')} (${cartCount})`,
+                    icon: ShoppingBag,
+                  },
+                ].map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <NavLink
+                      key={item.to}
+                      to={item.to}
+                      end={item.end}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={({ isActive }) =>
+                        `group min-h-[42px] flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
+                          isActive
+                            ? 'bg-[#38BDF8]/20 text-white font-bold border border-sky-400/45 shadow-xs'
+                            : 'text-slate-100/90 hover:bg-white/10 hover:text-white border border-transparent'
+                        }`
+                      }
+                    >
+                      {({ isActive }) => (
+                        <>
+                          <span
+                            className={`w-7 h-7 rounded-lg inline-flex items-center justify-center shrink-0 transition-colors ${
+                              isActive
+                                ? 'bg-[#38BDF8] text-[#04181F]'
+                                : 'bg-white/10 text-sky-300 group-hover:bg-white/15 group-hover:text-white'
+                            }`}
+                          >
+                            <Icon className="w-4 h-4" />
+                          </span>
+                          <span className="truncate">{item.label}</span>
+                        </>
+                      )}
+                    </NavLink>
+                  );
+                })}
               </nav>
 
               {/* Quick Links to Store Main Groups */}
-              <div className="pt-2 border-t border-slate-100 space-y-2">
-                <p className="text-[11px] font-bold text-slate-500 px-1">
+              <div className="pt-2 border-t border-white/10 space-y-2">
+                <p className="text-[11px] font-bold text-sky-300 px-1">
                   {lang === 'ar' ? 'أقسام المتجر الرئيسية' : 'Store Main Groups'}
                 </p>
                 <div className="grid grid-cols-1 gap-1.5">
@@ -430,14 +390,14 @@ export const StoreHeader: React.FC = () => {
                       key={sec.id}
                       to={`/store/category/${sec.slug}`}
                       onClick={() => setMobileMenuOpen(false)}
-                      className="flex items-center gap-2 px-2.5 py-2 rounded-lg bg-slate-50 hover:bg-sky-50 text-xs font-semibold text-slate-800 hover:text-[#0F4C5C] transition-colors"
+                      className="flex items-center gap-2 px-2.5 py-2 rounded-lg bg-[#04181F]/85 hover:bg-white/10 border border-white/10 text-xs font-semibold text-slate-100 hover:text-white transition-colors"
                     >
                       {sec.image && (
                         <img
                           src={sec.image}
                           alt={sec.nameAr}
                           referrerPolicy="no-referrer"
-                          className="w-6 h-6 rounded object-cover border border-slate-200 shrink-0"
+                          className="w-6 h-6 rounded object-cover border border-white/20 shrink-0"
                         />
                       )}
                       <span className="truncate">{sec.nameAr}</span>
@@ -448,27 +408,33 @@ export const StoreHeader: React.FC = () => {
             </div>
 
             {/* Pinned Bottom Actions */}
-            <div className="p-3 border-t border-slate-200 bg-slate-50/70 flex flex-col gap-2 shrink-0">
+            <div className="p-3 border-t border-white/15 bg-[#04181F] flex flex-col gap-2 shrink-0">
               <Link
                 to="/store/cart"
                 onClick={() => setMobileMenuOpen(false)}
-                className="w-full py-2.5 px-3 rounded-lg bg-[#0F4C5C] hover:bg-[#093542] text-white text-xs font-semibold text-center tabular-nums truncate"
+                className="w-full py-2.5 px-3 rounded-lg bg-gradient-to-r from-[#38BDF8] to-[#0284C7] hover:from-[#7DD3FC] hover:to-[#0EA5E9] text-[#04181F] text-xs font-bold inline-flex items-center justify-center gap-1.5 tabular-nums shadow-sm transition-all"
               >
-                {t('nav.cart')} ({cartCount}) · {formatPrice(cartSubtotalYER)}
+                <ShoppingBag className="w-3.5 h-3.5 shrink-0" />
+                <span className="truncate">
+                  {t('nav.cart')} ({cartCount}) · {formatPrice(cartSubtotalYER)}
+                </span>
               </Link>
               <Link
                 to="/"
                 onClick={() => setMobileMenuOpen(false)}
-                className="w-full py-2 px-3 rounded-lg border border-slate-200 bg-white text-slate-700 hover:text-[#0F4C5C] text-xs font-medium text-center truncate"
+                className="w-full py-2 px-3 rounded-lg border border-white/20 bg-white/10 text-white hover:bg-white/15 text-xs font-medium inline-flex items-center justify-center gap-1.5 transition-colors"
               >
-                {lang === 'ar' ? 'العودة إلى المركز الطبي' : 'Return to Clinic'}
+                <BackIcon className="w-3.5 h-3.5 text-sky-300 shrink-0" />
+                <span className="truncate">
+                  {lang === 'ar' ? 'العودة إلى المركز الطبي' : 'Return to Clinic'}
+                </span>
               </Link>
             </div>
           </aside>
 
           {/* Remaining Half Backdrop */}
           <div
-            className={`flex-1 bg-[#06222B]/55 backdrop-blur-sm transition-opacity duration-350 ${
+            className={`flex-1 bg-slate-950/65 backdrop-blur-xs transition-opacity duration-350 ${
               mobileMenuOpen ? 'opacity-100' : 'opacity-0'
             }`}
             onClick={() => setMobileMenuOpen(false)}

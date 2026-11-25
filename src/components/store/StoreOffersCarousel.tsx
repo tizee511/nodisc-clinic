@@ -13,6 +13,7 @@ import {
 import { useLanguage } from '../../context/LanguageContext';
 import { useClinic } from '../../context/ClinicContext';
 import { SafeImage } from '../SafeImage';
+import { StockStatusBadge } from './StockStatusBadge';
 
 export const StoreOffersCarousel: React.FC = () => {
   const { lang, isRTL, t, products, storeMainSections, productCategories } = useLanguage();
@@ -181,15 +182,18 @@ export const StoreOffersCarousel: React.FC = () => {
                         </h3>
                       </Link>
 
-                      {prd.offerExpiresAt && (
-                        <div className="inline-flex items-center gap-1 text-[11px] text-slate-500 tabular-nums">
-                          <CalendarClock className="w-3 h-3 text-[#0F4C5C] shrink-0" />
-                          <span>
-                            {lang === 'ar' ? 'حتى:' : 'Until:'}{' '}
-                            <span dir="ltr">{prd.offerExpiresAt}</span>
-                          </span>
-                        </div>
-                      )}
+                      <div className="flex flex-wrap items-center justify-between gap-2 pt-0.5">
+                        <StockStatusBadge product={prd} />
+                        {prd.offerExpiresAt && (
+                          <div className="inline-flex items-center gap-1 text-[11px] text-slate-500 tabular-nums">
+                            <CalendarClock className="w-3 h-3 text-[#0F4C5C] shrink-0" />
+                            <span>
+                              {lang === 'ar' ? 'حتى:' : 'Until:'}{' '}
+                              <span dir="ltr">{prd.offerExpiresAt}</span>
+                            </span>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
 

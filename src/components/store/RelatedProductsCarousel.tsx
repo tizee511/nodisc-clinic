@@ -15,6 +15,7 @@ import { useClinic } from '../../context/ClinicContext';
 import { useDataStore } from '../../context/DataStoreContext';
 import { Product } from '../../types/clinic';
 import { SafeImage } from '../SafeImage';
+import { StockStatusBadge } from './StockStatusBadge';
 
 interface RelatedProductsCarouselProps {
   currentProduct: Product;
@@ -271,7 +272,10 @@ export const RelatedProductsCarousel: React.FC<RelatedProductsCarouselProps> = (
                             {prd.name}
                           </h3>
                         </Link>
-                        <p className="text-xs text-slate-500">{prd.unit}</p>
+                        <div className="flex items-center justify-between gap-2 pt-0.5">
+                          <p className="text-xs text-slate-500 truncate">{prd.unit}</p>
+                          <StockStatusBadge product={prd} />
+                        </div>
                       </div>
                     </div>
 

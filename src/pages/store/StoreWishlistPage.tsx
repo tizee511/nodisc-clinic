@@ -15,6 +15,7 @@ import { useClinic } from '../../context/ClinicContext';
 import { useDataStore } from '../../context/DataStoreContext';
 import { Breadcrumbs } from '../../components/Breadcrumbs';
 import { SafeImage } from '../../components/SafeImage';
+import { StockStatusBadge } from '../../components/store/StockStatusBadge';
 
 export const StoreWishlistPage: React.FC = () => {
   const { lang, isRTL, t, products, productCategories } = useLanguage();
@@ -254,13 +255,7 @@ export const StoreWishlistPage: React.FC = () => {
                         </span>
                       )}
                     </div>
-                    <span
-                      className={`text-[11px] font-semibold ${
-                        prd.inStock ? 'text-emerald-700' : 'text-red-600'
-                      }`}
-                    >
-                      {prd.inStock ? t('store.product.inStock') : t('store.product.outOfStock')}
-                    </span>
+                    <StockStatusBadge product={prd} />
                   </div>
 
                   <div className="flex items-center gap-2">

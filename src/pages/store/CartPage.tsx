@@ -32,7 +32,7 @@ export const CartPage: React.FC = () => {
             { label: t('store.cart.title') },
           ]}
         />
-        <h1 className="font-display font-bold text-3xl text-slate-900">{t('store.cart.title')}</h1>
+        <h1 className="font-display font-bold text-2xl sm:text-3xl text-slate-900">{t('store.cart.title')}</h1>
       </div>
 
       {cart.length === 0 ? (
@@ -69,16 +69,16 @@ export const CartPage: React.FC = () => {
                   key={`${item.productId}-${item.selectedOption || 'default'}`}
                   className="p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center gap-4 justify-between"
                 >
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-3 sm:gap-4 min-w-0">
                     <SafeImage
                       src={prd.image}
                       alt={prd.name}
-                      aspectClass="w-20 h-20 shrink-0 rounded-lg border border-slate-200"
+                      aspectClass="w-16 h-16 sm:w-20 sm:h-20 shrink-0 rounded-lg border border-slate-200"
                     />
-                    <div className="space-y-1">
+                    <div className="space-y-1 min-w-0">
                       <Link
                         to={`/store/product/${prd.slug}`}
-                        className="font-display font-bold text-base text-slate-900 hover:text-[#0F4C5C]"
+                        className="font-display font-bold text-sm sm:text-base text-slate-900 hover:text-[#0F4C5C] block"
                       >
                         {prd.name}
                       </Link>
@@ -97,8 +97,8 @@ export const CartPage: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between sm:justify-end gap-4">
-                    <div className="inline-flex items-center border border-slate-300 rounded-lg">
+                  <div className="flex flex-wrap items-center justify-between sm:justify-end gap-2.5 sm:gap-4">
+                    <div className="inline-flex items-center border border-slate-300 rounded-lg shrink-0">
                       <button
                         type="button"
                         onClick={() =>
@@ -109,7 +109,7 @@ export const CartPage: React.FC = () => {
                       >
                         <Minus className="w-3.5 h-3.5" />
                       </button>
-                      <span className="px-3 text-sm font-semibold tabular-nums">
+                      <span className="px-2.5 sm:px-3 text-sm font-semibold tabular-nums">
                         {item.quantity}
                       </span>
                       <button
@@ -125,7 +125,7 @@ export const CartPage: React.FC = () => {
                       </button>
                     </div>
 
-                    <span className="font-bold text-sm text-slate-900 tabular-nums min-w-[90px] text-end">
+                    <span className="font-bold text-sm text-slate-900 tabular-nums min-w-0 sm:min-w-[90px] text-end">
                       {formatPrice(prd.priceYER * item.quantity)}
                     </span>
 

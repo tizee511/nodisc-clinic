@@ -422,7 +422,7 @@ export const AdminLayout: React.FC<{
   );
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 flex">
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex overflow-x-clip">
       {/* Desktop Sidebar */}
       <aside
         className={`hidden lg:block shrink-0 border-e border-slate-200 bg-white sticky top-0 h-screen transition-all duration-200 ${
@@ -498,7 +498,7 @@ export const AdminLayout: React.FC<{
               </button>
 
               {notifOpen && (
-                <div className="absolute end-0 top-full mt-2 w-72 bg-white rounded-xl border border-slate-200 shadow-lg p-3 z-50 space-y-2 text-xs">
+                <div className="fixed inset-x-3 top-16 sm:inset-x-auto sm:absolute sm:end-0 sm:top-full sm:mt-2 sm:w-72 bg-white rounded-xl border border-slate-200 shadow-lg p-3 z-50 space-y-2 text-xs">
                   <div className="flex items-center justify-between pb-2 border-b border-slate-100">
                     <span className="font-bold text-slate-900">
                       {lang === 'ar' ? 'تنبيهات العمليات' : 'Operational Alerts'}

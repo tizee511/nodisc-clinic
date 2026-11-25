@@ -5,15 +5,16 @@ import {
   ArrowRight,
   Banknote,
   ExternalLink,
+  Lock,
   Mail,
   Phone,
   ShieldCheck,
-  Store,
 } from 'lucide-react';
 import { siteConfig } from '../../config/siteConfig';
 import { useLanguage } from '../../context/LanguageContext';
 import { useClinic } from '../../context/ClinicContext';
 import { getShortWalletLabel, WalletBrandIcon } from '../PaymentMethodIcons';
+import { StoreLogoBadge } from './StoreLogoMark';
 
 export const StoreFooter: React.FC = () => {
   const { lang, isRTL, setLang, t, localizedConfig, storeMainSections } = useLanguage();
@@ -30,18 +31,7 @@ export const StoreFooter: React.FC = () => {
               to="/store"
               className="inline-flex items-center gap-2.5 bg-white px-3.5 py-2 rounded-xl"
             >
-              {localizedConfig.brand.logoUrl ? (
-                <img
-                  src={localizedConfig.brand.logoUrl}
-                  alt={lang === 'ar' ? 'متجر صيدلية نوديسك' : 'NODISC Store'}
-                  referrerPolicy="no-referrer"
-                  className="h-8 w-8 rounded-lg object-contain bg-white shrink-0"
-                />
-              ) : (
-                <span className="w-8 h-8 rounded-lg bg-[#0F4C5C] text-white inline-flex items-center justify-center shrink-0">
-                  <Store className="w-4 h-4" />
-                </span>
-              )}
+              <StoreLogoBadge size="sm" />
               <span className="font-display font-bold text-sm sm:text-base text-slate-900 whitespace-nowrap">
                 {lang === 'ar' ? 'متجر صيدلية نوديسك' : 'NODISC Store'}
               </span>
@@ -214,14 +204,6 @@ export const StoreFooter: React.FC = () => {
                   <span>{lang === 'ar' ? 'العودة إلى موقع المركز الطبي' : 'Return to Clinic Website'}</span>
                 </Link>
               </li>
-              <li>
-                <Link
-                  to="/admin/products"
-                  className="text-slate-400 hover:text-sky-300 text-xs font-medium transition-colors"
-                >
-                  {lang === 'ar' ? 'إدارة مخزون ومنتجات المتجر' : 'Manage Store Inventory'}
-                </Link>
-              </li>
             </ul>
           </div>
         </div>
@@ -268,7 +250,18 @@ export const StoreFooter: React.FC = () => {
               ? 'جميع المنتجات تخضع للمراجعة الصيدلانية ومعايير السلامة المعتمدة.'
               : 'All store products undergo pharmacist verification and quality standards.'}
           </p>
-          <p dir="ltr">© 2026 {localizedConfig.brand.nameEn} Store</p>
+          <div className="flex items-center gap-3">
+            <Link
+              to="/admin/products"
+              className="inline-flex items-center gap-1 text-[11px] text-slate-500/80 hover:text-slate-300 transition-colors"
+              aria-label={lang === 'ar' ? 'إدارة المتجر' : 'Store Admin'}
+            >
+              <Lock className="w-3 h-3" />
+              <span>{lang === 'ar' ? 'الإدارة' : 'Admin'}</span>
+            </Link>
+            <span className="text-slate-700" aria-hidden="true">·</span>
+            <p dir="ltr">© 2026 {localizedConfig.brand.nameEn} Store</p>
+          </div>
         </div>
       </div>
     </footer>

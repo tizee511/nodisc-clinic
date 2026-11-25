@@ -11,6 +11,7 @@ import {
   StarRatingDisplay,
 } from '../../components/store/ProductReviewsSection';
 import { RelatedProductsCarousel } from '../../components/store/RelatedProductsCarousel';
+import { StockStatusBadge } from '../../components/store/StockStatusBadge';
 
 export const ProductDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -211,16 +212,9 @@ export const ProductDetailPage: React.FC = () => {
                   {product.offerLabelAr}
                 </span>
               )}
-              <span
-                className={`text-xs font-semibold ms-auto ${
-                  product.inStock ? 'text-emerald-700' : 'text-red-600'
-                }`}
-              >
-                {product.inStock
-                  ? `${t('store.product.inStock')} (${product.stockQty})`
-                  : t('store.product.outOfStock')}
-              </span>
             </div>
+
+            <StockStatusBadge product={product} variant="detailed" />
 
             <p className="text-sm sm:text-base text-slate-700 leading-relaxed">
               {product.fullDesc}

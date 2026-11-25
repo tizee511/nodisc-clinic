@@ -95,21 +95,21 @@ export const AdminPrescriptionsPage: React.FC = () => {
   return (
     <AdminLayout titleAr="مراجعة الوصفات الطبية" titleEn="Prescriptions Queue">
       <div className="bg-white rounded-xl border border-slate-200 p-4 flex flex-wrap items-center justify-between gap-3">
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="relative">
+        <div className="w-full sm:w-auto flex flex-wrap items-center gap-3">
+          <div className="relative w-full sm:w-56">
             <Search className="w-4 h-4 text-slate-400 absolute top-1/2 -translate-y-1/2 start-3" />
             <input
               type="search"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="رقم الوصفة، المريض، الهاتف..."
-              className="ps-9 pe-3 py-2 rounded-lg border border-slate-300 text-xs w-56"
+              className="ps-9 pe-3 py-2 rounded-lg border border-slate-300 text-xs w-full"
             />
           </div>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white"
+            className="w-full sm:w-auto max-w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white"
           >
             <option value="all">كل الحالات</option>
             {Object.entries(PRESCRIPTION_STATUS_LABELS).map(([k, v]) => (

@@ -15,7 +15,7 @@ export const FloatingContactButton: React.FC = () => {
     <div className="fixed bottom-20 lg:bottom-4 end-3 sm:end-4 z-30">
       {open && (
         <div
-          className="mb-3 w-72 bg-white rounded-xl border border-slate-200 shadow-xl p-4 space-y-3"
+          className="mb-3 w-72 max-w-[calc(100vw-1.5rem)] bg-white rounded-xl border border-slate-200 shadow-xl p-4 space-y-3"
           role="dialog"
           aria-label={lang === 'ar' ? 'خيارات التواصل السريع' : 'Quick Contact Options'}
         >

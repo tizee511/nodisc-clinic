@@ -8,6 +8,7 @@ import { SafeImage } from '../../components/SafeImage';
 import { StoreOffersCarousel } from '../../components/store/StoreOffersCarousel';
 import { StoreMainGroupCard } from '../../components/store/StoreMainGroupCard';
 import { StoreMainGroupsFilterBar } from '../../components/store/StoreMainGroupsFilterBar';
+import { StockStatusBadge } from '../../components/store/StockStatusBadge';
 
 export const StoreHomePage: React.FC = () => {
   const { lang, isRTL, t, storeMainSections, productCategories, products } = useLanguage();
@@ -133,13 +134,7 @@ export const StoreHomePage: React.FC = () => {
                           </span>
                         )}
                       </div>
-                      <span
-                        className={`text-xs font-medium ${
-                          prd.inStock ? 'text-emerald-700' : 'text-red-600'
-                        }`}
-                      >
-                        {prd.inStock ? t('store.product.inStock') : t('store.product.outOfStock')}
-                      </span>
+                      <StockStatusBadge product={prd} />
                     </div>
                   </Link>
                 );
@@ -159,6 +154,7 @@ export const StoreHomePage: React.FC = () => {
                 section={sec}
                 subCategories={subCats}
                 products={secProducts}
+                hideGroupHeader={activeMainSection !== 'all'}
               />
             );
           })}

@@ -186,7 +186,9 @@
       "title": "Offers & Discounts",
       "subtitle": "Seasonal pharmacy savings across medical supports, vitamins, personal care, and mother & baby essentials.",
       "viewOffers": "Browse Offers & Discounts",
+      "backToStore": "Back to Store",
       "saveAmount": "Save",
+      "saveLabel": "Save",
       "allGroups": "All Groups",
       "empty": "No discounted products are currently listed in this group."
     },
@@ -202,6 +204,7 @@
     "product": {
       "unit": "Unit",
       "inStock": "In Stock",
+      "lowStock": "Only a few left",
       "outOfStock": "Out of Stock",
       "availableQty": "Demo Available Stock",
       "options": "Option / Size",

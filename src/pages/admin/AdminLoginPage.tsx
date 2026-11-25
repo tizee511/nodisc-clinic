@@ -23,11 +23,11 @@ export const AdminLoginPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col justify-between p-4 sm:p-8">
       {/* Top Bar */}
-      <div className="max-w-5xl w-full mx-auto flex items-center justify-between gap-4">
-        <Link to="/" className="hover:opacity-90">
+      <div className="max-w-5xl w-full mx-auto flex flex-wrap items-center justify-between gap-3">
+        <Link to="/" className="hover:opacity-90 min-w-0">
           <ClinicLogoMark />
         </Link>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2 ms-auto">
           <button
             type="button"
             onClick={() => setLang(lang === 'ar' ? 'en' : 'ar')}
@@ -38,7 +38,7 @@ export const AdminLoginPage: React.FC = () => {
           </button>
           <Link
             to="/"
-            className="px-3.5 py-1.5 rounded-lg border border-slate-300 bg-white text-xs font-semibold text-[#0F4C5C] hover:bg-slate-50"
+            className="px-3.5 py-1.5 rounded-lg border border-slate-300 bg-white text-xs font-semibold text-[#0F4C5C] hover:bg-slate-50 whitespace-nowrap"
           >
             {lang === 'ar' ? 'العودة للموقع العام' : 'Back to Public Site'}
           </Link>

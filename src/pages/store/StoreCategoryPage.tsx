@@ -7,6 +7,7 @@ import { Breadcrumbs } from '../../components/Breadcrumbs';
 import { SafeImage } from '../../components/SafeImage';
 import { getFilterTabClass, ScrollableFilterBar } from '../../components/ScrollableFilterBar';
 import { StoreMainGroupsFilterBar } from '../../components/store/StoreMainGroupsFilterBar';
+import { StockStatusBadge } from '../../components/store/StockStatusBadge';
 
 export const StoreCategoryPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -98,7 +99,7 @@ export const StoreCategoryPage: React.FC = () => {
               { label: pageTitle },
             ]}
           />
-          <h1 className="font-display font-bold text-3xl text-slate-900">{pageTitle}</h1>
+          <h1 className="font-display font-bold text-2xl sm:text-3xl text-slate-900">{pageTitle}</h1>
           {pageDescription && <p className="text-sm text-slate-600 mt-1">{pageDescription}</p>}
         </div>
 
@@ -151,15 +152,15 @@ export const StoreCategoryPage: React.FC = () => {
 
       {/* Filter & Sort Controls */}
       <div className="bg-white rounded-xl border border-slate-200 p-4 flex flex-wrap items-center justify-between gap-4">
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="relative">
+        <div className="w-full lg:w-auto flex flex-wrap items-center gap-3">
+          <div className="relative w-full sm:w-56">
             <Search className="w-4 h-4 text-slate-400 absolute top-1/2 -translate-y-1/2 start-3" />
             <input
               type="search"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder={t('store.searchPlaceholder')}
-              className="ps-9 pe-3 py-2 rounded-lg border border-slate-300 text-xs sm:text-sm w-56"
+              className="ps-9 pe-3 py-2 rounded-lg border border-slate-300 text-xs sm:text-sm w-full"
             />
           </div>
 
@@ -170,7 +171,7 @@ export const StoreCategoryPage: React.FC = () => {
               setSelectedMainSecId(e.target.value);
               setSelectedCatId('all');
             }}
-            className="px-3 py-2 rounded-lg border border-slate-300 text-xs sm:text-sm bg-white"
+            className="w-full sm:w-auto max-w-full px-3 py-2 rounded-lg border border-slate-300 text-xs sm:text-sm bg-white"
           >
             <option value="all">{lang === 'ar' ? 'كل المجموعات الرئيسية' : 'All Groups'}</option>
             {storeMainSections.map((s) => (
@@ -184,7 +185,7 @@ export const StoreCategoryPage: React.FC = () => {
             aria-label={t('store.filter.category')}
             value={selectedCatId}
             onChange={(e) => setSelectedCatId(e.target.value)}
-            className="px-3 py-2 rounded-lg border border-slate-300 text-xs sm:text-sm bg-white"
+            className="w-full sm:w-auto max-w-full px-3 py-2 rounded-lg border border-slate-300 text-xs sm:text-sm bg-white"
           >
             <option value="all">{t('store.allProducts')}</option>
             {productCategories
@@ -207,15 +208,15 @@ export const StoreCategoryPage: React.FC = () => {
           </label>
         </div>
 
-        <div className="flex items-center gap-2">
-          <label htmlFor="sort-select" className="text-xs text-slate-500">
+        <div className="w-full sm:w-auto flex items-center justify-between sm:justify-start gap-2">
+          <label htmlFor="sort-select" className="text-xs text-slate-500 shrink-0">
             {t('store.filter.sortBy')}:
           </label>
           <select
             id="sort-select"
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as 'featured' | 'price-asc' | 'price-desc')}
-            className="px-3 py-2 rounded-lg border border-slate-300 text-xs sm:text-sm bg-white"
+            className="flex-1 sm:flex-initial min-w-0 max-w-full px-3 py-2 rounded-lg border border-slate-300 text-xs sm:text-sm bg-white"
           >
             <option value="featured">{t('store.filter.sortFeatured')}</option>
             <option value="price-asc">{t('store.filter.sortPriceAsc')}</option>
@@ -269,7 +270,10 @@ export const StoreCategoryPage: React.FC = () => {
                     )}
                   </div>
                   <div className="p-5 space-y-2">
-                    <span className="text-xs text-slate-500 block">{cat?.nameAr}</span>
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs text-slate-500 truncate">{cat?.nameAr}</span>
+                      <StockStatusBadge product={prd} />
+                    </div>
                     <h2 className="font-display font-bold text-base sm:text-lg text-slate-900 group-hover:text-[#0F4C5C]">
                       {prd.name}
                     </h2>

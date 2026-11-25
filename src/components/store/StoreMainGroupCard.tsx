@@ -16,17 +16,20 @@ import { useDataStore } from '../../context/DataStoreContext';
 import { Product, ProductCategory, StoreMainSection } from '../../types/clinic';
 import { SafeImage } from '../SafeImage';
 import { ScrollableFilterBar } from '../ScrollableFilterBar';
+import { StockStatusBadge } from './StockStatusBadge';
 
 interface StoreMainGroupCardProps {
   section: StoreMainSection;
   subCategories: ProductCategory[];
   products: Product[];
+  hideGroupHeader?: boolean;
 }
 
 export const StoreMainGroupCard: React.FC<StoreMainGroupCardProps> = ({
   section,
   subCategories,
   products,
+  hideGroupHeader = false,
 }) => {
   const { lang, isRTL, t } = useLanguage();
   const { addToCart, formatPrice, isInWishlist, toggleWishlist } = useClinic();
@@ -41,9 +44,11 @@ export const StoreMainGroupCard: React.FC<StoreMainGroupCardProps> = ({
   const activeSubCat = subCategories.find((c) => c.id === selectedSubCatId);
 
   const visibleProducts = useMemo(() => {
-    if (selectedSubCatId === 'all') return products.slice(0, 4);
+    if (selectedSubCatId === 'all') {
+      return hideGroupHeader ? products : products.slice(0, 4);
+    }
     return products.filter((p) => p.categoryId === selectedSubCatId);
-  }, [products, selectedSubCatId]);
+  }, [products, selectedSubCatId, hideGroupHeader]);
 
   const handleQuickAdd = (productId: string, option?: string) => {
     const res = addToCart(productId, 1, option);
@@ -55,81 +60,83 @@ export const StoreMainGroupCard: React.FC<StoreMainGroupCardProps> = ({
 
   return (
     <section className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
-      {/* Main Group Banner Header */}
-      <div className="p-5 sm:p-6 bg-gradient-to-l from-slate-50 via-white to-sky-50/40 border-b border-slate-100 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-        <div className="flex items-start sm:items-center gap-4 min-w-0">
-          {section.image && (
+      {/* Main Group Banner Header (shown only when viewing all groups together) */}
+      {!hideGroupHeader && (
+        <div className="p-5 sm:p-6 bg-gradient-to-l from-slate-50 via-white to-sky-50/40 border-b border-slate-100 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div className="flex items-start sm:items-center gap-4 min-w-0">
+            {section.image && (
+              <Link
+                to={`/store/category/${section.slug}`}
+                className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border border-slate-200 shrink-0 shadow-xs bg-white"
+              >
+                <SafeImage
+                  src={section.image}
+                  alt={section.nameAr}
+                  aspectClass="aspect-square"
+                />
+              </Link>
+            )}
+            <div className="space-y-1 min-w-0">
+              <div className="flex flex-wrap items-center gap-2 text-xs">
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-[#0F4C5C]/10 text-[#0F4C5C] font-semibold">
+                  <Layers className="w-3 h-3" />
+                  <span>{lang === 'ar' ? 'مجموعة رئيسية' : 'Main Group'}</span>
+                </span>
+                <span className="text-slate-500 tabular-nums">
+                  {subCategories.length} {lang === 'ar' ? 'فروع' : 'branches'} · {products.length}{' '}
+                  {lang === 'ar' ? 'منتج' : 'items'}
+                </span>
+              </div>
+
+              <h2 className="font-display font-bold text-xl sm:text-2xl text-slate-900">
+                {section.nameAr}
+              </h2>
+              <p className="text-xs sm:text-sm text-slate-600 max-w-2xl line-clamp-2">
+                {section.description}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
             <Link
               to={`/store/category/${section.slug}`}
-              className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border border-slate-200 shrink-0 shadow-xs bg-white"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#0F4C5C] hover:bg-[#093542] text-white text-xs font-semibold transition-colors whitespace-nowrap"
             >
-              <SafeImage
-                src={section.image}
-                alt={section.nameAr}
-                aspectClass="aspect-square"
-              />
+              <span>
+                {lang === 'ar'
+                  ? `عرض المجموعة (${products.length})`
+                  : `Browse Group (${products.length})`}
+              </span>
+              <ArrowIcon className="w-3.5 h-3.5" />
             </Link>
-          )}
-          <div className="space-y-1 min-w-0">
-            <div className="flex flex-wrap items-center gap-2 text-xs">
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-[#0F4C5C]/10 text-[#0F4C5C] font-semibold">
-                <Layers className="w-3 h-3" />
-                <span>{lang === 'ar' ? 'مجموعة رئيسية' : 'Main Group'}</span>
-              </span>
-              <span className="text-slate-500 tabular-nums">
-                {subCategories.length} {lang === 'ar' ? 'فروع' : 'branches'} · {products.length}{' '}
-                {lang === 'ar' ? 'منتج' : 'items'}
-              </span>
-            </div>
 
-            <h2 className="font-display font-bold text-xl sm:text-2xl text-slate-900">
-              {section.nameAr}
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-600 max-w-2xl line-clamp-2">
-              {section.description}
-            </p>
+            <button
+              type="button"
+              onClick={() => setIsExpanded((v) => !v)}
+              aria-expanded={isExpanded}
+              className="inline-flex items-center gap-1 px-3 py-2 rounded-lg border border-slate-300 bg-white hover:border-[#0F4C5C] text-slate-700 text-xs font-semibold transition-colors whitespace-nowrap"
+            >
+              <span>
+                {isExpanded
+                  ? lang === 'ar'
+                    ? 'طي الفروع'
+                    : 'Collapse'
+                  : lang === 'ar'
+                  ? 'عرض الفروع'
+                  : 'Expand'}
+              </span>
+              <ChevronDown
+                className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                  isExpanded ? 'rotate-180' : ''
+                }`}
+              />
+            </button>
           </div>
         </div>
-
-        <div className="flex flex-wrap items-center gap-2 shrink-0">
-          <Link
-            to={`/store/category/${section.slug}`}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#0F4C5C] hover:bg-[#093542] text-white text-xs font-semibold transition-colors whitespace-nowrap"
-          >
-            <span>
-              {lang === 'ar'
-                ? `عرض المجموعة (${products.length})`
-                : `Browse Group (${products.length})`}
-            </span>
-            <ArrowIcon className="w-3.5 h-3.5" />
-          </Link>
-
-          <button
-            type="button"
-            onClick={() => setIsExpanded((v) => !v)}
-            aria-expanded={isExpanded}
-            className="inline-flex items-center gap-1 px-3 py-2 rounded-lg border border-slate-300 bg-white hover:border-[#0F4C5C] text-slate-700 text-xs font-semibold transition-colors whitespace-nowrap"
-          >
-            <span>
-              {isExpanded
-                ? lang === 'ar'
-                  ? 'طي الفروع'
-                  : 'Collapse'
-                : lang === 'ar'
-                ? 'عرض الفروع'
-                : 'Expand'}
-            </span>
-            <ChevronDown
-              className={`w-3.5 h-3.5 transition-transform duration-200 ${
-                isExpanded ? 'rotate-180' : ''
-              }`}
-            />
-          </button>
-        </div>
-      </div>
+      )}
 
       {/* Expandable Sub-Categories Tree + Live Filtered Products */}
-      {isExpanded && (
+      {(hideGroupHeader || isExpanded) && (
         <div className="p-5 sm:p-6 space-y-6">
           {/* Interactive Branching Sub-Categories Tab Strip */}
           {subCategories.length > 0 && (
@@ -314,7 +321,10 @@ export const StoreMainGroupCard: React.FC<StoreMainGroupCardProps> = ({
                             {prd.name}
                           </h3>
                         </Link>
-                        <p className="text-[11px] text-slate-500">{prd.unit}</p>
+                        <div className="flex items-center justify-between gap-2 pt-0.5">
+                          <p className="text-[11px] text-slate-500 truncate">{prd.unit}</p>
+                          <StockStatusBadge product={prd} />
+                        </div>
                       </div>
                     </div>
 

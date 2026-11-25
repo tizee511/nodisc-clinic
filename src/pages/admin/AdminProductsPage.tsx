@@ -96,15 +96,15 @@ export const AdminProductsPage: React.FC = () => {
     <AdminLayout titleAr="المنتجات والمخزون" titleEn="Products & Inventory">
       {/* Toolbar */}
       <div className="bg-white rounded-xl border border-slate-200 p-4 flex flex-wrap items-center justify-between gap-3">
-        <div className="flex flex-wrap items-center gap-2.5">
-          <div className="relative">
+        <div className="w-full lg:w-auto flex flex-wrap items-center gap-2.5">
+          <div className="relative w-full sm:w-56">
             <Search className="w-4 h-4 text-slate-400 absolute top-1/2 -translate-y-1/2 start-3" />
             <input
               type="search"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="اسم المنتج، الباركود، المورد..."
-              className="ps-9 pe-3 py-2 rounded-lg border border-slate-300 text-xs w-56"
+              className="ps-9 pe-3 py-2 rounded-lg border border-slate-300 text-xs w-full"
             />
           </div>
 
@@ -114,7 +114,7 @@ export const AdminProductsPage: React.FC = () => {
               setMainSecFilter(e.target.value);
               setCatFilter('all');
             }}
-            className="px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white"
+            className="w-full sm:w-auto max-w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white"
           >
             <option value="all">كل الأقسام الرئيسية</option>
             {storeMainSections.map((s) => (
@@ -127,7 +127,7 @@ export const AdminProductsPage: React.FC = () => {
           <select
             value={catFilter}
             onChange={(e) => setCatFilter(e.target.value)}
-            className="px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white"
+            className="w-full sm:w-auto max-w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white"
           >
             <option value="all">كل التصنيفات الفرعية</option>
             {productCategories
@@ -142,7 +142,7 @@ export const AdminProductsPage: React.FC = () => {
           <select
             value={stockFilter}
             onChange={(e) => setStockFilter(e.target.value as 'all' | 'low' | 'out' | 'offers')}
-            className="px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white"
+            className="w-full sm:w-auto max-w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white"
           >
             <option value="all">كل حالات المخزون والعروض</option>
             <option value="offers">منتجات العروض والتخفيضات</option>
@@ -380,7 +380,7 @@ export const AdminProductsPage: React.FC = () => {
                   className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm"
                 />
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block font-semibold text-slate-700 mb-1">المجموعة الرئيسية</label>
                   <select
@@ -420,7 +420,7 @@ export const AdminProductsPage: React.FC = () => {
                   </select>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block font-semibold text-slate-700 mb-1">الباركود</label>
                   <input
@@ -441,7 +441,7 @@ export const AdminProductsPage: React.FC = () => {
                   />
                 </div>
               </div>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
                   <label className="block font-semibold text-slate-700 mb-1">سعر البيع (ر.ي)</label>
                   <input
@@ -500,7 +500,7 @@ export const AdminProductsPage: React.FC = () => {
                   <span>تضمين المنتج في صفحة العروض والتخفيضات</span>
                 </label>
 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block font-medium text-slate-700 mb-1">
                       السعر الأصلي قبل الخصم (ر.ي)

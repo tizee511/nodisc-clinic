@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Banknote, ExternalLink, Mail, Phone, ShieldCheck } from 'lucide-react';
+import { Banknote, ExternalLink, Lock, Mail, Phone, ShieldCheck } from 'lucide-react';
 import { siteConfig } from '../config/siteConfig';
 import { useLanguage } from '../context/LanguageContext';
 import { useClinic } from '../context/ClinicContext';
@@ -234,11 +234,6 @@ export const Footer: React.FC = () => {
                   </Link>
                 </li>
               )}
-              <li>
-                <Link to="/admin" className="text-sky-300 hover:text-white font-semibold transition-colors">
-                  {lang === 'ar' ? 'لوحة الإدارة التجريبية' : 'Admin Control Panel'}
-                </Link>
-              </li>
             </ul>
           </div>
         </div>
@@ -281,7 +276,18 @@ export const Footer: React.FC = () => {
 
         <div className="mt-6 pt-6 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
           <p>{t('footer.legalNote')}</p>
-          <p dir="ltr">© 2026 {localizedConfig.brand.nameEn}</p>
+          <div className="flex items-center gap-3">
+            <Link
+              to="/admin"
+              className="inline-flex items-center gap-1 text-[11px] text-slate-600 hover:text-slate-300 transition-colors"
+              aria-label={lang === 'ar' ? 'لوحة الإدارة' : 'Admin Portal'}
+            >
+              <Lock className="w-3 h-3" />
+              <span>{lang === 'ar' ? 'الإدارة' : 'Admin'}</span>
+            </Link>
+            <span className="text-slate-700" aria-hidden="true">·</span>
+            <p dir="ltr">© 2026 {localizedConfig.brand.nameEn}</p>
+          </div>
         </div>
       </div>
     </footer>

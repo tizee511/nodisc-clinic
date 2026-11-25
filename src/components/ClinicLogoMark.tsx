@@ -2,26 +2,38 @@ import React from 'react';
 import { Stethoscope } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
-export const ClinicLogoMark: React.FC<{ compact?: boolean }> = ({ compact = false }) => {
-  const { localizedConfig, lang } = useLanguage();
+export const ClinicLogoMark: React.FC<{ compact?: boolean; tone?: 'light' | 'dark' }> = ({
+  compact = false,
+  tone = 'light',
+}) => {
+  const { localizedConfig } = useLanguage();
+  const isDark = tone === 'dark';
 
   if (localizedConfig.brand.logoUrl) {
     return (
-      <span className="inline-flex items-center gap-2.5 shrink-0">
+      <span className="inline-flex items-center gap-2 sm:gap-2.5 min-w-0">
         <img
           src={localizedConfig.brand.logoUrl}
           alt={localizedConfig.brand.nameAr}
           referrerPolicy="no-referrer"
-          className="h-9 w-9 rounded-lg object-contain bg-white border border-slate-200/80 p-0.5 shrink-0"
+          className={`h-8 w-8 sm:h-9 sm:w-9 rounded-lg object-contain bg-white p-0.5 shrink-0 ${
+            isDark ? 'border border-white/25 shadow-xs' : 'border border-slate-200/80'
+          }`}
         />
-        <span className="flex flex-col leading-tight">
-          <span className="font-display font-bold text-base sm:text-lg text-slate-900 whitespace-nowrap">
+        <span className="flex flex-col leading-tight min-w-0">
+          <span
+            className={`font-display font-bold text-sm sm:text-lg truncate ${
+              isDark ? 'text-white' : 'text-slate-900'
+            }`}
+          >
             {localizedConfig.brand.nameAr}
           </span>
           {!compact && (
             <span
-              className="text-[11px] font-medium whitespace-nowrap"
-              style={{ color: 'var(--color-petrol)' }}
+              className={`hidden min-[360px]:block text-[10px] sm:text-[11px] font-medium truncate ${
+                isDark ? 'text-sky-300' : ''
+              }`}
+              style={isDark ? undefined : { color: 'var(--color-petrol)' }}
               dir="ltr"
             >
               {localizedConfig.brand.nameEn}
@@ -33,24 +45,34 @@ export const ClinicLogoMark: React.FC<{ compact?: boolean }> = ({ compact = fals
   }
 
   return (
-    <span className="inline-flex items-center gap-2.5 shrink-0">
+    <span className="inline-flex items-center gap-2 sm:gap-2.5 min-w-0">
       <span
-        className="w-9 h-9 rounded-lg text-white flex items-center justify-center shrink-0"
-        style={{ backgroundColor: 'var(--color-petrol)' }}
+        className={`w-8 h-8 sm:w-9 sm:h-9 rounded-lg flex items-center justify-center shrink-0 ${
+          isDark
+            ? 'bg-white/15 border border-sky-300/35 text-[#7DD3FC] shadow-xs'
+            : 'text-white'
+        }`}
+        style={isDark ? undefined : { backgroundColor: 'var(--color-petrol)' }}
         aria-hidden="true"
       >
-        <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg viewBox="0 0 24 24" className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" strokeWidth="2">
           <path d="M12 3v18M7 7.5c2.5-1.5 7.5-1.5 10 0M7 12c2.5-1.5 7.5-1.5 10 0M7 16.5c2.5-1.5 7.5-1.5 10 0" />
         </svg>
       </span>
-      <span className="flex flex-col leading-tight">
-        <span className="font-display font-bold text-base sm:text-lg text-slate-900 whitespace-nowrap">
+      <span className="flex flex-col leading-tight min-w-0">
+        <span
+          className={`font-display font-bold text-sm sm:text-lg truncate ${
+            isDark ? 'text-white' : 'text-slate-900'
+          }`}
+        >
           {localizedConfig.brand.nameAr}
         </span>
         {!compact && (
           <span
-            className="text-[11px] font-medium whitespace-nowrap"
-            style={{ color: 'var(--color-petrol)' }}
+            className={`hidden min-[360px]:block text-[10px] sm:text-[11px] font-medium truncate ${
+              isDark ? 'text-sky-300' : ''
+            }`}
+            style={isDark ? undefined : { color: 'var(--color-petrol)' }}
             dir="ltr"
           >
             {localizedConfig.brand.nameEn}
