@@ -323,6 +323,8 @@ export interface OrderRecord {
     supplier?: string;
   }[];
   subtotal: number;
+  discountYER?: number;
+  couponCode?: string;
   deliveryFee: number;
   paymentFee: number;
   total: number;

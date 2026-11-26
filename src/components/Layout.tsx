@@ -6,6 +6,7 @@ import { StoreHeader } from './store/StoreHeader';
 import { StoreFooter } from './store/StoreFooter';
 import { FloatingContactButton } from './FloatingContactButton';
 import { MobileBottomNav } from './MobileBottomNav';
+import { ClinicAnnouncementBar } from './ClinicAnnouncementBar';
 
 export const Layout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
   const { pathname } = useLocation();
@@ -17,6 +18,7 @@ export const Layout: React.FC<{ children?: React.ReactNode }> = ({ children }) =
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 pb-20 lg:pb-0 overflow-x-clip">
+      {!isStoreRoute && <ClinicAnnouncementBar />}
       {isStoreRoute ? <StoreHeader /> : <Header />}
       <main className="flex-1 min-w-0">{children ?? <Outlet />}</main>
       {isStoreRoute ? <StoreFooter /> : <Footer />}

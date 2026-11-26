@@ -84,9 +84,18 @@ export const Header: React.FC = () => {
         id: 'doctor',
         text:
           lang === 'ar'
-            ? 'إشراف طبي مباشر: د. محمد عبدالله الجرباني — استشاري جراحة العظام والعمود الفقري'
-            : 'Led by Dr. Mohammed Al-Jurbani — Consultant Orthopedic & Spine Specialist',
+            ? 'إشراف طبي مباشر: د. محمد عبدالله الجرباني — استشاري جراحة المخ والأعصاب والعمود الفقري'
+            : 'Led by Dr. Mohammed Al-Jurbani — Consultant Neurosurgeon & Spine Surgeon',
         to: '/doctors',
+      },
+      {
+        id: 'conservative-85',
+        badge: lang === 'ar' ? '+85% تحفظياً' : '>85% Non-Surgical',
+        text:
+          lang === 'ar'
+            ? 'أكثر من 85% من حالات الانزلاق الغضروفي وآلام العمود الفقري تُعالج بنجاح بدون جراحة'
+            : 'Over 85% of spine disc & back pain cases recover through conservative & rehab care',
+        to: '/services',
       },
       {
         id: 'instant-book',

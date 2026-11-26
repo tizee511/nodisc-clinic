@@ -167,6 +167,16 @@ export const OrderResultPage: React.FC = () => {
                 </span>
               </li>
             ))}
+            {lastOrder.discountYER && lastOrder.discountYER > 0 && (
+              <li className="py-2.5 flex justify-between text-xs text-emerald-700 font-medium">
+                <span>
+                  {lang === 'ar'
+                    ? `خصم الكوبون (${lastOrder.couponCode || ''})`
+                    : `Coupon Discount (${lastOrder.couponCode || ''})`}
+                </span>
+                <span className="tabular-nums">-{formatPrice(lastOrder.discountYER)}</span>
+              </li>
+            )}
             <li className="py-2.5 flex justify-between text-xs text-slate-600">
               <span>{t('store.cart.deliveryFee')}</span>
               <span className="tabular-nums">

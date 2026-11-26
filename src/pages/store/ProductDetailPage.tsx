@@ -23,14 +23,14 @@ export const ProductDetailPage: React.FC = () => {
 
   const [selectedOption, setSelectedOption] = useState<string | undefined>(product?.options?.[0]);
   const [qty, setQty] = useState(1);
-  const [feedback, setFeedback] = useState<{ type: 'ok' | 'err'; text: string } | null>(null);
-  const [wishlistNotice, setWishlistNotice] = useState<'added' | 'removed' | null>(null);
+  const [justAdded, setJustAdded] = useState(false);
+  const [addError, setAddError] = useState<string | null>(null);
 
   React.useEffect(() => {
     setSelectedOption(product?.options?.[0]);
     setQty(1);
-    setFeedback(null);
-    setWishlistNotice(null);
+    setJustAdded(false);
+    setAddError(null);
     if (typeof window !== 'undefined') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -69,15 +69,17 @@ export const ProductDetailPage: React.FC = () => {
   const handleAdd = () => {
     const res = addToCart(product.id, qty, selectedOption);
     if (res.ok) {
-      setFeedback({ type: 'ok', text: t('store.product.addedFeedback') });
+      setAddError(null);
+      setJustAdded(true);
+      setTimeout(() => setJustAdded(false), 1800);
     } else {
-      setFeedback({ type: 'err', text: res.message || t('store.product.maxReached') });
+      setJustAdded(false);
+      setAddError(res.message || t('store.product.maxReached'));
     }
   };
 
   const handleToggleWishlist = () => {
-    const added = toggleWishlist(product.id);
-    setWishlistNotice(added ? 'added' : 'removed');
+    toggleWishlist(product.id);
   };
 
   return (
@@ -238,10 +240,10 @@ export const ProductDetailPage: React.FC = () => {
                       key={opt}
                       type="button"
                       onClick={() => setSelectedOption(opt)}
-                      className={`px-3.5 py-2 rounded-lg text-xs font-medium border transition-colors ${
+                      className={`btn-interactive px-4 py-2 rounded-xl text-xs font-bold border ${
                         selectedOption === opt
-                          ? 'border-[#0F4C5C] bg-sky-50 text-[#0F4C5C] font-semibold'
-                          : 'border-slate-300 text-slate-700 hover:border-slate-400'
+                          ? 'border-[#0284C7] bg-gradient-to-r from-[#0F4C5C] to-[#0284C7] text-white shadow-xs'
+                          : 'border-slate-300 bg-white text-slate-700 hover:border-[#0F4C5C]/60 hover:text-[#0F4C5C]'
                       }`}
                     >
                       {opt}
@@ -285,35 +287,33 @@ export const ProductDetailPage: React.FC = () => {
                   </p>
                 )}
 
-                {feedback && (
-                  <div
-                    role="status"
-                    className={`p-3 rounded-lg text-xs font-medium flex items-center justify-between gap-2 ${
-                      feedback.type === 'ok'
-                        ? 'bg-emerald-50 border border-emerald-200 text-emerald-800'
-                        : 'bg-red-50 border border-red-200 text-red-700'
-                    }`}
-                  >
-                    <span className="inline-flex items-center gap-1.5">
-                      {feedback.type === 'ok' && <Check className="w-4 h-4" />}
-                      {feedback.text}
-                    </span>
-                    {feedback.type === 'ok' && (
-                      <Link to="/store/cart" className="font-bold underline">
-                        {t('nav.cart')}
-                      </Link>
-                    )}
-                  </div>
+                {addError && (
+                  <p role="alert" className="text-xs text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+                    {addError}
+                  </p>
                 )}
 
                 <div className="flex flex-wrap gap-3">
                   <button
                     type="button"
                     onClick={handleAdd}
-                    className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-lg bg-[#0F4C5C] hover:bg-[#093542] text-white text-sm font-semibold transition-colors"
+                    className={`btn-interactive btn-sheen flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl border text-white text-sm font-bold shadow-sm ${
+                      justAdded
+                        ? 'bg-gradient-to-r from-emerald-600 to-teal-600 border-emerald-400 shadow-[0_8px_18px_-6px_rgba(16,185,129,0.5)]'
+                        : 'bg-gradient-to-r from-[#0F4C5C] to-[#0284C7] border-sky-300/35 shadow-[0_8px_20px_-6px_rgba(15,76,92,0.48)]'
+                    }`}
                   >
-                    <ShoppingBag className="w-4 h-4" />
-                    <span>{t('store.product.addToCart')}</span>
+                    {justAdded ? (
+                      <>
+                        <Check className="w-4 h-4" />
+                        <span>{t('store.product.addedFeedback')}</span>
+                      </>
+                    ) : (
+                      <>
+                        <ShoppingBag className="w-4 h-4" />
+                        <span>{t('store.product.addToCart')}</span>
+                      </>
+                    )}
                   </button>
 
                   <button
@@ -383,31 +383,6 @@ export const ProductDetailPage: React.FC = () => {
                       : 'Save to Favorites'}
                   </span>
                 </button>
-              </div>
-            )}
-
-            {(wishlistNotice || inWishlist) && (
-              <div className="flex items-center justify-between gap-2 px-3.5 py-2.5 rounded-lg bg-rose-50/70 border border-rose-200/80 text-xs text-rose-800">
-                <span className="inline-flex items-center gap-1.5 font-medium">
-                  <Heart
-                    className={`w-3.5 h-3.5 ${
-                      inWishlist ? 'fill-rose-500 text-rose-600' : 'text-slate-500'
-                    }`}
-                  />
-                  {wishlistNotice === 'removed'
-                    ? lang === 'ar'
-                      ? 'تمت إزالة المنتج من القائمة المفضلة.'
-                      : 'Removed from your favorites.'
-                    : lang === 'ar'
-                    ? 'هذا المنتج محفوظ في قائمتك المفضلة.'
-                    : 'This item is saved in your favorites list.'}
-                </span>
-                <Link
-                  to="/store/wishlist"
-                  className="font-bold text-rose-700 hover:underline shrink-0"
-                >
-                  {lang === 'ar' ? 'عرض المفضلة' : 'View Favorites'}
-                </Link>
               </div>
             )}
           </div>

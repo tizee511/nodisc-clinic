@@ -17,6 +17,7 @@ import {
   MapPin,
   PackageCheck,
   ShieldCheck,
+  Tag,
   Truck,
   Upload,
   Wallet,
@@ -26,6 +27,7 @@ import { useLanguage } from '../../context/LanguageContext';
 import { useClinic } from '../../context/ClinicContext';
 import { Breadcrumbs } from '../../components/Breadcrumbs';
 import { WalletBrandIcon } from '../../components/PaymentMethodIcons';
+import { WizardStepper } from '../../components/WizardStepper';
 import { OrderRecord } from '../../types/clinic';
 
 type CheckoutStep = 1 | 2 | 3 | 4;
@@ -38,7 +40,21 @@ function extractAccountNumber(hint: string): string {
 export const CheckoutPage: React.FC = () => {
   const navigate = useNavigate();
   const { lang, isRTL, t, products, localizedConfig } = useLanguage();
-  const { cart, cartSubtotalYER, currencyCode, formatPrice, clearCart, setLastOrder } = useClinic();
+  const {
+    cart,
+    cartSubtotalYER,
+    appliedCoupon,
+    couponDiscountYER,
+    applyCoupon,
+    clearCoupon,
+    currencyCode,
+    formatPrice,
+    clearCart,
+    setLastOrder,
+  } = useClinic();
+
+  const [couponInput, setCouponInput] = useState('');
+  const [couponMsg, setCouponMsg] = useState<{ ok: boolean; text: string } | null>(null);
 
   const [currentStep, setCurrentStep] = useState<CheckoutStep>(1);
   const [maxReachedStep, setMaxReachedStep] = useState<CheckoutStep>(1);
@@ -79,7 +95,7 @@ export const CheckoutPage: React.FC = () => {
       ? localizedConfig.payment.codFeeYER
       : localizedConfig.payment.ePaymentFeeYER;
 
-  const totalYER = cartSubtotalYER + deliveryFee + paymentFee;
+  const totalYER = Math.max(0, cartSubtotalYER - couponDiscountYER) + deliveryFee + paymentFee;
 
   const freeDeliveryThreshold = localizedConfig.payment.freeDeliveryThresholdYER;
   const remainingForFreeDelivery = Math.max(0, freeDeliveryThreshold - cartSubtotalYER);
@@ -342,6 +358,8 @@ export const CheckoutPage: React.FC = () => {
           })
           .filter((x): x is NonNullable<typeof x> => x !== null),
         subtotal: cartSubtotalYER,
+        discountYER: couponDiscountYER > 0 ? couponDiscountYER : undefined,
+        couponCode: appliedCoupon ? appliedCoupon.code : undefined,
         deliveryFee,
         paymentFee,
         total: totalYER,
@@ -401,70 +419,16 @@ export const CheckoutPage: React.FC = () => {
       <form onSubmit={handleSubmit} noValidate className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         <div className="lg:col-span-8 bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
           {/* 4-Step Checkout Stepper Header */}
-          <div className="bg-slate-50/90 border-b border-slate-200 px-4 sm:px-8 py-5 space-y-4">
-            <div className="flex items-center justify-between gap-2">
-              <span className="text-xs font-bold text-[#0F4C5C] bg-[#0F4C5C]/10 px-2.5 py-1 rounded-md">
-                {t('store.checkout.wizard.stepCounter')
-                  .replace('{{current}}', String(currentStep))
-                  .replace('{{total}}', '4')}
-              </span>
-              <span className="text-xs font-medium text-slate-500">
-                {stepsMeta.find((s) => s.step === currentStep)?.label}
-              </span>
-            </div>
-
-            <div className="grid grid-cols-4 gap-1.5 sm:gap-3">
-              {stepsMeta.map(({ step, label }) => {
-                const isActive = currentStep === step;
-                const isCompleted = step < currentStep;
-                const canJump = step <= maxReachedStep || step < currentStep;
-
-                return (
-                  <button
-                    key={step}
-                    type="button"
-                    disabled={!canJump}
-                    onClick={() => jumpToStep(step)}
-                    className={`flex flex-col items-start sm:items-center text-start sm:text-center gap-1.5 p-2 rounded-xl transition-all ${
-                      canJump ? 'cursor-pointer hover:bg-white' : 'cursor-default opacity-65'
-                    } ${isActive ? 'bg-white shadow-xs ring-1 ring-[#0F4C5C]/25' : ''}`}
-                  >
-                    <div className="w-full flex items-center gap-2 sm:justify-center">
-                      <span
-                        className={`w-7 h-7 rounded-full inline-flex items-center justify-center text-xs font-bold shrink-0 transition-colors ${
-                          isActive
-                            ? 'bg-[#0F4C5C] text-white'
-                            : isCompleted
-                              ? 'bg-emerald-600 text-white'
-                              : 'bg-slate-200 text-slate-600'
-                        }`}
-                      >
-                        {isCompleted ? <Check className="w-3.5 h-3.5" /> : step}
-                      </span>
-                      {step < 4 && (
-                        <span
-                          className={`h-1 flex-1 rounded-full hidden sm:block transition-colors ${
-                            currentStep > step ? 'bg-emerald-500' : 'bg-slate-200'
-                          }`}
-                        />
-                      )}
-                    </div>
-                    <span
-                      className={`text-[11px] sm:text-xs font-semibold leading-tight line-clamp-1 ${
-                        isActive
-                          ? 'text-[#0F4C5C]'
-                          : isCompleted
-                            ? 'text-emerald-700'
-                            : 'text-slate-500'
-                      }`}
-                    >
-                      {label}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+          <WizardStepper
+            steps={stepsMeta}
+            currentStep={currentStep}
+            maxReachedStep={maxReachedStep}
+            isStepCompleted={(step) => step < currentStep}
+            onStepClick={jumpToStep}
+            counterLabel={t('store.checkout.wizard.stepCounter')
+              .replace('{{current}}', String(currentStep))
+              .replace('{{total}}', '4')}
+          />
 
           <div className="p-5 sm:p-8 space-y-6">
             {submitError && (
@@ -1497,6 +1461,42 @@ export const CheckoutPage: React.FC = () => {
                       <span>{t('store.checkout.simulateFailToggle')}</span>
                     </label>
                   </div>
+
+                  {/* Quick Policy Links Notice */}
+                  <div className="rounded-xl bg-sky-50/70 border border-sky-200/80 px-4 py-3 text-xs text-slate-600 flex flex-wrap items-center gap-x-2 gap-y-1">
+                    <span>
+                      {lang === 'ar'
+                        ? 'بإتمام الطلب فإنك توافق على:'
+                        : 'By placing this order, you agree to our:'}
+                    </span>
+                    <Link
+                      to="/store/policies/shipping"
+                      className="font-bold text-[#0F4C5C] hover:text-[#0284C7] underline"
+                    >
+                      {lang === 'ar' ? 'الشحن والتوصيل' : 'Shipping & Delivery'}
+                    </Link>
+                    <span aria-hidden="true">·</span>
+                    <Link
+                      to="/store/policies/returns"
+                      className="font-bold text-[#0F4C5C] hover:text-[#0284C7] underline"
+                    >
+                      {lang === 'ar' ? 'الاستبدال والاسترجاع' : 'Returns & Exchanges'}
+                    </Link>
+                    <span aria-hidden="true">·</span>
+                    <Link
+                      to="/store/policies/privacy"
+                      className="font-bold text-[#0F4C5C] hover:text-[#0284C7] underline"
+                    >
+                      {lang === 'ar' ? 'الخصوصية' : 'Privacy'}
+                    </Link>
+                    <span aria-hidden="true">·</span>
+                    <Link
+                      to="/store/policies/terms"
+                      className="font-bold text-[#0F4C5C] hover:text-[#0284C7] underline"
+                    >
+                      {lang === 'ar' ? 'الشروط والأحكام' : 'Terms'}
+                    </Link>
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -1599,6 +1599,16 @@ export const CheckoutPage: React.FC = () => {
               <span className="text-slate-600">{t('store.cart.subtotal')}</span>
               <span className="tabular-nums">{formatPrice(cartSubtotalYER)}</span>
             </div>
+            {appliedCoupon && couponDiscountYER > 0 && (
+              <div className="flex justify-between text-emerald-700 font-medium">
+                <span>
+                  {lang === 'ar'
+                    ? `خصم الكوبون (${appliedCoupon.code})`
+                    : `Coupon (${appliedCoupon.code})`}
+                </span>
+                <span className="tabular-nums">-{formatPrice(couponDiscountYER)}</span>
+              </div>
+            )}
             <div className="flex justify-between">
               <span className="text-slate-600">{t('store.cart.deliveryFee')}</span>
               <span className="tabular-nums">
@@ -1611,6 +1621,60 @@ export const CheckoutPage: React.FC = () => {
                 {paymentFee === 0 ? t('store.checkout.freeLabel') : formatPrice(paymentFee)}
               </span>
             </div>
+
+            {/* Compact Coupon Control inside Checkout Sidebar */}
+            <div className="pt-2 border-t border-slate-100 space-y-1.5">
+              {appliedCoupon ? (
+                <div className="flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-lg bg-emerald-50 border border-emerald-200 text-xs text-emerald-800">
+                  <span className="font-mono font-bold inline-flex items-center gap-1" dir="ltr">
+                    <Tag className="w-3 h-3" />
+                    {appliedCoupon.code}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      clearCoupon();
+                      setCouponMsg(null);
+                    }}
+                    className="text-emerald-700 hover:text-red-600"
+                    aria-label={t('common.cancel')}
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              ) : (
+                <div className="flex gap-1.5">
+                  <input
+                    type="text"
+                    dir="ltr"
+                    value={couponInput}
+                    onChange={(e) => {
+                      setCouponInput(e.target.value);
+                      if (couponMsg) setCouponMsg(null);
+                    }}
+                    placeholder={lang === 'ar' ? 'كوبون (مثال: NODISC20)' : 'Promo code'}
+                    className="flex-1 min-w-0 px-2.5 py-1.5 rounded-lg border border-slate-300 text-xs font-mono uppercase"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const res = applyCoupon(couponInput);
+                      setCouponMsg({ ok: res.ok, text: res.message });
+                      if (res.ok) setCouponInput('');
+                    }}
+                    className="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-[#0F4C5C] text-white text-xs font-semibold shrink-0"
+                  >
+                    {lang === 'ar' ? 'تطبيق' : 'Apply'}
+                  </button>
+                </div>
+              )}
+              {couponMsg && !appliedCoupon && (
+                <p className={`text-[11px] ${couponMsg.ok ? 'text-emerald-700' : 'text-red-600'}`}>
+                  {couponMsg.text}
+                </p>
+              )}
+            </div>
+
             <div className="flex justify-between font-bold text-base text-slate-900 pt-2 border-t border-slate-100">
               <span>{t('store.cart.total')}</span>
               <span className="text-[#0F4C5C] tabular-nums">{formatPrice(totalYER)}</span>

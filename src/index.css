@@ -155,9 +155,64 @@
   }
 }
 
+@keyframes sheenSweep {
+  0% {
+    transform: translateX(-140%) skewX(-20deg);
+  }
+  100% {
+    transform: translateX(240%) skewX(-20deg);
+  }
+}
+
 .animate-ticker-scroll {
   animation: tickerScroll 32s linear infinite;
   will-change: transform;
+}
+
+.btn-interactive {
+  transition:
+    transform 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 180ms ease,
+    background-color 180ms ease;
+}
+
+.btn-interactive:hover {
+  transform: translateY(-2px);
+}
+
+.btn-interactive:active {
+  transform: translateY(0) scale(0.97);
+}
+
+.btn-sheen {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.btn-sheen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 45%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.32),
+    transparent
+  );
+  transform: translateX(-140%) skewX(-20deg);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.btn-sheen:hover::after {
+  animation: sheenSweep 680ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-sheen-auto::after {
+  animation: ctaSheen 4.4s ease-in-out infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -168,3 +223,4 @@
     scroll-behavior: auto !important;
   }
 }
+

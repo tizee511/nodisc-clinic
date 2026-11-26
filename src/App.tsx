@@ -31,6 +31,7 @@ import { CartPage } from './pages/store/CartPage';
 import { CheckoutPage } from './pages/store/CheckoutPage';
 import { OrderResultPage } from './pages/store/OrderResultPage';
 import { PrescriptionOrderPage } from './pages/store/PrescriptionOrderPage';
+import { StorePoliciesPage } from './pages/store/StorePoliciesPage';
 import {
   CareersPage,
   ComplaintsPage,
@@ -141,8 +142,11 @@ export default function App() {
                 <Route path="/store/checkout" element={<CheckoutPage />} />
                 <Route path="/store/order-result" element={<OrderResultPage />} />
                 <Route path="/store/prescription" element={<PrescriptionOrderPage />} />
+                <Route path="/store/policies" element={<StorePoliciesPage />} />
+                <Route path="/store/policies/:policySlug" element={<StorePoliciesPage />} />
 
                 {/* Support & Search */}
+                <Route path="/policies/:policySlug" element={<StorePoliciesPage />} />
                 <Route path="/contact" element={<ContactPage />} />
                 <Route path="/complaints" element={<ComplaintsPage />} />
                 <Route path="/careers" element={<CareersPage />} />

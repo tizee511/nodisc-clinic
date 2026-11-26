@@ -22,6 +22,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { useClinic } from '../context/ClinicContext';
 import { useDataStore } from '../context/DataStoreContext';
 import { Breadcrumbs } from '../components/Breadcrumbs';
+import { WizardStepper } from '../components/WizardStepper';
 import { AppointmentSubmission, DepartmentId } from '../types/clinic';
 
 type PatientStatus = 'new' | 'returning' | null;
@@ -64,7 +65,6 @@ export const BookAppointmentPage: React.FC = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitError, setSubmitError] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [simulateNetworkError, setSimulateNetworkError] = useState<boolean>(false);
   const [prefillSource, setPrefillSource] = useState<string | undefined>(
     bookingPrefill.fromSourceLabel
   );
@@ -246,12 +246,6 @@ export const BookAppointmentPage: React.FC = () => {
     setIsSubmitting(true);
 
     setTimeout(() => {
-      if (simulateNetworkError) {
-        setIsSubmitting(false);
-        setSubmitError(t('booking.errors.submitFailed'));
-        return;
-      }
-
       const refId = `ND-${Math.floor(100000 + Math.random() * 900000)}`;
       const submission: AppointmentSubmission = {
         referenceId: refId,
@@ -273,37 +267,6 @@ export const BookAppointmentPage: React.FC = () => {
       setLastAppointment(submission);
       setIsSubmitting(false);
     }, 550);
-  };
-
-  const triggerConfirmedDemoPreview = () => {
-    const dept = departments.find((d) => d.id === (departmentId || 'neurosurgery')) || departments[0];
-    const srv = services.find((s) => s.id === (serviceId || 'srv-neuro-consult')) || services[0];
-    const sampleName =
-      patientName.trim() || (lang === 'ar' ? 'أحمد عبد الله (معاينة)' : 'Ahmed Abdullah (Demo)');
-    const sampleDay = preferredDay || '2026-11-28';
-    const samplePeriod = preferredPeriod || localizedConfig.bookingRules.periods[0];
-    const demoRef = `ND-${Math.floor(100000 + Math.random() * 900000)}`;
-
-    setLastAppointment({
-      referenceId: demoRef,
-      departmentId: dept.id,
-      serviceId: srv.id,
-      doctorId: doctorId || 'dr-mohammed-aljurbani',
-      visitType,
-      preferredDay: sampleDay,
-      preferredPeriod: samplePeriod,
-      patientName: sampleName,
-      phone: phone.trim() || '+967 770 123 456',
-      previousFileNumber:
-        patientStatus === 'returning' ? previousFileNumber.trim() || 'MR-2210' : undefined,
-      status: 'confirmed',
-      createdAt: new Date().toISOString().slice(0, 16).replace('T', ' '),
-      confirmedDateTime: `${sampleDay} · 10:30 ${lang === 'ar' ? 'صباحًا' : 'AM'}`,
-      simulatedSmsText:
-        lang === 'ar'
-          ? `نوديسك كلينك: عزيزي/تي ${sampleName}، تم تأكيد موعدكم (${srv.title} - ${dept.nameAr}) ليوم ${sampleDay} الساعة 10:30 صباحًا. المرجع: ${demoRef}. (رسالة SMS تجريبية للمحاكاة).`
-          : `NODISC Clinic: Dear ${sampleName}, your appointment (${srv.title}) is confirmed for ${sampleDay} at 10:30 AM. Ref: ${demoRef}. (Simulated SMS preview).`,
-    });
   };
 
   const handleResetNewRequest = () => {
@@ -343,62 +306,6 @@ export const BookAppointmentPage: React.FC = () => {
         <p className="text-sm sm:text-base text-slate-600 mt-2 max-w-2xl">
           {t('booking.subtitle')}
         </p>
-      </div>
-
-      {/* Prototype Simulation Tester Toolbar */}
-      <div className="bg-slate-100 rounded-xl border border-slate-200 p-4 space-y-3">
-        <p className="text-xs font-semibold text-slate-700">{t('booking.scenarioBarTitle')}</p>
-        <div className="flex flex-wrap gap-2">
-          <button
-            type="button"
-            onClick={() => {
-              setLastAppointment(null);
-              setSimulateNetworkError(false);
-              setPreferredDay('2026-11-28');
-              setErrors({});
-              setSubmitError('');
-              setCurrentStep(1);
-            }}
-            className="px-3 py-1.5 rounded-lg bg-white border border-slate-300 text-xs font-medium text-slate-800 hover:border-[#0F4C5C]"
-          >
-            {t('booking.scenarios.normal')}
-          </button>
-          <button
-            type="button"
-            onClick={triggerConfirmedDemoPreview}
-            className="px-3 py-1.5 rounded-lg bg-white border border-slate-300 text-xs font-medium text-[#0F4C5C] hover:bg-sky-50"
-          >
-            {t('booking.scenarios.confirmed')}
-          </button>
-          {closedDates[0] && (
-            <button
-              type="button"
-              onClick={() => {
-                setLastAppointment(null);
-                const unavail = closedDates[0];
-                if (!patientStatus) setPatientStatus('new');
-                if (!departmentId && departments[0]) setDepartmentId(departments[0].id);
-                if (!serviceId && services[0]) setServiceId(services[0].id);
-                setPreferredDay(unavail);
-                setCurrentStep(3);
-                setMaxReachedStep((prev) => (prev < 3 ? 3 : prev));
-                setErrors({ preferredDay: t('booking.errors.unavailableDay') });
-              }}
-              className="px-3 py-1.5 rounded-lg bg-white border border-slate-300 text-xs font-medium text-amber-800 hover:bg-amber-50"
-            >
-              {t('booking.scenarios.unavailableDate')} ({closedDates[0]})
-            </button>
-          )}
-          <label className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white border border-slate-300 text-xs font-medium text-red-700 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={simulateNetworkError}
-              onChange={(e) => setSimulateNetworkError(e.target.checked)}
-              className="rounded border-slate-300"
-            />
-            <span>{t('booking.scenarios.networkError')}</span>
-          </label>
-        </div>
       </div>
 
       {lastAppointment ? (
@@ -511,79 +418,23 @@ export const BookAppointmentPage: React.FC = () => {
             className="lg:col-span-8 bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden"
           >
             {/* Wizard Stepper Header */}
-            <div className="bg-slate-50/90 border-b border-slate-200 px-4 sm:px-8 py-5 space-y-4">
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-xs font-bold text-[#0F4C5C] bg-[#0F4C5C]/10 px-2.5 py-1 rounded-md">
-                  {t('booking.wizard.stepCounter')
-                    .replace('{{current}}', String(currentStep))
-                    .replace('{{total}}', '4')}
-                </span>
-                <span className="text-xs font-medium text-slate-500">
-                  {stepsMeta.find((s) => s.step === currentStep)?.label}
-                </span>
-              </div>
-
-              {/* 4-Step Interactive Track */}
-              <div className="grid grid-cols-4 gap-1.5 sm:gap-3">
-                {stepsMeta.map(({ step, label }) => {
-                  const isActive = currentStep === step;
-                  const isCompleted =
-                    (step < currentStep || step <= maxReachedStep) &&
-                    !isActive &&
-                    ((step === 1 && patientStatus !== null) ||
-                      (step === 2 && Boolean(departmentId && serviceId)) ||
-                      (step === 3 && Boolean(preferredDay && preferredPeriod)) ||
-                      step < currentStep);
-                  const canJump = step <= maxReachedStep || step < currentStep;
-
-                  return (
-                    <button
-                      key={step}
-                      type="button"
-                      disabled={!canJump}
-                      onClick={() => jumpToStep(step)}
-                      className={`group flex flex-col items-start sm:items-center text-start sm:text-center gap-1.5 p-2 rounded-xl transition-all ${
-                        canJump ? 'cursor-pointer hover:bg-white' : 'cursor-default opacity-65'
-                      } ${isActive ? 'bg-white shadow-xs ring-1 ring-[#0F4C5C]/25' : ''}`}
-                    >
-                      <div className="w-full flex items-center gap-2 sm:justify-center">
-                        <span
-                          className={`w-7 h-7 rounded-full inline-flex items-center justify-center text-xs font-bold shrink-0 transition-colors ${
-                            isActive
-                              ? 'bg-[#0F4C5C] text-white'
-                              : isCompleted
-                                ? 'bg-emerald-600 text-white'
-                                : 'bg-slate-200 text-slate-600'
-                          }`}
-                        >
-                          {isCompleted ? <Check className="w-3.5 h-3.5" /> : step}
-                        </span>
-                        {step < 4 && (
-                          <span
-                            className={`h-1 flex-1 rounded-full hidden sm:block transition-colors ${
-                              isCompleted || currentStep > step
-                                ? 'bg-emerald-500'
-                                : 'bg-slate-200'
-                            }`}
-                          />
-                        )}
-                      </div>
-                      <span
-                        className={`text-[11px] sm:text-xs font-semibold leading-tight line-clamp-1 ${
-                          isActive
-                            ? 'text-[#0F4C5C]'
-                            : isCompleted
-                              ? 'text-emerald-700'
-                              : 'text-slate-500'
-                        }`}
-                      >
-                        {label}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
+            <WizardStepper
+              steps={stepsMeta}
+              currentStep={currentStep}
+              maxReachedStep={maxReachedStep}
+              isStepCompleted={(step) =>
+                (step < currentStep || step <= maxReachedStep) &&
+                currentStep !== step &&
+                ((step === 1 && patientStatus !== null) ||
+                  (step === 2 && Boolean(departmentId && serviceId)) ||
+                  (step === 3 && Boolean(preferredDay && preferredPeriod)) ||
+                  step < currentStep)
+              }
+              onStepClick={jumpToStep}
+              counterLabel={t('booking.wizard.stepCounter')
+                .replace('{{current}}', String(currentStep))
+                .replace('{{total}}', '4')}
+            />
 
             <div className="p-5 sm:p-8 space-y-6">
               {prefillSource && (

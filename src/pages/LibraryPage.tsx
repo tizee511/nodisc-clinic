@@ -5,6 +5,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { Breadcrumbs } from '../components/Breadcrumbs';
 import { SafeImage } from '../components/SafeImage';
 import { getFilterTabClass, ScrollableFilterBar } from '../components/ScrollableFilterBar';
+import { EmergencyRedFlagsSection } from '../components/EmergencyRedFlagsSection';
 import { LibraryCategory } from '../types/clinic';
 
 export const LibraryPage: React.FC = () => {
@@ -148,6 +149,8 @@ export const LibraryPage: React.FC = () => {
           })}
         </div>
       )}
+
+      <EmergencyRedFlagsSection />
     </div>
   );
 };

@@ -100,7 +100,7 @@ export const StoreMainGroupCard: React.FC<StoreMainGroupCardProps> = ({
           <div className="flex flex-wrap items-center gap-2 shrink-0">
             <Link
               to={`/store/category/${section.slug}`}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#0F4C5C] hover:bg-[#093542] text-white text-xs font-semibold transition-colors whitespace-nowrap"
+              className="btn-interactive btn-sheen inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-[#0F4C5C] to-[#0284C7] text-white border border-sky-300/35 text-xs font-bold shadow-xs whitespace-nowrap"
             >
               <span>
                 {lang === 'ar'
@@ -114,7 +114,7 @@ export const StoreMainGroupCard: React.FC<StoreMainGroupCardProps> = ({
               type="button"
               onClick={() => setIsExpanded((v) => !v)}
               aria-expanded={isExpanded}
-              className="inline-flex items-center gap-1 px-3 py-2 rounded-lg border border-slate-300 bg-white hover:border-[#0F4C5C] text-slate-700 text-xs font-semibold transition-colors whitespace-nowrap"
+              className="btn-interactive inline-flex items-center gap-1 px-3.5 py-2 rounded-xl border-2 border-[#0F4C5C]/20 bg-white hover:border-[#0284C7] text-[#0F4C5C] text-xs font-bold whitespace-nowrap"
             >
               <span>
                 {isExpanded
@@ -173,10 +173,10 @@ export const StoreMainGroupCard: React.FC<StoreMainGroupCardProps> = ({
                 <button
                   type="button"
                   onClick={() => setSelectedSubCatId('all')}
-                  className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all duration-150 whitespace-nowrap shrink-0 ${
+                  className={`btn-interactive flex items-center gap-2 px-3.5 py-2 rounded-xl border text-xs font-bold whitespace-nowrap shrink-0 ${
                     selectedSubCatId === 'all'
-                      ? 'bg-[#0F4C5C] text-white shadow-[0_3px_10px_-2px_rgba(15,76,92,0.45)]'
-                      : 'text-slate-700 hover:text-[#0F4C5C] hover:bg-white'
+                      ? 'btn-sheen bg-gradient-to-r from-[#0F4C5C] to-[#0284C7] text-white border-[#0284C7] shadow-[0_4px_12px_-3px_rgba(2,132,199,0.45)]'
+                      : 'bg-white text-slate-700 border-slate-200/80 hover:border-[#0284C7]/50 hover:text-[#0F4C5C]'
                   }`}
                 >
                   <span>{lang === 'ar' ? 'جميع الفروع' : 'All'}</span>
@@ -197,10 +197,10 @@ export const StoreMainGroupCard: React.FC<StoreMainGroupCardProps> = ({
                       key={cat.id}
                       type="button"
                       onClick={() => setSelectedSubCatId(cat.id)}
-                      className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-start transition-all duration-150 whitespace-nowrap shrink-0 ${
+                      className={`btn-interactive flex items-center gap-2 px-3 py-1.5 rounded-xl border text-start whitespace-nowrap shrink-0 ${
                         isActive
-                          ? 'bg-[#0F4C5C] text-white shadow-[0_3px_10px_-2px_rgba(15,76,92,0.45)]'
-                          : 'text-slate-700 hover:text-[#0F4C5C] hover:bg-white'
+                          ? 'btn-sheen bg-gradient-to-r from-[#0F4C5C] to-[#0284C7] text-white border-[#0284C7] shadow-[0_4px_12px_-3px_rgba(2,132,199,0.45)]'
+                          : 'bg-white text-slate-700 border-slate-200/80 hover:border-[#0284C7]/50 hover:text-[#0F4C5C]'
                       }`}
                     >
                       <img
@@ -344,10 +344,10 @@ export const StoreMainGroupCard: React.FC<StoreMainGroupCardProps> = ({
                         <button
                           type="button"
                           onClick={() => handleQuickAdd(prd.id, prd.options?.[0])}
-                          className={`px-2.5 py-1.5 rounded-lg text-[11px] font-semibold transition-colors inline-flex items-center gap-1 whitespace-nowrap shrink-0 ${
+                          className={`btn-interactive btn-sheen px-3 py-1.5 rounded-xl text-[11px] font-bold border inline-flex items-center gap-1 whitespace-nowrap shrink-0 ${
                             isAdded
-                              ? 'bg-emerald-600 text-white'
-                              : 'bg-slate-100 hover:bg-[#0F4C5C] text-slate-800 hover:text-white'
+                              ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white border-emerald-400 shadow-xs'
+                              : 'bg-gradient-to-r from-[#0F4C5C] to-[#0284C7] text-white border-sky-300/35 shadow-2xs'
                           }`}
                         >
                           {isAdded ? (

@@ -208,8 +208,45 @@ export const StoreFooter: React.FC = () => {
           </div>
         </div>
 
-        {/* Electronic Payment Methods Strip */}
+        {/* Store Policies & Legal Bar */}
         <div className="mt-10 pt-6 border-t border-white/10 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div className="flex items-center gap-2 text-xs text-slate-300 font-semibold shrink-0">
+            <ShieldCheck className="w-4 h-4 text-[#38BDF8] shrink-0" />
+            <span>{lang === 'ar' ? 'سياسات المتجر والضمان:' : 'Store Policies & Legal:'}</span>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            {[
+              {
+                to: '/store/policies/returns',
+                label: lang === 'ar' ? 'سياسة الاستبدال والاسترجاع' : 'Return & Exchange Policy',
+              },
+              {
+                to: '/store/policies/shipping',
+                label: lang === 'ar' ? 'سياسة الشحن والتوصيل' : 'Shipping & Delivery',
+              },
+              {
+                to: '/store/policies/privacy',
+                label: lang === 'ar' ? 'سياسة الخصوصية' : 'Privacy Policy',
+              },
+              {
+                to: '/store/policies/terms',
+                label: lang === 'ar' ? 'الشروط والأحكام' : 'Terms & Conditions',
+              },
+            ].map((item) => (
+              <Link
+                key={item.to}
+                to={item.to}
+                className="btn-interactive inline-flex items-center px-3 py-1.5 rounded-lg bg-white/8 hover:bg-sky-500/20 border border-white/15 hover:border-[#38BDF8]/60 text-xs font-medium text-sky-100 hover:text-white"
+              >
+                {item.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* Electronic Payment Methods Strip */}
+        <div className="mt-6 pt-6 border-t border-white/10 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div className="flex items-center gap-2 text-xs text-slate-300 font-medium shrink-0">
             <ShieldCheck className="w-4 h-4 text-sky-400 shrink-0" />
             <span>

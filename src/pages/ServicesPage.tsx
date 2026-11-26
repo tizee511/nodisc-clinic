@@ -111,9 +111,9 @@ export const ServicesPage: React.FC = () => {
                   serviceId={srv.id}
                   doctorId={srv.doctorId || undefined}
                   sourceLabel={srv.title}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#0F4C5C] hover:bg-[#093542] text-white text-xs font-semibold transition-colors"
+                  className="btn-interactive btn-sheen inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-[#0F4C5C] to-[#0284C7] text-white border border-sky-300/35 text-xs font-bold shadow-xs"
                 >
-                  <Calendar className="w-3.5 h-3.5" />
+                  <Calendar className="w-3.5 h-3.5 text-[#7DD3FC]" />
                   <span>{t('common.bookService')}</span>
                 </BookActionButton>
               </div>

@@ -10,8 +10,10 @@ import {
   Clock,
   HelpCircle,
   MapPin,
+  MessageSquare,
   Phone,
   Play,
+  ShieldCheck,
   Sparkles,
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
@@ -20,6 +22,8 @@ import { SafeImage } from '../components/SafeImage';
 import { DoctorPortraitFrame } from '../components/ClinicLogoMark';
 import { BookActionButton } from '../components/BookActionLink';
 import { SequentialCarousel } from '../components/SequentialCarousel';
+import { EmergencyRedFlagsSection } from '../components/EmergencyRedFlagsSection';
+import { ClinicalTrustStrip } from '../components/ClinicalTrustStrip';
 
 const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 
@@ -92,6 +96,7 @@ export const HomePage: React.FC = () => {
   const [openFaqId, setOpenFaqId] = useState<string | null>(
     library.find((l) => l.type === 'faq')?.id || null
   );
+  const [activePartnershipStep, setActivePartnershipStep] = useState<number>(0);
 
   // Campaigns sorted by priority: open -> scheduled -> full -> ended
   const orderedCampaigns = [...campaigns].sort((a, b) => {
@@ -191,15 +196,29 @@ export const HomePage: React.FC = () => {
                   <div className="flex flex-wrap items-center gap-3 pt-2">
                     <Link
                       to="/book"
-                      style={{ backgroundColor: 'var(--color-petrol)' }}
-                      className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl hover:opacity-95 text-white text-sm sm:text-base font-semibold transition-all duration-200 hover:-translate-y-0.5 shadow-sm hover:shadow-md whitespace-nowrap"
+                      className="btn-interactive btn-sheen btn-sheen-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-gradient-to-r from-[#0F4C5C] via-[#0F4C5C] to-[#0284C7] hover:from-[#093542] hover:to-[#0369A1] text-white border border-sky-300/40 ring-2 ring-[#0F4C5C]/15 text-sm sm:text-base font-bold shadow-[0_10px_24px_-8px_rgba(15,76,92,0.55)] hover:shadow-[0_14px_28px_-8px_rgba(2,132,199,0.55)] whitespace-nowrap"
                     >
-                      <Calendar className="w-4 h-4" />
+                      <Calendar className="w-4 h-4 text-[#7DD3FC]" />
                       <span>{heroPrimaryCta}</span>
                     </Link>
+                    {localizedConfig.contact.whatsappUrl && (
+                      <a
+                        href={`${localizedConfig.contact.whatsappUrl}?text=${encodeURIComponent(
+                          lang === 'ar'
+                            ? 'مرحبًا د. محمد الجرباني، أود حجز موعد استشارة طبية في نوديسك كلينك.'
+                            : 'Hello Dr. Mohammed Al-Jurbani, I would like to book a consultation at NODISC Clinic.'
+                        )}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn-interactive btn-sheen inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white border border-emerald-300/40 ring-2 ring-emerald-500/15 text-sm sm:text-base font-bold shadow-[0_10px_22px_-8px_rgba(16,185,129,0.55)] whitespace-nowrap"
+                      >
+                        <MessageSquare className="w-4 h-4 text-emerald-100" />
+                        <span>{lang === 'ar' ? 'حجز سريع عبر واتساب' : 'Quick WhatsApp'}</span>
+                      </a>
+                    )}
                     <a
                       href="#departments-section"
-                      className="inline-flex items-center justify-center px-5 py-3.5 rounded-xl border border-slate-300 bg-white/90 hover:border-[#0F4C5C] hover:text-[#0F4C5C] text-slate-700 text-sm sm:text-base font-medium transition-all hover:-translate-y-0.5 whitespace-nowrap"
+                      className="btn-interactive inline-flex items-center justify-center px-5 py-3.5 rounded-xl border-2 border-[#0F4C5C]/25 bg-white/95 hover:border-[#0284C7] hover:bg-sky-50/70 text-[#0F4C5C] text-sm sm:text-base font-bold shadow-xs whitespace-nowrap"
                     >
                       {heroSecondaryCta}
                     </a>
@@ -209,13 +228,15 @@ export const HomePage: React.FC = () => {
                     />
                     <a
                       href="#clinic-location-section"
-                      style={{ color: 'var(--color-sky)' }}
-                      className="inline-flex items-center justify-center gap-1.5 px-3 py-3 text-sm font-semibold hover:underline whitespace-nowrap"
+                      className="btn-interactive inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-sky-50/90 hover:bg-sky-100 border border-sky-200/90 text-[#0284C7] text-xs sm:text-sm font-bold whitespace-nowrap"
                     >
                       <MapPin className="w-4 h-4" />
                       <span>{t('common.clinicLocation')}</span>
                     </a>
                   </div>
+
+                  {/* Interactive Color-Framed Clinical Trust Pillars */}
+                  <ClinicalTrustStrip />
                 </motion.div>
 
                 <motion.div
@@ -284,7 +305,7 @@ export const HomePage: React.FC = () => {
                 headerRightLink={
                   <Link
                     to="/campaigns"
-                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-white text-[#093542] hover:bg-sky-50 text-xs font-bold transition-colors whitespace-nowrap"
+                    className="btn-interactive btn-sheen inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-[#38BDF8] to-white text-[#093542] border border-sky-200 hover:shadow-[0_6px_16px_-4px_rgba(56,189,248,0.5)] text-xs font-extrabold whitespace-nowrap"
                   >
                     <span>{t('common.viewAll')}</span>
                     <ArrowIcon className="w-3.5 h-3.5" />
@@ -405,7 +426,7 @@ export const HomePage: React.FC = () => {
               headerRightLink={
                 <Link
                   to="/services"
-                  className="text-sm font-semibold text-[#0F4C5C] hover:text-[#0284C7] inline-flex items-center gap-1.5 whitespace-nowrap px-3.5 py-2 rounded-lg border border-slate-200 bg-white hover:border-[#0F4C5C]/40 shadow-xs transition-all"
+                  className="btn-interactive inline-flex items-center gap-1.5 whitespace-nowrap px-4 py-2 rounded-xl border-2 border-[#0F4C5C]/25 bg-white hover:border-[#0284C7] hover:bg-sky-50/70 text-sm font-bold text-[#0F4C5C] shadow-xs"
                 >
                   <span>{t('nav.services')}</span>
                   <ArrowIcon className="w-4 h-4" />
@@ -526,29 +547,161 @@ export const HomePage: React.FC = () => {
                       {featuredDoctor.bio}
                     </p>
 
-                    {/* Staggered Clinical Focus Grid */}
+                    {/* Staggered Interactive Clinical Focus Grid */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                      {featuredDoctor.focusAreas.slice(0, 4).map((area, i) => (
-                        <motion.div
-                          key={i}
-                          initial={{ opacity: 0, y: 10 }}
-                          whileInView={{ opacity: 1, y: 0 }}
-                          viewport={{ once: true, amount: 0.2 }}
-                          transition={{
-                            duration: 0.35,
-                            delay: 0.12 + i * 0.06,
-                            ease: EASE_OUT_EXPO,
-                          }}
-                          className="rounded-xl border border-slate-200/90 bg-slate-50/70 hover:bg-white hover:border-[#0F4C5C]/40 transition-colors p-3.5 flex items-start gap-2.5"
-                        >
-                          <span className="font-mono text-xs font-bold text-[#0284C7] tabular-nums pt-0.5 shrink-0">
-                            0{i + 1}.
-                          </span>
-                          <span className="text-xs sm:text-sm font-medium text-slate-800 leading-snug">
-                            {area}
-                          </span>
-                        </motion.div>
-                      ))}
+                      {featuredDoctor.focusAreas.slice(0, 4).map((area, i) => {
+                        const badgeColors = [
+                          'from-[#0F4C5C] to-[#0284C7]',
+                          'from-[#0284C7] to-indigo-600',
+                          'from-emerald-600 to-teal-600',
+                          'from-amber-600 to-[#0F4C5C]',
+                        ];
+                        return (
+                          <motion.div
+                            key={i}
+                            initial={{ opacity: 0, y: 10 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, amount: 0.2 }}
+                            transition={{
+                              duration: 0.35,
+                              delay: 0.12 + i * 0.06,
+                              ease: EASE_OUT_EXPO,
+                            }}
+                          >
+                            <BookActionButton
+                              departmentId={featuredDoctor.departmentId}
+                              doctorId={featuredDoctor.id}
+                              sourceLabel={area}
+                              className="btn-interactive group w-full text-start rounded-xl border border-slate-200/90 bg-gradient-to-br from-slate-50/90 to-white hover:from-sky-50/80 hover:to-white hover:border-[#0284C7]/55 hover:shadow-sm p-3.5 flex items-center justify-between gap-2.5"
+                            >
+                              <div className="flex items-start gap-2.5 min-w-0">
+                                <span
+                                  className={`w-6 h-6 rounded-lg bg-gradient-to-br ${
+                                    badgeColors[i % badgeColors.length]
+                                  } text-white font-mono text-[11px] font-bold tabular-nums inline-flex items-center justify-center shrink-0 mt-0.5 shadow-2xs`}
+                                >
+                                  0{i + 1}
+                                </span>
+                                <span className="text-xs sm:text-sm font-semibold text-slate-800 group-hover:text-[#0F4C5C] leading-snug transition-colors">
+                                  {area}
+                                </span>
+                              </div>
+                              <ArrowIcon className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#0284C7] shrink-0 transition-transform group-hover:-translate-x-0.5" />
+                            </BookActionButton>
+                          </motion.div>
+                        );
+                      })}
+                    </div>
+
+                    {/* Interactive 3-Step Patient Partnership Track */}
+                    <div className="rounded-2xl p-[1.5px] bg-gradient-to-r from-[#0F4C5C]/30 via-[#0284C7]/45 to-emerald-400/40 shadow-xs">
+                      <div className="rounded-[14.5px] bg-gradient-to-br from-sky-50/85 via-white to-emerald-50/40 p-4 space-y-3">
+                        <div className="flex items-center justify-between gap-2 text-xs font-bold text-[#0F4C5C]">
+                          <div className="flex items-center gap-2">
+                            <span className="w-6 h-6 rounded-lg bg-[#0284C7] text-white inline-flex items-center justify-center shrink-0">
+                              <ShieldCheck className="w-3.5 h-3.5" />
+                            </span>
+                            <span>
+                              {lang === 'ar'
+                                ? 'المريض شريك في القرار العلاجي — مراحل الاستشارة:'
+                                : 'Patient-Partnered Care — 3-Step Consultation:'}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
+                          {(lang === 'ar'
+                            ? [
+                                {
+                                  num: '01',
+                                  title: 'تقييم الحالة والتاريخ المرضي',
+                                  tip: 'يستمع الاستشاري لتفاصيل الألم، مدة الأعراض، والعلاجات السابقة لوضع صورة سريرية دقيقة.',
+                                },
+                                {
+                                  num: '02',
+                                  title: 'مراجعة الفحوصات وتفسير MRI',
+                                  tip: 'تُعرض مقاطع الرنين المغناطيسي مع شرح واضح لموقع الضغط العصبي أو الغضروف للمريض.',
+                                },
+                                {
+                                  num: '03',
+                                  title: 'مناقشة الخطة العلاجية المناسبة',
+                                  tip: 'نبدأ بالحلول التحفظية غير الجراحية أولاً، ولا نلجأ للجراحة إلا عند الضرورة القصوى.',
+                                },
+                              ]
+                            : [
+                                {
+                                  num: '01',
+                                  title: 'Symptom & History Assessment',
+                                  tip: 'Thorough neurological evaluation of pain patterns, duration, and prior therapies.',
+                                },
+                                {
+                                  num: '02',
+                                  title: 'MRI & Diagnostic Review',
+                                  tip: 'Side-by-side visual walkthrough of spine/brain MRI slices in plain language.',
+                                },
+                                {
+                                  num: '03',
+                                  title: 'Shared Treatment Plan',
+                                  tip: 'Conservative non-surgical therapy first; minimally invasive surgery only when truly indicated.',
+                                },
+                              ]
+                          ).map((step, idx) => {
+                            const isSelected = activePartnershipStep === idx;
+                            return (
+                              <button
+                                key={idx}
+                                type="button"
+                                onClick={() => setActivePartnershipStep(idx)}
+                                aria-pressed={isSelected}
+                                className={`btn-interactive text-start rounded-xl px-3 py-2.5 border transition-all flex items-center gap-2 ${
+                                  isSelected
+                                    ? 'bg-gradient-to-r from-[#0F4C5C] to-[#0284C7] text-white border-[#0284C7] shadow-[0_6px_14px_-4px_rgba(2,132,199,0.45)]'
+                                    : 'bg-white border-sky-200/80 text-slate-800 hover:border-[#0284C7] hover:bg-sky-50/70'
+                                }`}
+                              >
+                                <span
+                                  className={`w-6 h-6 rounded-lg font-mono text-[11px] font-extrabold tabular-nums inline-flex items-center justify-center shrink-0 ${
+                                    isSelected
+                                      ? 'bg-white/20 text-white'
+                                      : 'bg-sky-100 text-[#0F4C5C]'
+                                  }`}
+                                >
+                                  {step.num}
+                                </span>
+                                <span className="font-bold leading-snug">{step.title}</span>
+                              </button>
+                            );
+                          })}
+                        </div>
+
+                        <AnimatePresence mode="wait">
+                          <motion.div
+                            key={activePartnershipStep}
+                            initial={{ opacity: 0, y: -4 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -4 }}
+                            transition={{ duration: 0.18, ease: EASE_OUT_EXPO }}
+                            className="rounded-xl bg-white/95 border border-sky-200/80 px-3.5 py-2.5 text-xs text-slate-700 leading-relaxed flex items-start gap-2"
+                          >
+                            <CheckCircle2 className="w-4 h-4 text-[#0284C7] shrink-0 mt-0.5" />
+                            <span>
+                              {
+                                (lang === 'ar'
+                                  ? [
+                                      'يستمع الاستشاري لتفاصيل الألم، مدة الأعراض، والعلاجات السابقة لوضع صورة سريرية دقيقة.',
+                                      'تُعرض مقاطع الرنين المغناطيسي مع شرح واضح لموقع الضغط العصبي أو الغضروف للمريض.',
+                                      'نبدأ بالحلول التحفظية غير الجراحية أولاً، ولا نلجأ للجراحة إلا عند الضرورة القصوى.',
+                                    ]
+                                  : [
+                                      'Thorough neurological evaluation of pain patterns, duration, and prior therapies.',
+                                      'Side-by-side visual walkthrough of spine/brain MRI slices in plain language.',
+                                      'Conservative non-surgical therapy first; minimally invasive surgery only when truly indicated.',
+                                    ])[activePartnershipStep]
+                              }
+                            </span>
+                          </motion.div>
+                        </AnimatePresence>
+                      </div>
                     </div>
 
                     {/* Qualifications Highlight */}
@@ -567,32 +720,49 @@ export const HomePage: React.FC = () => {
                   </div>
 
                   {/* CTA Action Row */}
-                  <div className="pt-4 border-t border-slate-100 flex flex-wrap items-center gap-3">
-                    <BookActionButton
-                      departmentId={featuredDoctor.departmentId}
-                      doctorId={featuredDoctor.id}
-                      sourceLabel={featuredDoctor.nameAr}
-                      style={{ backgroundColor: 'var(--color-petrol)' }}
-                      className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg hover:opacity-95 text-white text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5 whitespace-nowrap"
-                    >
-                      <Calendar className="w-4 h-4" />
-                      <span>{t('common.bookNow')}</span>
-                    </BookActionButton>
+                  <div className="pt-4 border-t border-slate-100 space-y-3">
+                    <div className="rounded-xl bg-gradient-to-r from-[#0F4C5C]/8 via-sky-50 to-emerald-50/60 border border-[#0F4C5C]/20 px-4 py-2.5">
+                      <p className="text-xs font-bold text-[#0F4C5C]">
+                        {lang === 'ar'
+                          ? 'لا تؤجل صحتك وعافيتك — احصل على رأي طبي استشاري موثوق في آلام الظهر والرقبة والأعصاب.'
+                          : 'Do not delay your recovery — get a trusted neurosurgical & spine consultation.'}
+                      </p>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-3">
+                      <BookActionButton
+                        departmentId={featuredDoctor.departmentId}
+                        doctorId={featuredDoctor.id}
+                        sourceLabel={featuredDoctor.nameAr}
+                        className="btn-interactive btn-sheen inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[#0F4C5C] to-[#0284C7] hover:from-[#093542] hover:to-[#0369A1] text-white border border-sky-300/40 text-sm font-bold shadow-[0_8px_20px_-6px_rgba(15,76,92,0.5)] whitespace-nowrap"
+                      >
+                        <Calendar className="w-4 h-4 text-[#7DD3FC]" />
+                        <span>{t('common.bookNow')}</span>
+                      </BookActionButton>
 
-                    <Link
-                      to={`/doctors/${featuredDoctor.slug}`}
-                      className="inline-flex items-center justify-center gap-1.5 px-5 py-3 rounded-lg border border-slate-300 hover:border-[#0F4C5C] text-slate-800 hover:text-[#0F4C5C] text-sm font-medium transition-colors whitespace-nowrap"
-                    >
-                      <span>{t('home.doctorProfileCta')}</span>
-                      <ArrowIcon className="w-4 h-4" />
-                    </Link>
+                      {localizedConfig.contact.whatsappUrl && (
+                        <a
+                          href={`${localizedConfig.contact.whatsappUrl}?text=${encodeURIComponent(
+                            lang === 'ar'
+                              ? 'مرحبًا د. محمد الجرباني، أود حجز موعد استشارة طبية.'
+                              : 'Hello Dr. Mohammed Al-Jurbani, I would like to book a consultation.'
+                          )}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn-interactive btn-sheen inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white border border-emerald-300/40 text-sm font-bold shadow-[0_8px_18px_-6px_rgba(16,185,129,0.45)] whitespace-nowrap"
+                        >
+                          <MessageSquare className="w-4 h-4" />
+                          <span>{lang === 'ar' ? 'حجز عبر واتساب' : 'Book via WhatsApp'}</span>
+                        </a>
+                      )}
 
-                    <Link
-                      to="/doctors"
-                      className="text-sm font-medium text-slate-600 hover:text-[#0F4C5C] px-2 py-2 whitespace-nowrap"
-                    >
-                      {t('nav.doctors')}
-                    </Link>
+                      <Link
+                        to={`/doctors/${featuredDoctor.slug}`}
+                        className="btn-interactive inline-flex items-center justify-center gap-1.5 px-5 py-3 rounded-xl border-2 border-[#0F4C5C]/25 bg-white hover:border-[#0284C7] hover:bg-sky-50/70 text-[#0F4C5C] text-sm font-bold whitespace-nowrap"
+                      >
+                        <span>{t('home.doctorProfileCta')}</span>
+                        <ArrowIcon className="w-4 h-4" />
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </motion.div>
@@ -631,7 +801,7 @@ export const HomePage: React.FC = () => {
               headerRightLink={
                 <Link
                   to="/services"
-                  className="text-sm font-semibold text-[#0F4C5C] hover:text-[#0284C7] inline-flex items-center gap-1.5 whitespace-nowrap px-3.5 py-2 rounded-lg border border-slate-200 bg-white hover:border-[#0F4C5C]/40 shadow-xs transition-all"
+                  className="btn-interactive inline-flex items-center gap-1.5 whitespace-nowrap px-4 py-2 rounded-xl border-2 border-[#0F4C5C]/25 bg-white hover:border-[#0284C7] hover:bg-sky-50/70 text-sm font-bold text-[#0F4C5C] shadow-xs"
                 >
                   <span>{t('common.viewAll')}</span>
                   <ArrowIcon className="w-4 h-4" />
@@ -641,7 +811,7 @@ export const HomePage: React.FC = () => {
                 const dept = departments.find((d) => d.id === srv.departmentId);
                 const doc = doctors.find((d) => d.id === srv.doctorId);
                 return (
-                  <div className="group bg-white rounded-xl border border-slate-200 overflow-hidden flex flex-col justify-between w-full transition-all duration-200 hover:-translate-y-0.5 hover:border-[#0F4C5C]/40">
+                  <div className="group bg-white rounded-xl border border-slate-200 overflow-hidden flex flex-col justify-between w-full transition-all duration-200 hover:-translate-y-0.5 hover:border-[#0284C7]/50 hover:shadow-md">
                     <div>
                       {srv.image && (
                         <Link to={`/services/${srv.slug}`} className="block overflow-hidden">
@@ -678,7 +848,7 @@ export const HomePage: React.FC = () => {
                     <div className="px-6 pb-5 pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
                       <Link
                         to={`/services/${srv.slug}`}
-                        className="text-sm font-semibold text-[#0F4C5C] hover:underline inline-flex items-center gap-1"
+                        className="text-sm font-bold text-[#0F4C5C] hover:text-[#0284C7] inline-flex items-center gap-1 transition-colors"
                       >
                         <span>{t('common.readMore')}</span>
                         <ArrowIcon className="w-3.5 h-3.5" />
@@ -688,7 +858,7 @@ export const HomePage: React.FC = () => {
                         serviceId={srv.id}
                         doctorId={srv.doctorId || undefined}
                         sourceLabel={srv.title}
-                        className="text-xs font-semibold px-3.5 py-2 rounded-lg bg-slate-100 hover:bg-[#0F4C5C] text-slate-800 hover:text-white transition-colors"
+                        className="btn-interactive btn-sheen text-xs font-bold px-4 py-2 rounded-xl bg-gradient-to-r from-[#0F4C5C] to-[#0284C7] text-white border border-sky-300/30 shadow-xs"
                       >
                         {t('common.bookService')}
                       </BookActionButton>
@@ -732,7 +902,7 @@ export const HomePage: React.FC = () => {
                 headerRightLink={
                   <Link
                     to="/stories"
-                    className="text-sm font-semibold text-[#0F4C5C] hover:text-[#0284C7] inline-flex items-center gap-1.5 whitespace-nowrap px-3.5 py-2 rounded-lg border border-slate-200 bg-slate-50 hover:bg-white hover:border-[#0F4C5C]/40 shadow-xs transition-all"
+                    className="btn-interactive inline-flex items-center gap-1.5 whitespace-nowrap px-4 py-2 rounded-xl border-2 border-[#0F4C5C]/25 bg-white hover:border-[#0284C7] hover:bg-sky-50/70 text-sm font-bold text-[#0F4C5C] shadow-xs"
                   >
                     <span>{t('nav.stories')}</span>
                     <ArrowIcon className="w-4 h-4" />
@@ -800,7 +970,7 @@ export const HomePage: React.FC = () => {
               </div>
               <Link
                 to="/library"
-                className="text-sm font-semibold text-[#0F4C5C] hover:text-[#0284C7] inline-flex items-center gap-1.5 whitespace-nowrap px-3.5 py-2 rounded-lg border border-slate-200 bg-white hover:border-[#0F4C5C]/40 shadow-xs transition-all self-start sm:self-auto"
+                className="btn-interactive inline-flex items-center gap-1.5 whitespace-nowrap px-4 py-2 rounded-xl border-2 border-[#0F4C5C]/25 bg-white hover:border-[#0284C7] hover:bg-sky-50/70 text-sm font-bold text-[#0F4C5C] shadow-xs self-start sm:self-auto"
               >
                 <span>{t('nav.library')}</span>
                 <ArrowIcon className="w-4 h-4" />
@@ -904,6 +1074,10 @@ export const HomePage: React.FC = () => {
                 </div>
               )}
             </div>
+
+            <div className="mt-8">
+              <EmergencyRedFlagsSection compact />
+            </div>
             </motion.div>
           </section>
         );
@@ -938,7 +1112,7 @@ export const HomePage: React.FC = () => {
                 headerRightLink={
                   <Link
                     to="/news"
-                    className="text-sm font-semibold text-[#0F4C5C] hover:text-[#0284C7] inline-flex items-center gap-1.5 whitespace-nowrap px-3.5 py-2 rounded-lg border border-slate-200 bg-slate-50 hover:bg-white hover:border-[#0F4C5C]/40 shadow-xs transition-all"
+                    className="btn-interactive inline-flex items-center gap-1.5 whitespace-nowrap px-4 py-2 rounded-xl border-2 border-[#0F4C5C]/25 bg-white hover:border-[#0284C7] hover:bg-sky-50/70 text-sm font-bold text-[#0F4C5C] shadow-xs"
                   >
                     <span>{t('common.viewAll')}</span>
                     <ArrowIcon className="w-4 h-4" />
@@ -1033,7 +1207,7 @@ export const HomePage: React.FC = () => {
                 <div className="relative flex flex-wrap items-center gap-3 pt-2 border-t border-white/15">
                   <Link
                     to="/book"
-                    className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#38BDF8] to-[#0284C7] hover:from-[#7DD3FC] hover:to-[#0EA5E9] text-[#05222B] text-xs sm:text-sm font-bold shadow-sm transition-all whitespace-nowrap"
+                    className="btn-interactive btn-sheen inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#38BDF8] to-[#0284C7] hover:from-[#7DD3FC] hover:to-[#0EA5E9] text-[#05222B] border border-sky-200/70 text-xs sm:text-sm font-extrabold shadow-[0_6px_18px_-4px_rgba(56,189,248,0.5)] whitespace-nowrap"
                   >
                     <Calendar className="w-4 h-4" />
                     <span>{t('common.bookNow')}</span>
@@ -1044,7 +1218,7 @@ export const HomePage: React.FC = () => {
                   />
                   <Link
                     to="/library?type=faq"
-                    className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-white/25 bg-white/10 hover:bg-white/15 text-white text-xs sm:text-sm font-semibold transition-colors whitespace-nowrap"
+                    className="btn-interactive inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-white/30 bg-white/10 hover:bg-white/20 text-white text-xs sm:text-sm font-bold whitespace-nowrap"
                   >
                     <span>{t('common.viewAll')}</span>
                     <ArrowIcon className="w-4 h-4" />
@@ -1169,9 +1343,9 @@ export const HomePage: React.FC = () => {
                 <div className="flex flex-wrap items-center gap-2.5">
                   <Link
                     to="/book"
-                    className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#0F4C5C] hover:bg-[#093542] text-white text-xs sm:text-sm font-semibold shadow-xs transition-all whitespace-nowrap"
+                    className="btn-interactive btn-sheen inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#0F4C5C] to-[#0284C7] text-white border border-sky-300/35 text-xs sm:text-sm font-bold shadow-[0_6px_18px_-5px_rgba(15,76,92,0.45)] whitespace-nowrap"
                   >
-                    <Calendar className="w-4 h-4" />
+                    <Calendar className="w-4 h-4 text-[#7DD3FC]" />
                     <span>{t('common.bookNow')}</span>
                   </Link>
                   <span
@@ -1180,7 +1354,7 @@ export const HomePage: React.FC = () => {
                   />
                   <Link
                     to="/contact"
-                    className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-slate-300 bg-white hover:border-[#0F4C5C] text-slate-800 hover:text-[#0F4C5C] text-xs sm:text-sm font-semibold transition-colors whitespace-nowrap"
+                    className="btn-interactive inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border-2 border-[#0F4C5C]/25 bg-white hover:border-[#0284C7] hover:bg-sky-50/70 text-[#0F4C5C] text-xs sm:text-sm font-bold whitespace-nowrap"
                   >
                     <span>{t('nav.contact')}</span>
                     <ArrowIcon className="w-4 h-4" />
@@ -1224,7 +1398,7 @@ export const HomePage: React.FC = () => {
                         <a
                           key={idx}
                           href={`tel:${ph.value.replace(/\s+/g, '')}`}
-                          className="flex items-center justify-between gap-2 px-3.5 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 border border-white/15 transition-colors"
+                          className="btn-interactive flex items-center justify-between gap-2 px-3.5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 hover:border-[#38BDF8]/60"
                         >
                           <span className="text-xs text-sky-100 font-medium">{ph.label}</span>
                           <span

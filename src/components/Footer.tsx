@@ -276,7 +276,21 @@ export const Footer: React.FC = () => {
 
         <div className="mt-6 pt-6 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
           <p>{t('footer.legalNote')}</p>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <Link
+              to="/policies/privacy"
+              className="text-slate-400 hover:text-sky-300 transition-colors"
+            >
+              {lang === 'ar' ? 'سياسة الخصوصية' : 'Privacy Policy'}
+            </Link>
+            <span className="text-slate-700" aria-hidden="true">·</span>
+            <Link
+              to="/policies/terms"
+              className="text-slate-400 hover:text-sky-300 transition-colors"
+            >
+              {lang === 'ar' ? 'الشروط والأحكام' : 'Terms & Conditions'}
+            </Link>
+            <span className="text-slate-700" aria-hidden="true">·</span>
             <Link
               to="/admin"
               className="inline-flex items-center gap-1 text-[11px] text-slate-600 hover:text-slate-300 transition-colors"

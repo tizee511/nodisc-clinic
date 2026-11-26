@@ -154,7 +154,7 @@ export const StoreHomePage: React.FC = () => {
           <div className="text-center pt-2">
             <Link
               to="/store/category/all"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-slate-300 bg-white hover:border-[#0F4C5C] text-slate-800 text-sm font-semibold transition-colors"
+              className="btn-interactive btn-sheen inline-flex items-center gap-2 px-7 py-3 rounded-xl bg-gradient-to-r from-[#0F4C5C] to-[#0284C7] text-white border border-sky-300/40 text-sm font-bold shadow-[0_8px_20px_-6px_rgba(15,76,92,0.45)]"
             >
               <span>
                 {t('store.allProducts')} ({products.length})

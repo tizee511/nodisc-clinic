@@ -86,7 +86,7 @@ export const FloatingContactButton: React.FC = () => {
               <Link
                 to="/store/prescription"
                 onClick={() => setOpen(false)}
-                className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[#0F4C5C] text-white text-xs font-semibold hover:bg-[#093542]"
+                className="btn-interactive btn-sheen inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-gradient-to-r from-[#0F4C5C] to-[#0284C7] text-white text-xs font-bold shadow-xs"
               >
                 <FileUp className="w-3.5 h-3.5" />
                 <span>{t('nav.prescriptionOrder')}</span>
@@ -95,7 +95,7 @@ export const FloatingContactButton: React.FC = () => {
               <Link
                 to="/book"
                 onClick={() => setOpen(false)}
-                className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[#0F4C5C] text-white text-xs font-semibold hover:bg-[#093542]"
+                className="btn-interactive btn-sheen inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-gradient-to-r from-[#0F4C5C] to-[#0284C7] text-white text-xs font-bold shadow-xs"
               >
                 <Calendar className="w-3.5 h-3.5" />
                 <span>{t('nav.bookAppointment')}</span>
@@ -104,7 +104,7 @@ export const FloatingContactButton: React.FC = () => {
             <Link
               to="/contact"
               onClick={() => setOpen(false)}
-              className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-slate-200 text-slate-700 text-xs font-semibold hover:bg-slate-50"
+              className="btn-interactive inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl border border-slate-300 bg-white hover:border-[#0F4C5C] text-slate-800 hover:text-[#0F4C5C] text-xs font-semibold shadow-2xs"
             >
               <Phone className="w-3.5 h-3.5" />
               <span>{t('nav.contact')}</span>
@@ -118,9 +118,9 @@ export const FloatingContactButton: React.FC = () => {
         onClick={() => setOpen((prev) => !prev)}
         aria-expanded={open}
         aria-label={lang === 'ar' ? 'التواصل السريع' : 'Quick Contact'}
-        className="h-12 px-4 rounded-full bg-[#0F4C5C] hover:bg-[#093542] text-white shadow-lg inline-flex items-center gap-2 text-sm font-semibold transition-transform hover:-translate-y-0.5"
+        className="btn-interactive btn-sheen h-12 px-4 rounded-full bg-gradient-to-r from-[#0F4C5C] via-[#0F4C5C] to-[#0284C7] text-white border border-sky-300/40 ring-2 ring-[#38BDF8]/25 shadow-[0_10px_25px_-6px_rgba(15,76,92,0.55)] inline-flex items-center gap-2 text-sm font-bold"
       >
-        <MessageSquare className="w-4 h-4" />
+        <MessageSquare className="w-4 h-4 text-[#7DD3FC]" />
         <span className="hidden sm:inline">{t('nav.contact')}</span>
       </button>
     </div>

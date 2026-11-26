@@ -59,10 +59,10 @@ export const StoreMainGroupsFilterBar: React.FC<StoreMainGroupsFilterBarProps> =
             type="button"
             onClick={() => onSelectMainSection('all')}
             aria-pressed={selectedMainSectionId === 'all'}
-            className={`flex items-center gap-3 px-4 py-2.5 rounded-xl border text-start transition-all duration-150 whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0F4C5C] ${
+            className={`btn-interactive flex items-center gap-3 px-4 py-2.5 rounded-xl border text-start whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0F4C5C] ${
               selectedMainSectionId === 'all'
-                ? 'bg-[#0F4C5C] text-white border-[#0F4C5C] shadow-[0_6px_16px_-4px_rgba(15,76,92,0.48)]'
-                : 'bg-white text-slate-800 border-slate-200 hover:border-[#0F4C5C]/45 hover:bg-sky-50/80 hover:text-[#0F4C5C] shadow-xs'
+                ? 'btn-sheen bg-gradient-to-r from-[#0F4C5C] to-[#0284C7] text-white border-[#0284C7] shadow-[0_8px_18px_-4px_rgba(2,132,199,0.48)]'
+                : 'bg-white text-slate-800 border-slate-200 hover:border-[#0284C7]/60 hover:bg-sky-50/80 hover:text-[#0F4C5C] shadow-xs'
             }`}
           >
             <span
@@ -97,10 +97,10 @@ export const StoreMainGroupsFilterBar: React.FC<StoreMainGroupsFilterBarProps> =
                 type="button"
                 onClick={() => onSelectMainSection(sec.id)}
                 aria-pressed={isActive}
-                className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl border text-start transition-all duration-150 whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0F4C5C] ${
+                className={`btn-interactive flex items-center gap-3 px-3.5 py-2.5 rounded-xl border text-start whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0F4C5C] ${
                   isActive
-                    ? 'bg-[#0F4C5C] text-white border-[#0F4C5C] shadow-[0_6px_16px_-4px_rgba(15,76,92,0.48)]'
-                    : 'bg-white text-slate-800 border-slate-200 hover:border-[#0F4C5C]/45 hover:bg-sky-50/80 hover:text-[#0F4C5C] shadow-xs'
+                    ? 'btn-sheen bg-gradient-to-r from-[#0F4C5C] to-[#0284C7] text-white border-[#0284C7] shadow-[0_8px_18px_-4px_rgba(2,132,199,0.48)]'
+                    : 'bg-white text-slate-800 border-slate-200 hover:border-[#0284C7]/60 hover:bg-sky-50/80 hover:text-[#0F4C5C] shadow-xs'
                 }`}
               >
                 {sec.image ? (

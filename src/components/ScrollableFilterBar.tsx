@@ -3,12 +3,12 @@ import { ChevronLeft, ChevronRight, SlidersHorizontal } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 export const getFilterTabClass = (isActive: boolean, compact = false) =>
-  `inline-flex items-center gap-1.5 rounded-xl font-semibold transition-all duration-150 whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0F4C5C] ${
+  `btn-interactive inline-flex items-center gap-1.5 rounded-xl font-semibold border whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0F4C5C] ${
     compact ? 'px-3.5 py-1.5 text-xs' : 'px-4 py-2 text-xs sm:text-sm'
   } ${
     isActive
-      ? 'bg-[#0F4C5C] text-white shadow-[0_3px_10px_-2px_rgba(15,76,92,0.45)]'
-      : 'text-slate-700 hover:text-[#0F4C5C] hover:bg-sky-50/90'
+      ? 'btn-sheen bg-gradient-to-r from-[#0F4C5C] to-[#0284C7] text-white border-[#0284C7] shadow-[0_6px_16px_-4px_rgba(2,132,199,0.45)]'
+      : 'bg-white/90 text-slate-700 border-slate-200/80 hover:text-[#0F4C5C] hover:border-[#0F4C5C]/40 hover:bg-sky-50/90 shadow-2xs'
   }`;
 
 interface ScrollableFilterBarProps {

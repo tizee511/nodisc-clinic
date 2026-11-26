@@ -22,10 +22,50 @@ interface BookingPrefill {
   fromSourceLabel?: string;
 }
 
+export interface StoreCoupon {
+  code: string;
+  type: 'percent' | 'fixed';
+  value: number;
+  minSubtotalYER: number;
+  titleAr: string;
+  titleEn: string;
+}
+
+export const STORE_COUPONS: StoreCoupon[] = [
+  {
+    code: 'NODISC20',
+    type: 'percent',
+    value: 20,
+    minSubtotalYER: 10000,
+    titleAr: 'خصم 20% على المستلزمات والمشدات الطبية',
+    titleEn: '20% off orthopedic supports & store items',
+  },
+  {
+    code: 'SPINE5000',
+    type: 'fixed',
+    value: 5000,
+    minSubtotalYER: 20000,
+    titleAr: 'خصم 5,000 ر.ي لأجهزة التأهيل والطلبات الكبيرة',
+    titleEn: '5,000 YER off rehabilitation devices & orders',
+  },
+  {
+    code: 'WELCOME10',
+    type: 'percent',
+    value: 10,
+    minSubtotalYER: 0,
+    titleAr: 'خصم 10% للطلبات من متجر صيدلية نوديسك',
+    titleEn: '10% welcome discount at NODISC Pharmacy',
+  },
+];
+
 interface ClinicContextValue {
   cart: CartItem[];
   cartCount: number;
   cartSubtotalYER: number;
+  appliedCoupon: StoreCoupon | null;
+  couponDiscountYER: number;
+  applyCoupon: (rawCode: string) => { ok: boolean; message: string };
+  clearCoupon: () => void;
   addToCart: (productId: string, quantity: number, selectedOption?: string) => { ok: boolean; message?: string };
   updateCartQuantity: (productId: string, selectedOption: string | undefined, quantity: number) => void;
   removeFromCart: (productId: string, selectedOption?: string) => void;
@@ -256,6 +296,8 @@ export const ClinicProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const clearWishlist = () => setWishlist([]);
 
+  const [appliedCouponCode, setAppliedCouponCode] = useState<string | null>(null);
+
   const wishlistCount = wishlist.filter((id) =>
     liveProducts.some((p) => p.id === id && p.visible !== false)
   ).length;
@@ -265,6 +307,60 @@ export const ClinicProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const prod = liveProducts.find((p) => p.id === item.productId);
     return acc + (prod ? prod.priceYER * item.quantity : 0);
   }, 0);
+
+  const matchedCoupon = appliedCouponCode
+    ? STORE_COUPONS.find((c) => c.code === appliedCouponCode) || null
+    : null;
+
+  const appliedCoupon =
+    matchedCoupon && cartSubtotalYER >= matchedCoupon.minSubtotalYER ? matchedCoupon : null;
+
+  const couponDiscountYER = appliedCoupon
+    ? appliedCoupon.type === 'percent'
+      ? Math.round((cartSubtotalYER * appliedCoupon.value) / 100)
+      : Math.min(cartSubtotalYER, appliedCoupon.value)
+    : 0;
+
+  const applyCoupon = (rawCode: string): { ok: boolean; message: string } => {
+    const code = rawCode.trim().toUpperCase();
+    if (!code) {
+      return {
+        ok: false,
+        message: lang === 'ar' ? 'يرجى إدخال رمز الكوبون.' : 'Please enter a coupon code.',
+      };
+    }
+    const found = STORE_COUPONS.find((c) => c.code === code);
+    if (!found) {
+      return {
+        ok: false,
+        message:
+          lang === 'ar'
+            ? 'كود الخصم غير صحيح أو منتهي الصلاحية.'
+            : 'Invalid or expired coupon code.',
+      };
+    }
+    if (cartSubtotalYER < found.minSubtotalYER) {
+      return {
+        ok: false,
+        message:
+          lang === 'ar'
+            ? `يتطلب هذا الكوبون حدًا أدنى للطلب بقيمة ${formatPrice(found.minSubtotalYER)}.`
+            : `This coupon requires a minimum order of ${formatPrice(found.minSubtotalYER)}.`,
+      };
+    }
+    setAppliedCouponCode(found.code);
+    return {
+      ok: true,
+      message: lang === 'ar' ? `تم تفعيل الكوبون: ${found.titleAr}` : `Applied: ${found.titleEn}`,
+    };
+  };
+
+  const clearCoupon = () => setAppliedCouponCode(null);
+
+  const clearCartWithCoupon = () => {
+    clearCart();
+    setAppliedCouponCode(null);
+  };
 
   const setLastAppointment = (app: AppointmentSubmission | null) => {
     setLastAppointmentState(app);
@@ -314,10 +410,14 @@ export const ClinicProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         cart,
         cartCount,
         cartSubtotalYER,
+        appliedCoupon,
+        couponDiscountYER,
+        applyCoupon,
+        clearCoupon,
         addToCart,
         updateCartQuantity,
         removeFromCart,
-        clearCart,
+        clearCart: clearCartWithCoupon,
         wishlist,
         wishlistCount,
         isInWishlist,
