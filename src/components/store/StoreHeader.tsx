@@ -142,11 +142,6 @@ export const StoreHeader: React.FC = () => {
               <span>{t('nav.prescriptionOrder')}</span>
             </NavLink>
 
-            <NavLink to="/store/wishlist" className={navLinkClass}>
-              <Heart className="w-3.5 h-3.5 hidden xl:inline-block shrink-0 text-sky-300/90" />
-              <span>{lang === 'ar' ? 'المفضلة' : 'Favorites'}</span>
-            </NavLink>
-
             <Link
               to="/"
               className="text-sm font-medium whitespace-nowrap shrink-0 py-1.5 text-sky-200 hover:text-white transition-colors inline-flex items-center gap-1"
@@ -205,10 +200,10 @@ export const StoreHeader: React.FC = () => {
               to="/store/wishlist"
               aria-label={lang === 'ar' ? 'القائمة المفضلة' : 'Favorites'}
               title={lang === 'ar' ? 'القائمة المفضلة' : 'Favorites'}
-              className="relative p-1.5 sm:p-2 rounded-lg text-slate-100 hover:text-rose-300 hover:bg-white/10 transition-colors inline-flex items-center justify-center"
+              className="hidden lg:inline-flex relative p-2 rounded-lg text-slate-100 hover:text-rose-300 hover:bg-white/10 transition-colors items-center justify-center"
             >
               <Heart
-                className={`w-4 h-4 sm:w-5 sm:h-5 ${
+                className={`w-5 h-5 ${
                   wishlistCount > 0 ? 'text-rose-400 fill-rose-400/25' : ''
                 }`}
               />
@@ -222,15 +217,14 @@ export const StoreHeader: React.FC = () => {
             <Link
               to="/store/cart"
               aria-label={t('nav.cart')}
-              className="inline-flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-lg bg-gradient-to-r from-[#38BDF8] to-[#0284C7] hover:from-[#7DD3FC] hover:to-[#0EA5E9] text-[#04181F] text-xs sm:text-sm font-bold whitespace-nowrap shrink-0 transition-all tabular-nums shadow-sm"
+              className="hidden lg:inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-[#38BDF8] to-[#0284C7] hover:from-[#7DD3FC] hover:to-[#0EA5E9] text-[#04181F] text-sm font-bold whitespace-nowrap shrink-0 transition-all tabular-nums shadow-sm"
             >
               <ShoppingBag className="w-4 h-4 shrink-0" />
-              <span className="sm:hidden">{cartCount}</span>
-              <span className="hidden sm:inline">
+              <span>
                 {t('nav.cart')} ({cartCount})
               </span>
               {cartCount > 0 && (
-                <span className="hidden md:inline text-[#06222B]/80 font-semibold">
+                <span className="text-[#06222B]/80 font-semibold">
                   · {formatPrice(cartSubtotalYER)}
                 </span>
               )}
@@ -334,16 +328,6 @@ export const StoreHeader: React.FC = () => {
                     label: t('nav.prescriptionOrder'),
                     icon: FileUp,
                   },
-                  {
-                    to: '/store/wishlist',
-                    label: `${lang === 'ar' ? 'المفضلة' : 'Favorites'} (${wishlistCount})`,
-                    icon: Heart,
-                  },
-                  {
-                    to: '/store/cart',
-                    label: `${t('nav.cart')} (${cartCount})`,
-                    icon: ShoppingBag,
-                  },
                 ].map((item) => {
                   const Icon = item.icon;
                   return (
@@ -409,16 +393,6 @@ export const StoreHeader: React.FC = () => {
 
             {/* Pinned Bottom Actions */}
             <div className="p-3 border-t border-white/15 bg-[#04181F] flex flex-col gap-2 shrink-0">
-              <Link
-                to="/store/cart"
-                onClick={() => setMobileMenuOpen(false)}
-                className="w-full py-2.5 px-3 rounded-lg bg-gradient-to-r from-[#38BDF8] to-[#0284C7] hover:from-[#7DD3FC] hover:to-[#0EA5E9] text-[#04181F] text-xs font-bold inline-flex items-center justify-center gap-1.5 tabular-nums shadow-sm transition-all"
-              >
-                <ShoppingBag className="w-3.5 h-3.5 shrink-0" />
-                <span className="truncate">
-                  {t('nav.cart')} ({cartCount}) · {formatPrice(cartSubtotalYER)}
-                </span>
-              </Link>
               <Link
                 to="/"
                 onClick={() => setMobileMenuOpen(false)}

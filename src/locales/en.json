@@ -131,6 +131,7 @@
       "networkError": "Simulate Submission Error (Keep Form Data)"
     },
     "errors": {
+      "patientStatusRequired": "Please select whether you are a new patient or previously registered to continue.",
       "departmentRequired": "Please select a medical department.",
       "serviceRequired": "Please select a service.",
       "dayRequired": "Please select a preferred day.",
@@ -139,6 +140,40 @@
       "nameRequired": "Please enter the full name (at least 3 characters).",
       "phoneRequired": "Please enter a valid contact phone number (at least 7 digits).",
       "submitFailed": "Unable to complete submission right now (simulated network error). Your form data has been preserved; please try again."
+    },
+    "wizard": {
+      "stepCounter": "Step {{current}} of {{total}}",
+      "steps": {
+        "status": "Patient Status",
+        "service": "Service & Doctor",
+        "schedule": "Date & Time",
+        "details": "Details & Confirm"
+      },
+      "step1Title": "Is this your first visit, or are you previously registered?",
+      "step1Subtitle": "Selecting your patient status helps our reception prepare your existing chart or set up a new file faster.",
+      "newPatientTitle": "New Patient (First Visit)",
+      "newPatientDesc": "I have not visited NODISC Clinic before and want to book a consultation or open a new chart.",
+      "returningPatientTitle": "Previously Registered",
+      "returningPatientDesc": "I already have a medical file or visited the clinic before and want a follow-up or new booking.",
+      "returningLookupTitle": "Quick File Lookup (Optional)",
+      "returningLookupPlaceholder": "Enter file number (e.g., MR-2210) or registered phone",
+      "returningLookupHint": "You can enter your previous file number now, or continue using your phone number in the final step.",
+      "returningLookupBtn": "Look Up File",
+      "returningMatchFound": "Medical file matched: {{name}}",
+      "returningAutofillBtn": "Auto-fill My Details",
+      "returningAutofillDone": "Name and phone auto-filled",
+      "returningNoMatch": "No matching local demo file found; you may still continue and submit normally.",
+      "step2Title": "Choose Department, Service & Specialist",
+      "step2Subtitle": "Select the medical specialty and service you need, and optionally pick a preferred doctor.",
+      "step3Title": "Select Visit Type & Preferred Schedule",
+      "step3Subtitle": "Pick your visit type, preferred day, and morning or evening period for coordination.",
+      "step4Title": "Contact Information & Final Review",
+      "step4Subtitle": "Enter your contact information and verify your appointment summary before submitting.",
+      "reviewBoxTitle": "Final Review Summary",
+      "patientStatusLabel": "Patient Status",
+      "nextBtn": "Next",
+      "prevBtn": "Back",
+      "editStep": "Edit"
     },
     "result": {
       "pendingTitle": "Appointment Request Received (Demo Result)",
@@ -255,7 +290,37 @@
       "transferReceiptLabel": "Attach Transfer Screenshot (Optional)",
       "autoBalance": "Auto-balance remaining",
       "paymentFeeLabel": "Payment Fee",
-      "freeLabel": "Free"
+      "freeLabel": "Free",
+      "wizard": {
+        "stepCounter": "Step {{current}} of {{total}}",
+        "steps": {
+          "delivery": "Fulfillment",
+          "recipient": "Recipient",
+          "payment": "Payment",
+          "review": "Review & Confirm"
+        },
+        "step1Title": "How would you like to receive your order?",
+        "step1Subtitle": "Select delivery or clinic pickup first to calculate delivery fees or unlock free pharmacy pickup.",
+        "step2Title": "Recipient & Delivery Details",
+        "step2Subtitle": "Enter the recipient name and contact phone; address is required only for home delivery.",
+        "step3Title": "Choose Your Payment Method",
+        "step3Subtitle": "Pay cash on delivery/pickup, transfer via local Yemeni wallets, or split across two methods.",
+        "step4Title": "Final Review & Order Confirmation",
+        "step4Subtitle": "Verify your fulfillment method, items, and payment verification details before submitting to pharmacy review.",
+        "nextBtn": "Next",
+        "prevBtn": "Back",
+        "editBtn": "Edit",
+        "verifyRequiredTitle": "Transfer Verification Control:",
+        "verifyRequiredHint": "Enter a transfer reference, attach a receipt image, or select WhatsApp follow-up to speed up order approval.",
+        "stockCheckOk": "All item quantities verified against live stock.",
+        "stockCheckFail": "Requested quantities for some items exceed available stock."
+      },
+      "errors": {
+        "addressRequired": "Please enter a detailed delivery address (at least 5 characters).",
+        "epaymentProofRequired": "Please enter a transfer reference, attach a receipt, or choose WhatsApp confirmation.",
+        "splitPositiveRequired": "Both split payment amounts must be greater than zero.",
+        "splitDuplicateMethod": "Please choose two different payment methods when splitting payment."
+      }
     },
     "orderResult": {
       "title": "Order Received Successfully",

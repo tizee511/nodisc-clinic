@@ -9,7 +9,6 @@ import {
   Calendar,
   ChevronDown,
   Globe,
-  Heart,
   Home,
   LayoutGrid,
   Megaphone,
@@ -20,7 +19,6 @@ import {
   X,
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
-import { useClinic } from '../context/ClinicContext';
 import { ClinicLogoMark } from './ClinicLogoMark';
 import { StoreGlyph } from './store/StoreLogoMark';
 import { SearchModal } from './SearchModal';
@@ -37,7 +35,6 @@ export const Header: React.FC = () => {
     departments,
     campaigns,
   } = useLanguage();
-  const { wishlistCount } = useClinic();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [deptDropdownOpen, setDeptDropdownOpen] = useState(false);
   const [mobileDeptOpen, setMobileDeptOpen] = useState(false);
@@ -274,24 +271,6 @@ export const Header: React.FC = () => {
                 {lang === 'ar' ? 'EN' : 'AR'}
               </span>
             </button>
-
-            <Link
-              to="/store/wishlist"
-              aria-label={lang === 'ar' ? 'القائمة المفضلة' : 'Favorites'}
-              title={lang === 'ar' ? 'القائمة المفضلة' : 'Favorites'}
-              className="relative p-1.5 sm:p-2 rounded-lg text-slate-100 hover:text-rose-300 hover:bg-white/10 transition-colors inline-flex items-center justify-center"
-            >
-              <Heart
-                className={`w-4 h-4 sm:w-5 sm:h-5 ${
-                  wishlistCount > 0 ? 'text-rose-400 fill-rose-400/25' : ''
-                }`}
-              />
-              {wishlistCount > 0 && (
-                <span className="absolute -top-0.5 -end-0.5 min-w-[16px] h-4 px-1 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center tabular-nums leading-none ring-2 ring-[#093542]">
-                  {wishlistCount}
-                </span>
-              )}
-            </Link>
 
             <Link
               to="/book"

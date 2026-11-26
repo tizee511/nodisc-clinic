@@ -5,11 +5,14 @@ import {
   ArrowLeft,
   ArrowRight,
   Calendar,
+  CheckCircle2,
   ChevronDown,
   Clock,
+  HelpCircle,
   MapPin,
   Phone,
   Play,
+  Sparkles,
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useDataStore } from '../context/DataStoreContext';
@@ -19,6 +22,53 @@ import { BookActionButton } from '../components/BookActionLink';
 import { SequentialCarousel } from '../components/SequentialCarousel';
 
 const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
+
+const GeometricSectionDivider: React.FC<{ variant?: 'light' | 'subtle' }> = ({
+  variant = 'light',
+}) => (
+  <motion.div
+    initial={{ opacity: 0, scaleX: 0.78 }}
+    whileInView={{ opacity: 1, scaleX: 1 }}
+    viewport={{ once: true, amount: 0.5 }}
+    transition={{ duration: 0.55, ease: EASE_OUT_EXPO }}
+    aria-hidden="true"
+    className={`w-full py-2 ${
+      variant === 'subtle' ? 'bg-slate-50/70' : 'bg-transparent'
+    }`}
+  >
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-center gap-3">
+      <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[#0F4C5C]/25 to-[#0F4C5C]/50" />
+      <span className="w-1.5 h-1.5 rotate-45 border border-[#0284C7]/50 bg-white shrink-0" />
+      <div className="relative w-7 h-7 rotate-45 rounded-[4px] border border-[#0F4C5C]/30 bg-white shadow-xs flex items-center justify-center shrink-0">
+        <span className="w-2.5 h-2.5 rounded-[2px] bg-gradient-to-br from-[#0F4C5C] to-[#38BDF8]" />
+      </div>
+      <span className="w-1.5 h-1.5 rotate-45 border border-[#0284C7]/50 bg-white shrink-0" />
+      <div className="flex-1 h-px bg-gradient-to-l from-transparent via-[#0F4C5C]/25 to-[#0F4C5C]/50" />
+    </div>
+  </motion.div>
+);
+
+const GeometricTitleRule: React.FC<{ light?: boolean }> = ({ light = false }) => (
+  <div aria-hidden="true" className="flex items-center gap-1.5 mt-2">
+    <span
+      className={`h-[3px] w-10 rounded-full ${
+        light
+          ? 'bg-gradient-to-r from-[#38BDF8] to-white/80'
+          : 'bg-gradient-to-r from-[#0F4C5C] to-[#38BDF8]'
+      }`}
+    />
+    <span
+      className={`w-1.5 h-1.5 rotate-45 rounded-[1px] ${
+        light ? 'bg-[#38BDF8]' : 'bg-[#0284C7]'
+      }`}
+    />
+    <span
+      className={`h-[1.5px] w-4 rounded-full ${
+        light ? 'bg-white/35' : 'bg-[#0F4C5C]/25'
+      }`}
+    />
+  </div>
+);
 
 export const HomePage: React.FC = () => {
   const {
@@ -82,8 +132,30 @@ export const HomePage: React.FC = () => {
     switch (secId) {
       case 'hero':
         return (
-          <section key="hero" className="bg-white border-b border-slate-200 overflow-hidden">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 lg:py-16">
+          <section
+            key="hero"
+            className="relative bg-gradient-to-b from-white via-white to-sky-50/45 overflow-hidden"
+          >
+            {/* Subtle Architectural Grid & Ambient Glow */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 opacity-[0.045]"
+              style={{
+                backgroundImage:
+                  'linear-gradient(to right, #0F4C5C 1px, transparent 1px), linear-gradient(to bottom, #0F4C5C 1px, transparent 1px)',
+                backgroundSize: '36px 36px',
+              }}
+            />
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -top-24 -end-24 w-80 h-80 rounded-full bg-[#38BDF8]/12 blur-3xl"
+            />
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -bottom-24 -start-24 w-72 h-72 rounded-full bg-[#0F4C5C]/10 blur-3xl"
+            />
+
+            <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-10 lg:py-16">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch">
                 <motion.div
                   initial={{ opacity: 0, y: 18 }}
@@ -91,37 +163,54 @@ export const HomePage: React.FC = () => {
                   transition={{ duration: 0.45, ease: EASE_OUT_EXPO }}
                   className="lg:col-span-6 flex flex-col justify-center space-y-6"
                 >
-                  <p
-                    className="text-xs sm:text-sm font-semibold"
-                    style={{ color: 'var(--color-sky)' }}
-                  >
-                    {heroKicker}
-                  </p>
-                  <h1 className="font-display font-bold text-3xl sm:text-4xl lg:text-[2.75rem] leading-[1.2] text-slate-900">
-                    {heroTitle}
-                  </h1>
+                  <div className="inline-flex items-center gap-2">
+                    <span
+                      className="w-2 h-2 rotate-45 rounded-[1px] shrink-0"
+                      style={{ backgroundColor: 'var(--color-sky)' }}
+                      aria-hidden="true"
+                    />
+                    <p
+                      className="text-xs sm:text-sm font-semibold"
+                      style={{ color: 'var(--color-sky)' }}
+                    >
+                      {heroKicker}
+                    </p>
+                  </div>
+
+                  <div>
+                    <h1 className="font-display font-bold text-3xl sm:text-4xl lg:text-[2.75rem] leading-[1.2] text-slate-900">
+                      {heroTitle}
+                    </h1>
+                    <GeometricTitleRule />
+                  </div>
+
                   <p className="text-base sm:text-lg text-slate-600 leading-relaxed max-w-2xl">
                     {heroSubtitle}
                   </p>
+
                   <div className="flex flex-wrap items-center gap-3 pt-2">
                     <Link
                       to="/book"
                       style={{ backgroundColor: 'var(--color-petrol)' }}
-                      className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg hover:opacity-95 text-white text-sm sm:text-base font-semibold transition-all duration-200 hover:-translate-y-0.5 whitespace-nowrap"
+                      className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl hover:opacity-95 text-white text-sm sm:text-base font-semibold transition-all duration-200 hover:-translate-y-0.5 shadow-sm hover:shadow-md whitespace-nowrap"
                     >
                       <Calendar className="w-4 h-4" />
                       <span>{heroPrimaryCta}</span>
                     </Link>
                     <a
                       href="#departments-section"
-                      className="inline-flex items-center justify-center px-5 py-3.5 rounded-lg border border-slate-300 hover:border-[#0F4C5C] hover:text-[#0F4C5C] text-slate-700 text-sm sm:text-base font-medium transition-colors whitespace-nowrap"
+                      className="inline-flex items-center justify-center px-5 py-3.5 rounded-xl border border-slate-300 bg-white/90 hover:border-[#0F4C5C] hover:text-[#0F4C5C] text-slate-700 text-sm sm:text-base font-medium transition-all hover:-translate-y-0.5 whitespace-nowrap"
                     >
                       {heroSecondaryCta}
                     </a>
+                    <span
+                      aria-hidden="true"
+                      className="hidden sm:inline-block w-px h-6 bg-gradient-to-b from-transparent via-[#0F4C5C]/30 to-transparent mx-1"
+                    />
                     <a
                       href="#clinic-location-section"
                       style={{ color: 'var(--color-sky)' }}
-                      className="inline-flex items-center justify-center gap-1.5 px-4 py-3.5 text-sm font-medium hover:underline whitespace-nowrap"
+                      className="inline-flex items-center justify-center gap-1.5 px-3 py-3 text-sm font-semibold hover:underline whitespace-nowrap"
                     >
                       <MapPin className="w-4 h-4" />
                       <span>{t('common.clinicLocation')}</span>
@@ -133,14 +222,16 @@ export const HomePage: React.FC = () => {
                   initial={{ opacity: 0, scale: 0.97 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.5, delay: 0.08, ease: EASE_OUT_EXPO }}
-                  className="lg:col-span-6"
+                  className="lg:col-span-6 relative"
                 >
-                  <SafeImage
-                    src={homeHero.heroImage || localizedConfig.brand.heroImage}
-                    alt={localizedConfig.brand.nameAr}
-                    aspectClass="aspect-[16/10] lg:h-full lg:aspect-auto min-h-[260px]"
-                    className="rounded-xl border border-slate-200"
-                  />
+                  <div className="relative h-full p-1.5 rounded-2xl bg-gradient-to-br from-[#0F4C5C]/15 via-sky-100/60 to-white border border-slate-200/80 shadow-sm">
+                    <SafeImage
+                      src={homeHero.heroImage || localizedConfig.brand.heroImage}
+                      alt={localizedConfig.brand.nameAr}
+                      aspectClass="aspect-[16/10] lg:h-full lg:aspect-auto min-h-[260px]"
+                      className="rounded-xl"
+                    />
+                  </div>
                 </motion.div>
               </div>
             </div>
@@ -153,9 +244,15 @@ export const HomePage: React.FC = () => {
           <section
             key="campaign"
             style={{ backgroundColor: 'var(--color-petrol)' }}
-            className="text-white border-b border-black/15"
+            className="text-white border-y border-black/15"
           >
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 lg:py-12">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.1 }}
+              transition={{ duration: 0.5, ease: EASE_OUT_EXPO }}
+              className="max-w-7xl mx-auto px-4 sm:px-6 py-10 lg:py-12"
+            >
               <SequentialCarousel
                 items={orderedCampaigns}
                 keyExtractor={(camp) => camp.id}
@@ -268,7 +365,7 @@ export const HomePage: React.FC = () => {
                   );
                 }}
               />
-            </div>
+            </motion.div>
           </section>
         );
 
@@ -277,8 +374,14 @@ export const HomePage: React.FC = () => {
           <section
             key="departments"
             id="departments-section"
-            className="max-w-7xl mx-auto px-4 sm:px-6 py-14 lg:py-16"
+            className="max-w-7xl mx-auto px-4 sm:px-6 py-12 lg:py-14"
           >
+            <motion.div
+              initial={{ opacity: 0, y: 22 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.1 }}
+              transition={{ duration: 0.5, ease: EASE_OUT_EXPO }}
+            >
             <SequentialCarousel
               items={departments}
               keyExtractor={(dept) => dept.id}
@@ -293,7 +396,8 @@ export const HomePage: React.FC = () => {
                   <h2 className="font-display font-bold text-2xl sm:text-3xl text-slate-900">
                     {t('home.departmentsHeading')}
                   </h2>
-                  <p className="text-sm sm:text-base text-slate-600 mt-1.5 max-w-2xl">
+                  <GeometricTitleRule />
+                  <p className="text-sm sm:text-base text-slate-600 mt-2.5 max-w-2xl">
                     {t('home.departmentsSub')}
                   </p>
                 </div>
@@ -301,7 +405,7 @@ export const HomePage: React.FC = () => {
               headerRightLink={
                 <Link
                   to="/services"
-                  className="text-sm font-semibold text-[#0F4C5C] hover:text-[#0284C7] inline-flex items-center gap-1 whitespace-nowrap px-2 py-1"
+                  className="text-sm font-semibold text-[#0F4C5C] hover:text-[#0284C7] inline-flex items-center gap-1.5 whitespace-nowrap px-3.5 py-2 rounded-lg border border-slate-200 bg-white hover:border-[#0F4C5C]/40 shadow-xs transition-all"
                 >
                   <span>{t('nav.services')}</span>
                   <ArrowIcon className="w-4 h-4" />
@@ -336,6 +440,7 @@ export const HomePage: React.FC = () => {
                 </Link>
               )}
             />
+            </motion.div>
           </section>
         );
 
@@ -498,7 +603,13 @@ export const HomePage: React.FC = () => {
 
       case 'services':
         return (
-          <section key="services" className="max-w-7xl mx-auto px-4 sm:px-6 py-14 lg:py-16">
+          <section key="services" className="max-w-7xl mx-auto px-4 sm:px-6 py-12 lg:py-14">
+            <motion.div
+              initial={{ opacity: 0, y: 22 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.1 }}
+              transition={{ duration: 0.5, ease: EASE_OUT_EXPO }}
+            >
             <SequentialCarousel
               items={sequentialServices}
               keyExtractor={(srv) => srv.id}
@@ -513,13 +624,14 @@ export const HomePage: React.FC = () => {
                   <h2 className="font-display font-bold text-2xl sm:text-3xl text-slate-900">
                     {t('home.servicesHeading')}
                   </h2>
-                  <p className="text-sm sm:text-base text-slate-600 mt-1.5">{t('home.servicesSub')}</p>
+                  <GeometricTitleRule />
+                  <p className="text-sm sm:text-base text-slate-600 mt-2.5">{t('home.servicesSub')}</p>
                 </div>
               }
               headerRightLink={
                 <Link
                   to="/services"
-                  className="text-sm font-semibold text-[#0F4C5C] hover:text-[#0284C7] inline-flex items-center gap-1 whitespace-nowrap px-2 py-1"
+                  className="text-sm font-semibold text-[#0F4C5C] hover:text-[#0284C7] inline-flex items-center gap-1.5 whitespace-nowrap px-3.5 py-2 rounded-lg border border-slate-200 bg-white hover:border-[#0F4C5C]/40 shadow-xs transition-all"
                 >
                   <span>{t('common.viewAll')}</span>
                   <ArrowIcon className="w-4 h-4" />
@@ -585,13 +697,20 @@ export const HomePage: React.FC = () => {
                 );
               }}
             />
+            </motion.div>
           </section>
         );
 
       case 'stories':
         return (
-          <section key="stories" className="bg-white border-y border-slate-200">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 py-14 lg:py-16">
+          <section key="stories" className="bg-white border-y border-slate-200/80">
+            <motion.div
+              initial={{ opacity: 0, y: 22 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.1 }}
+              transition={{ duration: 0.5, ease: EASE_OUT_EXPO }}
+              className="max-w-7xl mx-auto px-4 sm:px-6 py-12 lg:py-14"
+            >
               <SequentialCarousel
                 items={sequentialStories}
                 keyExtractor={(story) => story.id}
@@ -606,13 +725,14 @@ export const HomePage: React.FC = () => {
                     <h2 className="font-display font-bold text-2xl sm:text-3xl text-slate-900">
                       {t('home.storiesHeading')}
                     </h2>
-                    <p className="text-sm sm:text-base text-slate-600 mt-1.5">{t('home.storiesSub')}</p>
+                    <GeometricTitleRule />
+                    <p className="text-sm sm:text-base text-slate-600 mt-2.5">{t('home.storiesSub')}</p>
                   </div>
                 }
                 headerRightLink={
                   <Link
                     to="/stories"
-                    className="text-sm font-semibold text-[#0F4C5C] hover:text-[#0284C7] inline-flex items-center gap-1 whitespace-nowrap px-2 py-1"
+                    className="text-sm font-semibold text-[#0F4C5C] hover:text-[#0284C7] inline-flex items-center gap-1.5 whitespace-nowrap px-3.5 py-2 rounded-lg border border-slate-200 bg-slate-50 hover:bg-white hover:border-[#0F4C5C]/40 shadow-xs transition-all"
                   >
                     <span>{t('nav.stories')}</span>
                     <ArrowIcon className="w-4 h-4" />
@@ -657,23 +777,30 @@ export const HomePage: React.FC = () => {
                   );
                 }}
               />
-            </div>
+            </motion.div>
           </section>
         );
 
       case 'library':
         return (
-          <section key="library" className="max-w-7xl mx-auto px-4 sm:px-6 py-14 lg:py-16">
+          <section key="library" className="max-w-7xl mx-auto px-4 sm:px-6 py-12 lg:py-14">
+            <motion.div
+              initial={{ opacity: 0, y: 22 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.1 }}
+              transition={{ duration: 0.5, ease: EASE_OUT_EXPO }}
+            >
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
               <div>
                 <h2 className="font-display font-bold text-2xl sm:text-3xl text-slate-900">
                   {t('home.libraryHeading')}
                 </h2>
-                <p className="text-sm sm:text-base text-slate-600 mt-1.5">{t('home.librarySub')}</p>
+                <GeometricTitleRule />
+                <p className="text-sm sm:text-base text-slate-600 mt-2.5">{t('home.librarySub')}</p>
               </div>
               <Link
                 to="/library"
-                className="text-sm font-semibold text-[#0F4C5C] hover:text-[#0284C7] inline-flex items-center gap-1 whitespace-nowrap"
+                className="text-sm font-semibold text-[#0F4C5C] hover:text-[#0284C7] inline-flex items-center gap-1.5 whitespace-nowrap px-3.5 py-2 rounded-lg border border-slate-200 bg-white hover:border-[#0F4C5C]/40 shadow-xs transition-all self-start sm:self-auto"
               >
                 <span>{t('nav.library')}</span>
                 <ArrowIcon className="w-4 h-4" />
@@ -777,13 +904,20 @@ export const HomePage: React.FC = () => {
                 </div>
               )}
             </div>
+            </motion.div>
           </section>
         );
 
       case 'news':
         return (
-          <section key="news" className="bg-white border-y border-slate-200">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 py-14 lg:py-16">
+          <section key="news" className="bg-white border-y border-slate-200/80">
+            <motion.div
+              initial={{ opacity: 0, y: 22 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.1 }}
+              transition={{ duration: 0.5, ease: EASE_OUT_EXPO }}
+              className="max-w-7xl mx-auto px-4 sm:px-6 py-12 lg:py-14"
+            >
               <SequentialCarousel
                 items={news}
                 keyExtractor={(item) => item.id}
@@ -794,14 +928,17 @@ export const HomePage: React.FC = () => {
                 isRTL={isRTL}
                 lang={lang}
                 headerLeft={
-                  <h2 className="font-display font-bold text-2xl sm:text-3xl text-slate-900">
-                    {t('home.newsHeading')}
-                  </h2>
+                  <div>
+                    <h2 className="font-display font-bold text-2xl sm:text-3xl text-slate-900">
+                      {t('home.newsHeading')}
+                    </h2>
+                    <GeometricTitleRule />
+                  </div>
                 }
                 headerRightLink={
                   <Link
                     to="/news"
-                    className="text-sm font-semibold text-[#0F4C5C] hover:text-[#0284C7] inline-flex items-center gap-1 whitespace-nowrap px-2 py-1"
+                    className="text-sm font-semibold text-[#0F4C5C] hover:text-[#0284C7] inline-flex items-center gap-1.5 whitespace-nowrap px-3.5 py-2 rounded-lg border border-slate-200 bg-slate-50 hover:bg-white hover:border-[#0F4C5C]/40 shadow-xs transition-all"
                   >
                     <span>{t('common.viewAll')}</span>
                     <ArrowIcon className="w-4 h-4" />
@@ -835,54 +972,145 @@ export const HomePage: React.FC = () => {
                   </Link>
                 )}
               />
-            </div>
+            </motion.div>
           </section>
         );
 
       case 'faq':
         return (
-          <section key="faq" className="max-w-7xl mx-auto px-4 sm:px-6 py-14 lg:py-16">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-              <div className="lg:col-span-4 space-y-3">
-                <h2 className="font-display font-bold text-2xl sm:text-3xl text-slate-900">
-                  {t('home.faqHeading')}
-                </h2>
-                <p className="text-sm text-slate-600 leading-relaxed">
-                  {lang === 'ar'
-                    ? 'إجابات سريعة حول آلية تأكيد المواعيد، وتحضير الأشعة، وتكامل أقسام المركز.'
-                    : 'Quick answers about appointment confirmation, MRI preparation, and coordinated clinic care.'}
-                </p>
-                <Link
-                  to="/library?type=faq"
-                  className="inline-flex items-center gap-1 text-sm font-semibold text-[#0F4C5C] hover:underline"
-                >
-                  <span>{t('common.viewAll')}</span>
-                  <ArrowIcon className="w-4 h-4" />
-                </Link>
+          <section key="faq" className="max-w-7xl mx-auto px-4 sm:px-6 py-12 lg:py-16">
+            <motion.div
+              initial={{ opacity: 0, y: 22 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.1 }}
+              transition={{ duration: 0.5, ease: EASE_OUT_EXPO }}
+              className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start"
+            >
+              {/* Standout Dark Petrol FAQ Intro & Booking Guide Panel */}
+              <div className="lg:col-span-5 relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#062B35] via-[#093542] to-[#0F4C5C] text-white p-6 sm:p-8 shadow-lg border border-sky-400/20 space-y-6">
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute -top-12 -end-12 w-40 h-40 rounded-full bg-[#38BDF8]/15 blur-2xl"
+                />
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute bottom-4 end-4 w-20 h-20 rotate-45 border border-white/10 rounded-xl"
+                />
+
+                <div className="relative space-y-3">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-white/10 border border-white/15 text-sky-200 text-xs font-semibold">
+                    <HelpCircle className="w-3.5 h-3.5 text-[#38BDF8]" />
+                    <span>
+                      {lang === 'ar' ? 'دليل الحجز والخدمات السريع' : 'Booking & Care Guide'}
+                    </span>
+                  </div>
+
+                  <h2 className="font-display font-bold text-2xl sm:text-3xl text-white leading-snug">
+                    {t('home.faqHeading')}
+                  </h2>
+                  <GeometricTitleRule light />
+
+                  <p className="text-sm text-slate-200 leading-relaxed pt-1">
+                    {lang === 'ar'
+                      ? 'إجابات واضحة ومرتبة حول آلية تأكيد المواعيد، تحضير فحوصات الرنين المغناطيسي، وتكامل خدمات علاج الألم والتأهيل والصيدلية.'
+                      : 'Clear answers on appointment confirmation, MRI preparation, and coordinated pain, rehabilitation & pharmacy services.'}
+                  </p>
+                </div>
+
+                <ul className="relative space-y-2.5 text-xs sm:text-sm text-slate-100 border-t border-white/15 pt-4">
+                  {[
+                    lang === 'ar' ? 'تأكيد المواعيد برقم مرجعي وإشعار فوري' : 'Instant reference ID & schedule confirmation',
+                    lang === 'ar' ? 'تجهيز الأشعة والتقارير قبل الاستشارة الأولى' : 'First-visit MRI & medical records guidance',
+                    lang === 'ar' ? 'تكامل خطة علاج الألم مع العلاج الطبيعي' : 'Integrated pain care & physiotherapy sessions',
+                  ].map((point, idx) => (
+                    <li key={idx} className="flex items-start gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-[#38BDF8] shrink-0 mt-0.5" />
+                      <span>{point}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <div className="relative flex flex-wrap items-center gap-3 pt-2 border-t border-white/15">
+                  <Link
+                    to="/book"
+                    className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#38BDF8] to-[#0284C7] hover:from-[#7DD3FC] hover:to-[#0EA5E9] text-[#05222B] text-xs sm:text-sm font-bold shadow-sm transition-all whitespace-nowrap"
+                  >
+                    <Calendar className="w-4 h-4" />
+                    <span>{t('common.bookNow')}</span>
+                  </Link>
+                  <span
+                    aria-hidden="true"
+                    className="hidden sm:inline-block w-px h-5 bg-white/20"
+                  />
+                  <Link
+                    to="/library?type=faq"
+                    className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-white/25 bg-white/10 hover:bg-white/15 text-white text-xs sm:text-sm font-semibold transition-colors whitespace-nowrap"
+                  >
+                    <span>{t('common.viewAll')}</span>
+                    <ArrowIcon className="w-4 h-4" />
+                  </Link>
+                </div>
               </div>
 
-              <div className="lg:col-span-8 space-y-3">
-                {homeFaqs.map((faq) => {
+              {/* Numbered Accordion List */}
+              <div className="lg:col-span-7 space-y-3">
+                {homeFaqs.map((faq, idx) => {
                   const isOpen = openFaqId === faq.id;
+                  const dept = departments.find((d) => d.id === faq.departmentId);
                   return (
-                    <div
+                    <motion.div
                       key={faq.id}
-                      className="bg-white rounded-xl border border-slate-200 overflow-hidden"
+                      initial={{ opacity: 0, y: 12 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true, amount: 0.2 }}
+                      transition={{ duration: 0.35, delay: idx * 0.06, ease: EASE_OUT_EXPO }}
+                      className={`rounded-xl border overflow-hidden transition-all duration-200 ${
+                        isOpen
+                          ? 'bg-sky-50/45 border-[#0F4C5C]/45 shadow-sm'
+                          : 'bg-white border-slate-200 hover:border-[#0F4C5C]/30'
+                      }`}
                     >
                       <button
                         type="button"
                         aria-expanded={isOpen}
                         onClick={() => setOpenFaqId(isOpen ? null : faq.id)}
-                        className="w-full px-5 py-4 text-start flex items-center justify-between gap-4 hover:bg-slate-50 transition-colors"
+                        className="w-full px-4 sm:px-5 py-4 text-start flex items-center justify-between gap-3 transition-colors"
                       >
-                        <span className="font-display font-semibold text-sm sm:text-base text-slate-900">
-                          {faq.title}
-                        </span>
-                        <ChevronDown
-                          className={`w-4 h-4 text-slate-500 shrink-0 transition-transform ${
-                            isOpen ? 'rotate-180' : ''
+                        <div className="flex items-start sm:items-center gap-3 min-w-0">
+                          <span
+                            className={`w-7 h-7 rounded-lg text-xs font-mono font-bold tabular-nums inline-flex items-center justify-center shrink-0 transition-colors ${
+                              isOpen
+                                ? 'bg-[#0F4C5C] text-white'
+                                : 'bg-slate-100 text-[#0F4C5C]'
+                            }`}
+                          >
+                            {String(idx + 1).padStart(2, '0')}
+                          </span>
+                          <div className="min-w-0 space-y-0.5">
+                            {dept && (
+                              <span className="block text-[11px] font-semibold text-[#0284C7]">
+                                {dept.nameAr}
+                              </span>
+                            )}
+                            <span className="block font-display font-bold text-sm sm:text-base text-slate-900 leading-snug">
+                              {faq.title}
+                            </span>
+                          </div>
+                        </div>
+
+                        <span
+                          className={`w-8 h-8 rounded-lg inline-flex items-center justify-center shrink-0 transition-colors ${
+                            isOpen
+                              ? 'bg-[#0F4C5C]/10 text-[#0F4C5C]'
+                              : 'bg-slate-100/80 text-slate-500'
                           }`}
-                        />
+                        >
+                          <ChevronDown
+                            className={`w-4 h-4 transition-transform duration-200 ${
+                              isOpen ? 'rotate-180' : ''
+                            }`}
+                          />
+                        </span>
                       </button>
                       <AnimatePresence initial={false}>
                         {isOpen && (
@@ -890,20 +1118,20 @@ export const HomePage: React.FC = () => {
                             initial={{ opacity: 0, height: 0 }}
                             animate={{ opacity: 1, height: 'auto' }}
                             exit={{ opacity: 0, height: 0 }}
-                            transition={{ duration: 0.22, ease: EASE_OUT_EXPO }}
+                            transition={{ duration: 0.24, ease: EASE_OUT_EXPO }}
                             className="overflow-hidden"
                           >
-                            <div className="px-5 pb-4 pt-1 text-sm text-slate-600 leading-relaxed border-t border-slate-100">
+                            <div className="px-4 sm:px-5 pb-4 pt-3 text-sm text-slate-700 leading-relaxed border-t border-[#0F4C5C]/15 bg-white/80">
                               {faq.faqAnswer}
                             </div>
                           </motion.div>
                         )}
                       </AnimatePresence>
-                    </div>
+                    </motion.div>
                   );
                 })}
               </div>
-            </div>
+            </motion.div>
           </section>
         );
 
@@ -912,83 +1140,215 @@ export const HomePage: React.FC = () => {
           <section
             key="location"
             id="clinic-location-section"
-            className="bg-white border-t border-slate-200"
+            className="bg-gradient-to-b from-slate-50 via-sky-50/35 to-white border-t border-slate-200"
           >
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 py-14">
-              <h2 className="font-display font-bold text-2xl sm:text-3xl text-slate-900 mb-8">
-                {t('home.locationHeading')}
-              </h2>
+            <motion.div
+              initial={{ opacity: 0, y: 22 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.1 }}
+              transition={{ duration: 0.5, ease: EASE_OUT_EXPO }}
+              className="max-w-7xl mx-auto px-4 sm:px-6 py-12 lg:py-16 space-y-8"
+            >
+              {/* Section Heading + Quick Action Links separated cleanly */}
+              <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+                <div>
+                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#0284C7] mb-1">
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>
+                      {lang === 'ar'
+                        ? 'خدمة المراجعين والوصول السريع'
+                        : 'Patient Access & Direct Desk'}
+                    </span>
+                  </span>
+                  <h2 className="font-display font-bold text-2xl sm:text-3xl text-slate-900">
+                    {t('home.locationHeading')}
+                  </h2>
+                  <GeometricTitleRule />
+                </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-slate-50 rounded-xl border border-slate-200 p-6 space-y-2">
-                  <div className="flex items-center gap-2 text-[#0F4C5C] font-semibold text-sm">
-                    <MapPin className="w-4 h-4" />
-                    <span>{t('home.addressLabel')}</span>
+                <div className="flex flex-wrap items-center gap-2.5">
+                  <Link
+                    to="/book"
+                    className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#0F4C5C] hover:bg-[#093542] text-white text-xs sm:text-sm font-semibold shadow-xs transition-all whitespace-nowrap"
+                  >
+                    <Calendar className="w-4 h-4" />
+                    <span>{t('common.bookNow')}</span>
+                  </Link>
+                  <span
+                    aria-hidden="true"
+                    className="hidden sm:inline-block w-px h-5 bg-slate-300"
+                  />
+                  <Link
+                    to="/contact"
+                    className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-slate-300 bg-white hover:border-[#0F4C5C] text-slate-800 hover:text-[#0F4C5C] text-xs sm:text-sm font-semibold transition-colors whitespace-nowrap"
+                  >
+                    <span>{t('nav.contact')}</span>
+                    <ArrowIcon className="w-4 h-4" />
+                  </Link>
+                </div>
+              </div>
+
+              {/* Reordered & Elevated 3-Card Hub: Direct Contact (Highlighted) -> Working Hours -> Clinic Location */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+                {/* 1. Highlighted Direct Contact Anchor Card */}
+                <motion.div
+                  initial={{ opacity: 0, y: 14 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.2 }}
+                  transition={{ duration: 0.4, delay: 0.04, ease: EASE_OUT_EXPO }}
+                  className="lg:col-span-4 relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#062B35] via-[#093542] to-[#0F4C5C] text-white p-6 shadow-md border border-sky-400/20 flex flex-col justify-between space-y-5"
+                >
+                  <div
+                    aria-hidden="true"
+                    className="pointer-events-none absolute -top-10 -end-10 w-32 h-32 rounded-full bg-[#38BDF8]/15 blur-2xl"
+                  />
+                  <div className="relative space-y-4">
+                    <div className="flex items-center gap-3">
+                      <span className="w-10 h-10 rounded-xl bg-white/10 border border-white/15 text-[#38BDF8] inline-flex items-center justify-center shrink-0">
+                        <Phone className="w-5 h-5" />
+                      </span>
+                      <div>
+                        <h3 className="font-display font-bold text-base sm:text-lg text-white">
+                          {t('home.phonesLabel')}
+                        </h3>
+                        <p className="text-xs text-sky-200/85">
+                          {lang === 'ar'
+                            ? 'للاستفسارات السريعة وتنسيق المواعيد'
+                            : 'For quick inquiries & booking coordination'}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2.5">
+                      {localizedConfig.contact.phones.map((ph, idx) => (
+                        <a
+                          key={idx}
+                          href={`tel:${ph.value.replace(/\s+/g, '')}`}
+                          className="flex items-center justify-between gap-2 px-3.5 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 border border-white/15 transition-colors"
+                        >
+                          <span className="text-xs text-sky-100 font-medium">{ph.label}</span>
+                          <span
+                            className="font-mono text-sm font-bold text-white tabular-nums"
+                            dir="ltr"
+                          >
+                            {ph.value}
+                          </span>
+                        </a>
+                      ))}
+                    </div>
                   </div>
-                  <p className="text-sm font-medium text-slate-900">{localizedConfig.contact.city}</p>
-                  <p className="text-sm text-slate-600">{localizedConfig.contact.address}</p>
-                  <p className="text-xs text-slate-500">{localizedConfig.contact.landmark}</p>
-                  <div className="pt-2">
+
+                  <div className="relative pt-3 border-t border-white/15 flex items-center justify-between gap-2">
+                    <Link
+                      to="/contact"
+                      className="text-xs sm:text-sm font-semibold text-[#7DD3FC] hover:text-white inline-flex items-center gap-1.5 transition-colors"
+                    >
+                      <span>
+                        {lang === 'ar' ? 'نموذج التواصل والشكاوى' : 'Contact & Inquiry Form'}
+                      </span>
+                      <ArrowIcon className="w-4 h-4" />
+                    </Link>
+                  </div>
+                </motion.div>
+
+                {/* 2. Elevated Working Days & Hours Card */}
+                <motion.div
+                  initial={{ opacity: 0, y: 14 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.2 }}
+                  transition={{ duration: 0.4, delay: 0.1, ease: EASE_OUT_EXPO }}
+                  className="lg:col-span-4 bg-white rounded-2xl border border-slate-200 border-t-4 border-t-[#0284C7] p-6 shadow-xs hover:shadow-md transition-all flex flex-col justify-between space-y-5"
+                >
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                      <span className="w-10 h-10 rounded-xl bg-sky-50 border border-sky-200 text-[#0284C7] inline-flex items-center justify-center shrink-0">
+                        <Clock className="w-5 h-5" />
+                      </span>
+                      <div>
+                        <h3 className="font-display font-bold text-base sm:text-lg text-slate-900">
+                          {t('home.workingDaysLabel')}
+                        </h3>
+                        <p className="text-xs font-semibold text-[#0F4C5C]">
+                          {localizedConfig.contact.workingDays}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2.5">
+                      {localizedConfig.contact.workingPeriods.map((period, idx) => (
+                        <div
+                          key={idx}
+                          className="flex items-center justify-between gap-2 px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200/80 text-xs sm:text-sm"
+                        >
+                          <span className="font-semibold text-slate-800">{period.label}</span>
+                          <span className="font-mono font-semibold text-[#0F4C5C] tabular-nums">
+                            {period.time}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <p className="text-xs text-slate-500 pt-3 border-t border-slate-100">
+                    {lang === 'ar'
+                      ? 'يفضل الحجز المسبق لتفادي وقت الانتظار في الفترات المزدحمة.'
+                      : 'Advance booking is recommended during peak consultation periods.'}
+                  </p>
+                </motion.div>
+
+                {/* 3. Elevated Clinic Location & Directions Card */}
+                <motion.div
+                  initial={{ opacity: 0, y: 14 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.2 }}
+                  transition={{ duration: 0.4, delay: 0.16, ease: EASE_OUT_EXPO }}
+                  className="lg:col-span-4 bg-white rounded-2xl border border-slate-200 border-t-4 border-t-[#0F4C5C] p-6 shadow-xs hover:shadow-md transition-all flex flex-col justify-between space-y-5"
+                >
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3">
+                      <span className="w-10 h-10 rounded-xl bg-[#0F4C5C]/10 border border-[#0F4C5C]/20 text-[#0F4C5C] inline-flex items-center justify-center shrink-0">
+                        <MapPin className="w-5 h-5" />
+                      </span>
+                      <div>
+                        <h3 className="font-display font-bold text-base sm:text-lg text-slate-900">
+                          {t('home.addressLabel')}
+                        </h3>
+                        <p className="text-xs font-semibold text-[#0284C7]">
+                          {localizedConfig.contact.city}
+                        </p>
+                      </div>
+                    </div>
+
+                    <p className="text-sm font-medium text-slate-800 leading-relaxed">
+                      {localizedConfig.contact.address}
+                    </p>
+
+                    <div className="rounded-xl bg-slate-50 border border-slate-200/80 px-3.5 py-2.5 text-xs text-slate-600">
+                      <span className="font-semibold text-slate-800">
+                        {lang === 'ar' ? 'أقرب معلم: ' : 'Landmark: '}
+                      </span>
+                      {localizedConfig.contact.landmark}
+                    </div>
+                  </div>
+
+                  <div className="pt-3 border-t border-slate-100">
                     {localizedConfig.contact.directionsUrl ? (
                       <a
                         href={localizedConfig.contact.directionsUrl}
-                        className="text-sm font-semibold text-[#0284C7] hover:underline"
+                        className="inline-flex items-center gap-1.5 text-sm font-bold text-[#0F4C5C] hover:text-[#0284C7] transition-colors"
                       >
-                        {t('common.getDirections')}
+                        <span>{t('common.getDirections')}</span>
+                        <ArrowIcon className="w-4 h-4" />
                       </a>
                     ) : (
-                      <p className="text-xs text-[#0284C7] font-medium">
+                      <p className="text-xs text-[#0284C7] font-semibold">
                         {localizedConfig.contact.directionsNote}
                       </p>
                     )}
                   </div>
-                </div>
-
-                <div className="bg-slate-50 rounded-xl border border-slate-200 p-6 space-y-3">
-                  <div className="flex items-center gap-2 text-[#0F4C5C] font-semibold text-sm">
-                    <Clock className="w-4 h-4" />
-                    <span>{t('home.workingDaysLabel')}</span>
-                  </div>
-                  <p className="text-sm font-semibold text-slate-900">
-                    {localizedConfig.contact.workingDays}
-                  </p>
-                  <div className="space-y-1.5 text-sm text-slate-600">
-                    {localizedConfig.contact.workingPeriods.map((period, idx) => (
-                      <div key={idx} className="flex justify-between gap-2">
-                        <span className="font-medium text-slate-800">{period.label}:</span>
-                        <span className="tabular-nums">{period.time}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="bg-slate-50 rounded-xl border border-slate-200 p-6 space-y-3">
-                  <div className="flex items-center gap-2 text-[#0F4C5C] font-semibold text-sm">
-                    <Phone className="w-4 h-4" />
-                    <span>{t('home.phonesLabel')}</span>
-                  </div>
-                  <div className="space-y-2">
-                    {localizedConfig.contact.phones.map((ph, idx) => (
-                      <div key={idx} className="text-sm">
-                        <span className="text-slate-500 block text-xs">{ph.label}</span>
-                        <span className="font-mono font-semibold text-slate-900 tabular-nums" dir="ltr">
-                          {ph.value}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="pt-2">
-                    <Link
-                      to="/contact"
-                      className="text-sm font-semibold text-[#0F4C5C] hover:underline inline-flex items-center gap-1"
-                    >
-                      <span>{t('nav.contact')}</span>
-                      <ArrowIcon className="w-4 h-4" />
-                    </Link>
-                  </div>
-                </div>
+                </motion.div>
               </div>
-            </div>
+            </motion.div>
           </section>
         );
 
@@ -997,9 +1357,27 @@ export const HomePage: React.FC = () => {
     }
   };
 
+  const visibleSections = homepageSections.filter((s) => s.visible);
+
   return (
     <MotionConfig reducedMotion="user">
-      <div>{homepageSections.filter((s) => s.visible).map((s) => renderSection(s.id))}</div>
+      <div>
+        {visibleSections.map((sec, index) => {
+          const content = renderSection(sec.id);
+          if (!content) return null;
+          const isLast = index === visibleSections.length - 1;
+          const nextSec = !isLast ? visibleSections[index + 1] : null;
+          // Skip extra standalone divider right before/after dark Petrol campaign band
+          const showDivider =
+            !isLast && sec.id !== 'campaign' && nextSec?.id !== 'campaign';
+          return (
+            <React.Fragment key={sec.id}>
+              {content}
+              {showDivider && <GeometricSectionDivider />}
+            </React.Fragment>
+          );
+        })}
+      </div>
     </MotionConfig>
   );
 };
