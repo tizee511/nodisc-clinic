@@ -64,8 +64,8 @@ export const AdminLoginPage: React.FC = () => {
             </h1>
             <p className="text-sm text-slate-600 max-w-3xl leading-relaxed">
               {lang === 'ar'
-                ? 'الدخول وإتاحة الصفحات والإجراءات في هذا النموذج محاكاة محلية لبيانات المعاينة فقط. اختر أحد الأدوار الخمسة لتجربة انعكاس الصلاحيات مباشرة على القائمة الجانبية والإجراءات.'
-                : 'Authentication and role-based access control here are local frontend simulations. Select any of the 5 demo roles below to preview how menus and actions adapt immediately.'}
+                ? 'الدخول وإتاحة الصفحات والإجراءات في هذا النموذج محاكاة محلية لبيانات المعاينة فقط. اختر أحد الأدوار الإدارية لتجربة انعكاس الصلاحيات مباشرة على القائمة الجانبية والإجراءات.'
+                : 'Authentication and role-based access control here are local frontend simulations. Select any demo role below to preview how menus and actions adapt immediately.'}
             </p>
           </div>
 

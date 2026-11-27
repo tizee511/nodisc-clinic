@@ -604,7 +604,7 @@ export const HomePage: React.FC = () => {
                             <span>
                               {lang === 'ar'
                                 ? 'المريض شريك في القرار العلاجي — مراحل الاستشارة:'
-                                : 'Patient-Partnered Care — 3-Step Consultation:'}
+                                : 'Patient-Partnered Care — Consultation Stages:'}
                             </span>
                           </div>
                         </div>

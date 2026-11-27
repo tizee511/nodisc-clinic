@@ -276,8 +276,8 @@ export const AboutPage: React.FC = () => {
                 <div>
                   <h2 className="font-display font-bold text-lg sm:text-xl text-slate-900">
                     {lang === 'ar'
-                      ? 'منظومة نوديسك المتكاملة — 4 ركائز تحت سقف واحد'
-                      : 'Integrated NODISC Care — 4 Pillars Under One Roof'}
+                      ? 'منظومة نوديسك المتكاملة — ركائز الرعاية تحت سقف واحد'
+                      : 'Integrated NODISC Care — Pillars Under One Roof'}
                   </h2>
                   <p className="text-xs text-slate-500">
                     {lang === 'ar'
@@ -347,7 +347,7 @@ export const AboutPage: React.FC = () => {
           </div>
         </motion.section>
 
-        {/* 4 Departments Overview */}
+        {/* Departments Overview */}
         <section className="space-y-6">
           <div className="flex items-center justify-between gap-3">
             <div>

@@ -255,7 +255,7 @@ export const DoctorProfilePage: React.FC = () => {
                   <h2 className="font-display font-bold text-base sm:text-lg text-slate-900">
                     {lang === 'ar'
                       ? 'المريض شريك في القرار العلاجي — مراحل الاستشارة مع الدكتور'
-                      : 'Patient-Partnered Care — Your 3-Step Consultation Track'}
+                      : 'Patient-Partnered Care — Your Consultation Track'}
                   </h2>
                   <p className="text-xs text-slate-500">
                     {lang === 'ar'
