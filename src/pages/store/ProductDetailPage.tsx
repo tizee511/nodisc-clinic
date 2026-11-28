@@ -260,12 +260,12 @@ export const ProductDetailPage: React.FC = () => {
                   <span className="text-xs font-semibold text-slate-700">
                     {t('store.product.quantity')}
                   </span>
-                  <div className="inline-flex items-center border border-slate-300 rounded-lg bg-white">
+                  <div className="inline-flex items-center border border-slate-300 rounded-xl bg-white">
                     <button
                       type="button"
                       onClick={() => setQty((q) => Math.max(1, q - 1))}
                       aria-label={lang === 'ar' ? 'إنقاص الكمية' : 'Decrease quantity'}
-                      className="p-2.5 text-slate-600 hover:text-slate-900"
+                      className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center text-slate-600 hover:text-slate-900"
                     >
                       <Minus className="w-4 h-4" />
                     </button>
@@ -274,7 +274,7 @@ export const ProductDetailPage: React.FC = () => {
                       type="button"
                       onClick={() => setQty((q) => Math.min(product.stockQty + 1, q + 1))}
                       aria-label={lang === 'ar' ? 'زيادة الكمية' : 'Increase quantity'}
-                      className="p-2.5 text-slate-600 hover:text-slate-900"
+                      className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center text-slate-600 hover:text-slate-900"
                     >
                       <Plus className="w-4 h-4" />
                     </button>
@@ -293,11 +293,11 @@ export const ProductDetailPage: React.FC = () => {
                   </p>
                 )}
 
-                <div className="flex flex-wrap gap-3">
+                <div className="flex flex-wrap gap-2.5 sm:gap-3">
                   <button
                     type="button"
                     onClick={handleAdd}
-                    className={`btn-interactive btn-sheen flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl border text-white text-sm font-bold shadow-sm ${
+                    className={`btn-interactive btn-sheen w-full sm:w-auto sm:flex-1 min-h-[48px] inline-flex items-center justify-center gap-2 px-7 py-3 rounded-xl border text-white text-sm font-bold shadow-sm ${
                       justAdded
                         ? 'bg-gradient-to-r from-emerald-600 to-teal-600 border-emerald-400 shadow-[0_8px_18px_-6px_rgba(16,185,129,0.5)]'
                         : 'bg-gradient-to-r from-[#0F4C5C] to-[#0284C7] border-sky-300/35 shadow-[0_8px_20px_-6px_rgba(15,76,92,0.48)]'
@@ -320,7 +320,7 @@ export const ProductDetailPage: React.FC = () => {
                     type="button"
                     onClick={handleToggleWishlist}
                     aria-pressed={inWishlist}
-                    className={`inline-flex items-center justify-center gap-2 px-4 py-3.5 rounded-lg border text-sm font-semibold transition-colors ${
+                    className={`btn-interactive flex-1 sm:flex-none min-h-[44px] inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-semibold transition-colors ${
                       inWishlist
                         ? 'bg-rose-50 border-rose-300 text-rose-700 hover:bg-rose-100'
                         : 'border-slate-300 text-slate-700 hover:border-rose-300 hover:text-rose-600 hover:bg-rose-50/60'
@@ -344,7 +344,7 @@ export const ProductDetailPage: React.FC = () => {
 
                   <Link
                     to="/store/cart"
-                    className="px-5 py-3.5 rounded-lg border border-slate-300 text-slate-700 text-sm font-medium hover:bg-slate-50"
+                    className="btn-interactive flex-1 sm:flex-none min-h-[44px] inline-flex items-center justify-center px-5 py-2.5 rounded-xl border border-slate-300 text-slate-700 text-sm font-semibold hover:bg-slate-50"
                   >
                     {t('nav.cart')}
                   </Link>

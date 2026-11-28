@@ -26,11 +26,33 @@
     font-family: var(--font-sans);
     background-color: var(--color-canvas);
     color: var(--color-ink);
+    max-width: 100%;
+    overflow-x: clip;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    max-width: 100%;
+    overflow-x: clip;
   }
 
   h1, h2, h3, h4, .font-display {
     font-family: var(--font-display);
     text-wrap-style: balance;
+  }
+
+  a, button, select, summary, [role="button"] {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+}
+
+/* Prevent iOS Safari forced auto-zoom when tapping form controls < 16px */
+@media (hover: none) and (pointer: coarse) {
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    font-size: 16px;
   }
 }
 
@@ -148,10 +170,28 @@
 
 @keyframes tickerScroll {
   0% {
-    transform: translateX(0);
+    transform: translate3d(0, 0, 0);
   }
   100% {
-    transform: translateX(-50%);
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes tickerScrollRTL {
+  0% {
+    transform: translate3d(-50%, 0, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes carouselDotProgress {
+  0% {
+    transform: scaleX(0);
+  }
+  100% {
+    transform: scaleX(1);
   }
 }
 
@@ -165,7 +205,18 @@
 }
 
 .animate-ticker-scroll {
-  animation: tickerScroll 32s linear infinite;
+  animation: tickerScroll 34s linear infinite;
+  will-change: transform;
+}
+
+.animate-ticker-scroll-rtl {
+  animation: tickerScrollRTL 34s linear infinite;
+  will-change: transform;
+}
+
+.animate-dot-progress {
+  transform-origin: left center;
+  animation: carouselDotProgress linear forwards;
   will-change: transform;
 }
 
@@ -177,8 +228,10 @@
     background-color 180ms ease;
 }
 
-.btn-interactive:hover {
-  transform: translateY(-2px);
+@media (hover: hover) and (pointer: fine) {
+  .btn-interactive:hover {
+    transform: translateY(-2px);
+  }
 }
 
 .btn-interactive:active {

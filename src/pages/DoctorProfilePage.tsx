@@ -114,7 +114,7 @@ export const DoctorProfilePage: React.FC = () => {
             transition={{ duration: 0.45, ease: EASE_OUT_EXPO }}
             className="rounded-3xl p-[1.5px] bg-gradient-to-br from-[#0F4C5C]/30 via-[#0284C7]/35 to-emerald-400/30 shadow-sm"
           >
-            <div className="relative overflow-hidden rounded-[22.5px] bg-white p-6 sm:p-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            <div className="relative overflow-hidden rounded-[22.5px] bg-white p-5 sm:p-10 grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start">
               {/* Subtle Architectural Grid */}
               <div
                 aria-hidden="true"
@@ -170,7 +170,7 @@ export const DoctorProfilePage: React.FC = () => {
                     </div>
                   )}
 
-                  <h1 className="font-display font-bold text-3xl sm:text-4xl text-slate-900 leading-tight">
+                  <h1 className="font-display font-bold text-2xl sm:text-4xl text-slate-900 leading-tight">
                     {doctor.nameAr}
                   </h1>
                   <p className="text-sm text-slate-500" dir="ltr">
@@ -192,12 +192,12 @@ export const DoctorProfilePage: React.FC = () => {
                 </div>
 
                 {/* Primary CTA Row */}
-                <div className="flex flex-wrap items-center gap-3 pt-1">
+                <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 pt-1">
                   <BookActionButton
                     departmentId={doctor.departmentId}
                     doctorId={doctor.id}
                     sourceLabel={doctor.nameAr}
-                    className="btn-interactive btn-sheen inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[#0F4C5C] to-[#0284C7] hover:from-[#093542] hover:to-[#0369A1] text-white border border-sky-300/40 text-sm font-bold shadow-[0_8px_20px_-6px_rgba(15,76,92,0.5)] whitespace-nowrap"
+                    className="btn-interactive btn-sheen w-full sm:w-auto justify-center min-h-[46px] inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[#0F4C5C] to-[#0284C7] hover:from-[#093542] hover:to-[#0369A1] text-white border border-sky-300/40 text-sm font-bold shadow-[0_8px_20px_-6px_rgba(15,76,92,0.5)] whitespace-nowrap"
                   >
                     <Calendar className="w-4 h-4 text-[#7DD3FC]" />
                     <span>{t('common.bookNow')}</span>
@@ -212,7 +212,7 @@ export const DoctorProfilePage: React.FC = () => {
                       )}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="btn-interactive inline-flex items-center gap-2 px-5 py-3 rounded-xl border-2 border-emerald-500/45 bg-emerald-50/75 hover:bg-emerald-100/80 hover:border-emerald-600 text-emerald-900 text-sm font-bold whitespace-nowrap shadow-2xs"
+                      className="btn-interactive flex-1 sm:flex-none justify-center min-h-[46px] inline-flex items-center gap-2 px-4 sm:px-5 py-3 rounded-xl border-2 border-emerald-500/45 bg-emerald-50/75 hover:bg-emerald-100/80 hover:border-emerald-600 text-emerald-900 text-sm font-bold whitespace-nowrap shadow-2xs"
                     >
                       <MessageSquare className="w-4 h-4 text-emerald-700" />
                       <span>{t('common.whatsapp')}</span>
@@ -222,7 +222,7 @@ export const DoctorProfilePage: React.FC = () => {
                   {dept && (
                     <Link
                       to={`/departments/${dept.slug}`}
-                      className="btn-interactive inline-flex items-center gap-1.5 px-5 py-3 rounded-xl border-2 border-[#0F4C5C]/25 bg-white hover:border-[#0284C7] hover:bg-sky-50/70 text-[#0F4C5C] text-sm font-bold whitespace-nowrap"
+                      className="btn-interactive flex-1 sm:flex-none justify-center min-h-[46px] inline-flex items-center gap-1.5 px-4 sm:px-5 py-3 rounded-xl border-2 border-[#0F4C5C]/25 bg-white hover:border-[#0284C7] hover:bg-sky-50/70 text-[#0F4C5C] text-sm font-bold whitespace-nowrap"
                     >
                       <span>{dept.nameAr}</span>
                       <ArrowIcon className="w-4 h-4" />
@@ -471,13 +471,13 @@ export const DoctorProfilePage: React.FC = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, amount: 0.2 }}
                   transition={{ duration: 0.35, delay: idx * 0.05, ease: EASE_OUT_EXPO }}
-                  className="group relative overflow-hidden bg-white rounded-2xl border border-slate-200 hover:border-[#0284C7]/50 hover:shadow-md p-5 flex flex-col justify-between space-y-4 transition-all"
+                  className="group relative overflow-hidden bg-white rounded-2xl border border-slate-200 hover:border-[#0284C7]/50 hover:shadow-md flex flex-col justify-between transition-all"
                 >
                   <span
                     aria-hidden="true"
                     className="absolute top-0 inset-x-5 h-[3px] rounded-b-full bg-gradient-to-r from-[#0F4C5C] via-[#0284C7] to-[#38BDF8] opacity-75 group-hover:opacity-100 transition-opacity"
                   />
-                  <div className="pt-1">
+                  <div className="p-5 pt-6">
                     <h3 className="font-display font-bold text-base text-slate-900 group-hover:text-[#0F4C5C] transition-colors">
                       <Link to={`/services/${srv.slug}`}>{srv.title}</Link>
                     </h3>
@@ -485,10 +485,10 @@ export const DoctorProfilePage: React.FC = () => {
                       {srv.shortDesc}
                     </p>
                   </div>
-                  <div className="flex items-center justify-between pt-3 border-t border-slate-100">
+                  <div className="px-5 py-3.5 border-t border-[#0F4C5C]/25 bg-gradient-to-r from-[#0F4C5C]/20 via-sky-100/95 to-[#0284C7]/18 flex items-center justify-between gap-2">
                     <Link
                       to={`/services/${srv.slug}`}
-                      className="text-xs font-bold text-[#0F4C5C] hover:text-[#0284C7] inline-flex items-center gap-1"
+                      className="btn-interactive inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/95 hover:bg-gradient-to-r hover:from-[#0F4C5C] hover:to-[#0284C7] text-[#0F4C5C] hover:text-white border border-[#0F4C5C]/20 hover:border-transparent text-xs font-bold shadow-2xs transition-all duration-200 whitespace-nowrap"
                     >
                       <span>{t('common.readMore')}</span>
                       <ArrowIcon className="w-3.5 h-3.5" />
@@ -526,9 +526,9 @@ export const DoctorProfilePage: React.FC = () => {
                 <Link
                   key={item.id}
                   to={`/library/${item.slug}`}
-                  className="btn-interactive group bg-white rounded-2xl border border-slate-200 hover:border-[#0284C7]/55 hover:shadow-md p-5 space-y-2.5 flex flex-col justify-between"
+                  className="btn-interactive group bg-white rounded-2xl border border-slate-200 hover:border-[#0284C7]/55 hover:shadow-md overflow-hidden flex flex-col justify-between"
                 >
-                  <div className="space-y-2">
+                  <div className="p-5 space-y-2">
                     <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#0284C7]">
                       <BookOpen className="w-3.5 h-3.5" />
                       <span>{item.typeLabel}</span>
@@ -540,9 +540,11 @@ export const DoctorProfilePage: React.FC = () => {
                       {item.summary}
                     </p>
                   </div>
-                  <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-[#0F4C5C]">
-                    <span>{t('common.readMore')}</span>
-                    <ArrowIcon className="w-3.5 h-3.5" />
+                  <div className="px-5 py-3.5 border-t border-[#0F4C5C]/25 bg-gradient-to-r from-[#0F4C5C]/20 via-sky-100/95 to-[#0284C7]/18 flex items-center justify-between">
+                    <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white/95 group-hover:bg-gradient-to-r group-hover:from-[#0F4C5C] group-hover:to-[#0284C7] text-[#0F4C5C] group-hover:text-white border border-[#0F4C5C]/20 group-hover:border-transparent text-xs font-bold shadow-2xs transition-all duration-200 whitespace-nowrap">
+                      <span>{t('common.readMore')}</span>
+                      <ArrowIcon className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-0.5" />
+                    </span>
                   </div>
                 </Link>
               ))}

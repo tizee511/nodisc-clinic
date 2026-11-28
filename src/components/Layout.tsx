@@ -17,7 +17,7 @@ export const Layout: React.FC<{ children?: React.ReactNode }> = ({ children }) =
   }, [pathname]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 pb-20 lg:pb-0 overflow-x-clip">
+    <div className="min-h-dvh flex flex-col bg-slate-50 text-slate-900 pb-[calc(5.5rem+env(safe-area-inset-bottom))] lg:pb-0 overflow-x-clip">
       {!isStoreRoute && <ClinicAnnouncementBar />}
       {isStoreRoute ? <StoreHeader /> : <Header />}
       <main className="flex-1 min-w-0">{children ?? <Outlet />}</main>

@@ -128,7 +128,7 @@ export const AboutPage: React.FC = () => {
             transition={{ duration: 0.45, ease: EASE_OUT_EXPO }}
             className="rounded-3xl p-[1.5px] bg-gradient-to-br from-[#0F4C5C]/30 via-[#0284C7]/35 to-emerald-400/30 shadow-sm"
           >
-            <div className="relative overflow-hidden rounded-[22.5px] bg-white p-6 sm:p-10 space-y-8">
+            <div className="relative overflow-hidden rounded-[22.5px] bg-white p-5 sm:p-10 space-y-8">
               <div
                 aria-hidden="true"
                 className="pointer-events-none absolute inset-0 opacity-[0.03]"
@@ -152,7 +152,7 @@ export const AboutPage: React.FC = () => {
                   </div>
 
                   <div>
-                    <h1 className="font-display font-bold text-3xl sm:text-4xl text-slate-900 leading-tight">
+                    <h1 className="font-display font-bold text-2xl sm:text-4xl text-slate-900 leading-tight">
                       {localizedConfig.brand.nameAr}
                     </h1>
                     <p className="text-sm sm:text-base font-semibold text-[#0F4C5C] mt-1.5">
@@ -204,10 +204,10 @@ export const AboutPage: React.FC = () => {
                   </div>
 
                   {/* Hero Action Buttons */}
-                  <div className="flex flex-wrap items-center gap-3 pt-1">
+                  <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 pt-1">
                     <BookActionButton
                       sourceLabel={localizedConfig.brand.nameAr}
-                      className="btn-interactive btn-sheen inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[#0F4C5C] to-[#0284C7] hover:from-[#093542] hover:to-[#0369A1] text-white border border-sky-300/40 text-sm font-bold shadow-[0_8px_20px_-6px_rgba(15,76,92,0.5)] whitespace-nowrap"
+                      className="btn-interactive btn-sheen w-full sm:w-auto justify-center min-h-[46px] inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[#0F4C5C] to-[#0284C7] hover:from-[#093542] hover:to-[#0369A1] text-white border border-sky-300/40 text-sm font-bold shadow-[0_8px_20px_-6px_rgba(15,76,92,0.5)] whitespace-nowrap"
                     >
                       <Calendar className="w-4 h-4 text-[#7DD3FC]" />
                       <span>{t('common.bookNow')}</span>
@@ -222,7 +222,7 @@ export const AboutPage: React.FC = () => {
                         )}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="btn-interactive inline-flex items-center gap-2 px-5 py-3 rounded-xl border-2 border-emerald-500/45 bg-emerald-50/75 hover:bg-emerald-100/80 hover:border-emerald-600 text-emerald-900 text-sm font-bold whitespace-nowrap shadow-2xs"
+                        className="btn-interactive flex-1 sm:flex-none justify-center min-h-[46px] inline-flex items-center gap-2 px-4 sm:px-5 py-3 rounded-xl border-2 border-emerald-500/45 bg-emerald-50/75 hover:bg-emerald-100/80 hover:border-emerald-600 text-emerald-900 text-sm font-bold whitespace-nowrap shadow-2xs"
                       >
                         <MessageSquare className="w-4 h-4 text-emerald-700" />
                         <span>{t('common.whatsapp')}</span>
@@ -231,7 +231,7 @@ export const AboutPage: React.FC = () => {
 
                     <Link
                       to="/services"
-                      className="btn-interactive inline-flex items-center gap-1.5 px-5 py-3 rounded-xl border-2 border-[#0F4C5C]/25 bg-white hover:border-[#0284C7] hover:bg-sky-50/70 text-[#0F4C5C] text-sm font-bold whitespace-nowrap"
+                      className="btn-interactive flex-1 sm:flex-none justify-center min-h-[46px] inline-flex items-center gap-1.5 px-4 sm:px-5 py-3 rounded-xl border-2 border-[#0F4C5C]/25 bg-white hover:border-[#0284C7] hover:bg-sky-50/70 text-[#0F4C5C] text-sm font-bold whitespace-nowrap"
                     >
                       <span>{t('nav.services')}</span>
                       <ArrowIcon className="w-4 h-4" />
@@ -379,7 +379,7 @@ export const AboutPage: React.FC = () => {
               >
                 <Link
                   to={`/departments/${dept.slug}`}
-                  className="btn-interactive group relative overflow-hidden h-full bg-white rounded-2xl border border-slate-200 hover:border-[#0284C7]/55 hover:shadow-md p-5 flex flex-col justify-between space-y-4 transition-all"
+                  className="btn-interactive group relative overflow-hidden h-full bg-white rounded-2xl border border-slate-200 hover:border-[#0284C7]/55 hover:shadow-md flex flex-col justify-between transition-all"
                 >
                   <span
                     aria-hidden="true"
@@ -387,7 +387,7 @@ export const AboutPage: React.FC = () => {
                       deptAccents[idx % deptAccents.length]
                     } opacity-80 group-hover:opacity-100 transition-opacity`}
                   />
-                  <div className="space-y-2 pt-1">
+                  <div className="p-5 space-y-2 pt-6">
                     <div className="flex items-center justify-between gap-2">
                       <span className="text-[11px] font-medium text-slate-400 truncate" dir="ltr">
                         {dept.nameEn}
@@ -401,9 +401,11 @@ export const AboutPage: React.FC = () => {
                     </h3>
                     <p className="text-xs text-slate-600 leading-relaxed">{dept.shortDesc}</p>
                   </div>
-                  <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-[#0F4C5C]">
-                    <span>{t('common.readMore')}</span>
-                    <ArrowIcon className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-0.5" />
+                  <div className="px-5 py-3.5 border-t border-[#0F4C5C]/25 bg-gradient-to-r from-[#0F4C5C]/20 via-sky-100/95 to-[#0284C7]/18 flex items-center justify-between">
+                    <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white/95 group-hover:bg-gradient-to-r group-hover:from-[#0F4C5C] group-hover:to-[#0284C7] text-[#0F4C5C] group-hover:text-white border border-[#0F4C5C]/20 group-hover:border-transparent text-xs font-bold shadow-2xs transition-all duration-200 whitespace-nowrap">
+                      <span>{t('common.readMore')}</span>
+                      <ArrowIcon className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-0.5" />
+                    </span>
                   </div>
                 </Link>
               </motion.div>
@@ -649,7 +651,7 @@ export const AboutPage: React.FC = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-xs flex items-center justify-center p-4"
+              className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))]"
               role="dialog"
               aria-modal="true"
               aria-label={activeGalleryItem.caption}
@@ -660,7 +662,7 @@ export const AboutPage: React.FC = () => {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.96, y: 10 }}
                 transition={{ duration: 0.22, ease: EASE_OUT_EXPO }}
-                className="relative w-full max-w-3xl rounded-2xl overflow-hidden bg-white shadow-2xl border border-slate-200"
+                className="relative w-full max-w-3xl max-h-[90dvh] overflow-y-auto rounded-2xl bg-white shadow-2xl border border-slate-200"
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="relative bg-slate-900">
@@ -673,7 +675,7 @@ export const AboutPage: React.FC = () => {
                     type="button"
                     onClick={() => setLightboxIndex(null)}
                     aria-label={lang === 'ar' ? 'إغلاق المعاينة' : 'Close preview'}
-                    className="absolute top-3 end-3 w-9 h-9 rounded-xl bg-slate-950/70 hover:bg-slate-950 text-white inline-flex items-center justify-center transition-colors"
+                    className="absolute top-3 end-3 w-10 h-10 rounded-xl bg-slate-950/70 hover:bg-slate-950 text-white inline-flex items-center justify-center transition-colors"
                   >
                     <X className="w-4 h-4" />
                   </button>

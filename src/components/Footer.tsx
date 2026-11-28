@@ -274,9 +274,39 @@ export const Footer: React.FC = () => {
           </div>
         </div>
 
-        <div className="mt-6 pt-6 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
-          <p>{t('footer.legalNote')}</p>
-          <div className="flex flex-wrap items-center justify-center gap-3">
+        <div className="mt-6 pt-6 border-t border-slate-800 flex flex-col lg:flex-row items-center justify-between gap-4 text-xs text-slate-400 text-center lg:text-start">
+          <div className="flex flex-wrap items-center justify-center lg:justify-start gap-x-2.5 gap-y-2">
+            <p className="text-slate-300">{t('footer.legalNote')}</p>
+            <span className="hidden sm:inline text-slate-700" aria-hidden="true">·</span>
+            <div className="inline-flex flex-wrap items-center justify-center gap-2 text-slate-400">
+              <span>
+                {lang === 'ar' ? (
+                  <>
+                    تصميم وتطوير:{' '}
+                    <span className="text-sky-300 font-semibold">م. نشوان حاتم</span>
+                  </>
+                ) : (
+                  <>
+                    Designed &amp; Developed by{' '}
+                    <span className="text-sky-300 font-semibold">Eng. Nashwan Hatem</span>
+                  </>
+                )}
+              </span>
+              <a
+                href="tel:+967784392285"
+                dir="ltr"
+                aria-label={lang === 'ar' ? 'اتصال بالمطور: 784392285' : 'Call developer: 784392285'}
+                className="btn-interactive inline-flex items-center gap-1.5 ps-1.5 pe-2.5 py-1 rounded-xl bg-gradient-to-r from-[#0F4C5C]/90 to-[#0284C7]/85 hover:from-[#0284C7] hover:to-[#0EA5E9] border border-sky-400/35 hover:border-sky-300/70 text-white text-[11px] font-mono font-semibold tabular-nums shadow-[0_4px_14px_-4px_rgba(2,132,199,0.45)]"
+              >
+                <span className="w-5 h-5 rounded-lg bg-white/15 inline-flex items-center justify-center shrink-0">
+                  <Phone className="w-3 h-3 text-sky-200" />
+                </span>
+                <span>784392285</span>
+              </a>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center justify-center gap-3 shrink-0">
             <Link
               to="/policies/privacy"
               className="text-slate-400 hover:text-sky-300 transition-colors"
@@ -299,8 +329,6 @@ export const Footer: React.FC = () => {
               <Lock className="w-3 h-3" />
               <span>{lang === 'ar' ? 'الإدارة' : 'Admin'}</span>
             </Link>
-            <span className="text-slate-700" aria-hidden="true">·</span>
-            <p dir="ltr">© 2026 {localizedConfig.brand.nameEn}</p>
           </div>
         </div>
       </div>

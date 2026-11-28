@@ -2,6 +2,7 @@
   "name": "react-example",
   "private": true,
   "version": "0.0.0",
+  "author": "Eng. Nashwan Hatem (م. نشوان حاتم)",
   "type": "module",
   "scripts": {
     "dev": "vite --port=3000 --host=0.0.0.0",
@@ -13,6 +14,8 @@
   "dependencies": {
     "@google/genai": "^2.4.0",
     "@tailwindcss/vite": "^4.3.3",
+    "@types/google.maps": "^3.67.0",
+    "@vis.gl/react-google-maps": "^1.10.2",
     "@vitejs/plugin-react": "^6.1.1",
     "dotenv": "^17.2.3",
     "express": "^4.21.2",
@@ -33,6 +36,5 @@
     "tsx": "^4.21.0",
     "typescript": "^7.0.2",
     "@types/express": "^4.17.21"
-  }   
-
+  }
 }

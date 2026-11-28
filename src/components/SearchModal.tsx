@@ -177,7 +177,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-start justify-center p-4 pt-16 sm:pt-24"
+      className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-start justify-center p-3 sm:p-4 pt-[max(1rem,env(safe-area-inset-top))] sm:pt-24"
       role="dialog"
       aria-modal="true"
       aria-label={storeOnly ? t('store.searchPlaceholder') : t('nav.search')}
@@ -187,7 +187,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
         className="w-full max-w-2xl bg-white rounded-xl border border-slate-200 shadow-xl overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        <form onSubmit={handleSubmit} className="flex items-center gap-3 px-4 py-3 border-b border-slate-200">
+        <form onSubmit={handleSubmit} className="flex items-center gap-2.5 sm:gap-3 px-3.5 sm:px-4 py-2.5 sm:py-3 border-b border-slate-200">
           <Search className="w-5 h-5 text-slate-400 shrink-0" />
           <input
             type="search"
@@ -195,19 +195,19 @@ export const SearchModal: React.FC<SearchModalProps> = ({
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={storeOnly ? t('store.searchPlaceholder') : t('common.searchPlaceholder')}
-            className="w-full text-sm sm:text-base text-slate-900 placeholder:text-slate-400 focus:outline-none"
+            className="w-full text-base text-slate-900 placeholder:text-slate-400 focus:outline-none"
           />
           <button
             type="button"
             onClick={onClose}
             aria-label={t('common.cancel')}
-            className="p-2 rounded-lg text-slate-500 hover:bg-slate-100 transition-colors"
+            className="min-w-[40px] min-h-[40px] inline-flex items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 transition-colors shrink-0"
           >
             <X className="w-4 h-4" />
           </button>
         </form>
 
-        <div className="max-h-96 overflow-y-auto p-4">
+        <div className="max-h-[60dvh] sm:max-h-96 overflow-y-auto overscroll-contain p-4">
           {!query.trim() ? (
             <div className="text-center py-6 space-y-3">
               <p className="text-sm text-slate-500">

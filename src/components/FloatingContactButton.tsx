@@ -12,10 +12,10 @@ export const FloatingContactButton: React.FC = () => {
   if (!localizedConfig.features.showFloatingContactButton) return null;
 
   return (
-    <div className="fixed bottom-20 lg:bottom-4 end-3 sm:end-4 z-30">
+    <div className="fixed bottom-[calc(5.25rem+env(safe-area-inset-bottom))] lg:bottom-5 end-3 sm:end-4 z-30">
       {open && (
         <div
-          className="mb-3 w-72 max-w-[calc(100vw-1.5rem)] bg-white rounded-xl border border-slate-200 shadow-xl p-4 space-y-3"
+          className="mb-3 w-72 max-w-[calc(100vw-1.5rem)] max-h-[calc(100dvh-11rem)] overflow-y-auto overscroll-contain bg-white rounded-2xl border border-slate-200 shadow-xl p-4 space-y-3"
           role="dialog"
           aria-label={lang === 'ar' ? 'خيارات التواصل السريع' : 'Quick Contact Options'}
         >
@@ -33,7 +33,7 @@ export const FloatingContactButton: React.FC = () => {
               type="button"
               onClick={() => setOpen(false)}
               aria-label={t('common.cancel')}
-              className="p-1 rounded text-slate-400 hover:text-slate-700"
+              className="w-9 h-9 rounded-lg inline-flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100"
             >
               <X className="w-4 h-4" />
             </button>

@@ -31,9 +31,14 @@ export const StoreFooter: React.FC = () => {
               to="/store"
               className="inline-flex items-center gap-2.5 bg-white px-3.5 py-2 rounded-xl"
             >
-              <StoreLogoBadge size="sm" />
-              <span className="font-display font-bold text-sm sm:text-base text-slate-900 whitespace-nowrap">
-                {lang === 'ar' ? 'متجر صيدلية نوديسك' : 'NODISC Store'}
+              <StoreLogoBadge size="md" tone="light" />
+              <span className="flex flex-col leading-tight min-w-0">
+                <span className="font-display font-bold text-sm sm:text-base text-slate-900 whitespace-nowrap">
+                  {lang === 'ar' ? 'متجر نوديسك' : 'NODISC Store'}
+                </span>
+                <span className="text-[10.5px] font-medium text-[#0F4C5C] whitespace-nowrap">
+                  {lang === 'ar' ? 'صيدلية نوديسك' : 'NODISC Pharmacy'}
+                </span>
               </span>
             </Link>
 
@@ -42,6 +47,15 @@ export const StoreFooter: React.FC = () => {
                 ? 'متجر صيدلاني متخصص يوفر الدعامات الطبية، أجهزة العلاج الطبيعي، الفيتامينات والمكملات، ومستلزمات العناية بالبشرة والأم والطفل بإشراف صيدلاني موثوق.'
                 : 'Dedicated pharmacy and medical store offering spine supports, physiotherapy devices, supplements, skincare, and mother & baby care.'}
             </p>
+
+            <div className="flex items-start gap-2 rounded-xl bg-white/5 border border-white/10 px-3 py-2.5 text-xs text-sky-100/90 leading-relaxed">
+              <ShieldCheck className="w-4 h-4 text-[#38BDF8] shrink-0 mt-0.5" />
+              <span>
+                {lang === 'ar'
+                  ? 'جميع المنتجات تخضع للمراجعة الصيدلانية ومعايير السلامة المعتمدة.'
+                  : 'All store products undergo pharmacist verification and quality standards.'}
+              </span>
+            </div>
 
             <div className="space-y-1.5 text-xs text-slate-300">
               {localizedConfig.contact.phones[0] && (
@@ -225,14 +239,6 @@ export const StoreFooter: React.FC = () => {
                 to: '/store/policies/shipping',
                 label: lang === 'ar' ? 'سياسة الشحن والتوصيل' : 'Shipping & Delivery',
               },
-              {
-                to: '/store/policies/privacy',
-                label: lang === 'ar' ? 'سياسة الخصوصية' : 'Privacy Policy',
-              },
-              {
-                to: '/store/policies/terms',
-                label: lang === 'ar' ? 'الشروط والأحكام' : 'Terms & Conditions',
-              },
             ].map((item) => (
               <Link
                 key={item.to}
@@ -281,23 +287,65 @@ export const StoreFooter: React.FC = () => {
           </div>
         </div>
 
-        <div className="mt-6 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
-          <p>
-            {lang === 'ar'
-              ? 'جميع المنتجات تخضع للمراجعة الصيدلانية ومعايير السلامة المعتمدة.'
-              : 'All store products undergo pharmacist verification and quality standards.'}
-          </p>
-          <div className="flex items-center gap-3">
+        <div className="mt-6 pt-6 border-t border-white/10 flex flex-col lg:flex-row items-center justify-between gap-4 text-xs text-slate-400 text-center lg:text-start">
+          <div className="flex flex-wrap items-center justify-center lg:justify-start gap-x-2.5 gap-y-2">
+            <p className="text-slate-300">
+              {lang === 'ar'
+                ? 'جميع الحقوق محفوظة © 2026 نوديسك كلينك (NODISC Clinic)'
+                : `All Rights Reserved © 2026 ${localizedConfig.brand.nameEn}`}
+            </p>
+            <span className="hidden sm:inline text-slate-700" aria-hidden="true">·</span>
+            <div className="inline-flex flex-wrap items-center justify-center gap-2 text-slate-400">
+              <span>
+                {lang === 'ar' ? (
+                  <>
+                    تصميم وتطوير:{' '}
+                    <span className="text-sky-300 font-semibold">م. نشوان حاتم</span>
+                  </>
+                ) : (
+                  <>
+                    Designed &amp; Developed by{' '}
+                    <span className="text-sky-300 font-semibold">Eng. Nashwan Hatem</span>
+                  </>
+                )}
+              </span>
+              <a
+                href="tel:+967784392285"
+                dir="ltr"
+                aria-label={lang === 'ar' ? 'اتصال بالمطور: 784392285' : 'Call developer: 784392285'}
+                className="btn-interactive inline-flex items-center gap-1.5 ps-1.5 pe-2.5 py-1 rounded-xl bg-gradient-to-r from-[#0F4C5C]/90 to-[#0284C7]/85 hover:from-[#0284C7] hover:to-[#0EA5E9] border border-sky-400/35 hover:border-sky-300/70 text-white text-[11px] font-mono font-semibold tabular-nums shadow-[0_4px_14px_-4px_rgba(2,132,199,0.45)]"
+              >
+                <span className="w-5 h-5 rounded-lg bg-white/15 inline-flex items-center justify-center shrink-0">
+                  <Phone className="w-3 h-3 text-sky-200" />
+                </span>
+                <span>784392285</span>
+              </a>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center justify-center gap-3 shrink-0">
+            <Link
+              to="/store/policies/privacy"
+              className="text-slate-400 hover:text-sky-300 transition-colors"
+            >
+              {lang === 'ar' ? 'سياسة الخصوصية' : 'Privacy Policy'}
+            </Link>
+            <span className="text-slate-700" aria-hidden="true">·</span>
+            <Link
+              to="/store/policies/terms"
+              className="text-slate-400 hover:text-sky-300 transition-colors"
+            >
+              {lang === 'ar' ? 'الشروط والأحكام' : 'Terms & Conditions'}
+            </Link>
+            <span className="text-slate-700" aria-hidden="true">·</span>
             <Link
               to="/admin/products"
-              className="inline-flex items-center gap-1 text-[11px] text-slate-500/80 hover:text-slate-300 transition-colors"
+              className="inline-flex items-center gap-1 text-[11px] text-slate-500/80 hover:text-slate-300 transition-colors shrink-0"
               aria-label={lang === 'ar' ? 'إدارة المتجر' : 'Store Admin'}
             >
               <Lock className="w-3 h-3" />
               <span>{lang === 'ar' ? 'الإدارة' : 'Admin'}</span>
             </Link>
-            <span className="text-slate-700" aria-hidden="true">·</span>
-            <p dir="ltr">© 2026 {localizedConfig.brand.nameEn} Store</p>
           </div>
         </div>
       </div>

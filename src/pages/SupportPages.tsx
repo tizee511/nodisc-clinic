@@ -5,6 +5,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { useClinic } from '../context/ClinicContext';
 import { useDataStore } from '../context/DataStoreContext';
 import { Breadcrumbs } from '../components/Breadcrumbs';
+import { ClinicLocationMap } from '../components/ClinicLocationMap';
 
 export const ContactPage: React.FC = () => {
   const { lang, t, localizedConfig, departments } = useLanguage();
@@ -240,6 +241,9 @@ export const ContactPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Interactive Clinic Location Map */}
+      <ClinicLocationMap />
     </div>
   );
 };

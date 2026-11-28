@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { CheckCircle2, Star } from 'lucide-react';
+import { ArrowLeft, ArrowRight, CheckCircle2, Star } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useClinic } from '../context/ClinicContext';
 import { Breadcrumbs } from '../components/Breadcrumbs';
@@ -9,8 +9,9 @@ import { BookActionButton } from '../components/BookActionLink';
 import { getFilterTabClass, ScrollableFilterBar } from '../components/ScrollableFilterBar';
 
 export const StoriesPage: React.FC = () => {
-  const { lang, t, stories, departments } = useLanguage();
+  const { lang, isRTL, t, stories, departments } = useLanguage();
   const [selectedDept, setSelectedDept] = useState<string>('all');
+  const ArrowIcon = isRTL ? ArrowLeft : ArrowRight;
 
   const filteredStories =
     selectedDept === 'all'
@@ -92,9 +93,12 @@ export const StoriesPage: React.FC = () => {
                   <p className="text-sm text-slate-600 leading-relaxed">{story.summary}</p>
                 </div>
               </div>
-              <div className="px-5 py-3 border-t border-slate-100 text-xs text-slate-500 flex items-center justify-between">
-                <span>{story.patientLabel}</span>
-                <span className="font-semibold text-[#0F4C5C]">{t('common.readMore')}</span>
+              <div className="px-5 py-3.5 border-t border-emerald-600/25 bg-gradient-to-r from-emerald-600/20 via-teal-100/90 to-sky-100/90 text-xs text-slate-700 flex items-center justify-between gap-2">
+                <span className="truncate font-medium">{story.patientLabel}</span>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/95 group-hover:bg-gradient-to-r group-hover:from-[#0F4C5C] group-hover:to-emerald-600 text-[#0F4C5C] group-hover:text-white border border-emerald-600/25 group-hover:border-transparent font-bold shadow-2xs transition-all duration-200 whitespace-nowrap shrink-0">
+                  <span>{t('common.readMore')}</span>
+                  <ArrowIcon className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-0.5" />
+                </span>
               </div>
             </Link>
           );

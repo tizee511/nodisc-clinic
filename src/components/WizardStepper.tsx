@@ -31,12 +31,14 @@ export function WizardStepper<T extends number>({
   const activeLabel = steps.find((s) => s.step === currentStep)?.label || '';
 
   return (
-    <div className="bg-slate-50/90 border-b border-slate-200 px-4 sm:px-8 py-5 space-y-5">
+    <div className="bg-slate-50/90 border-b border-slate-200 px-3 sm:px-8 py-4 sm:py-5 space-y-4 sm:space-y-5">
       <div className="flex items-center justify-between gap-2">
-        <span className="text-xs font-bold text-[#0F4C5C] bg-[#0F4C5C]/10 px-2.5 py-1 rounded-md">
+        <span className="text-[11px] sm:text-xs font-bold text-[#0F4C5C] bg-[#0F4C5C]/10 px-2.5 py-1 rounded-md whitespace-nowrap">
           {counterLabel}
         </span>
-        <span className="text-xs font-semibold text-slate-600">{activeLabel}</span>
+        <span className="text-[11px] sm:text-xs font-semibold text-slate-600 truncate">
+          {activeLabel}
+        </span>
       </div>
 
       {/* Continuous Line Timeline Stepper (no boxes around steps) */}
@@ -67,7 +69,7 @@ export function WizardStepper<T extends number>({
                 disabled={!canJump}
                 onClick={() => onStepClick(step)}
                 aria-current={isActive ? 'step' : undefined}
-                className={`group flex flex-col items-center text-center gap-2 bg-transparent border-0 p-0 focus-visible:outline-none ${
+                className={`group flex flex-col items-center text-center gap-1.5 sm:gap-2 bg-transparent border-0 p-0 min-h-[44px] focus-visible:outline-none ${
                   canJump ? 'cursor-pointer' : 'cursor-default'
                 }`}
               >
@@ -84,7 +86,7 @@ export function WizardStepper<T extends number>({
                 </span>
 
                 <span
-                  className={`text-[11px] sm:text-xs font-bold leading-snug line-clamp-2 max-w-[90px] sm:max-w-none transition-colors ${
+                  className={`text-[10.5px] sm:text-xs font-bold leading-snug line-clamp-2 max-w-[78px] sm:max-w-none transition-colors ${
                     isActive
                       ? 'text-[#0F4C5C]'
                       : isCompleted

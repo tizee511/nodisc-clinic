@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { Calendar, CheckCircle2, MapPin, Users } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Calendar, CheckCircle2, MapPin, Users } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useDataStore } from '../context/DataStoreContext';
 import { Breadcrumbs } from '../components/Breadcrumbs';
@@ -9,9 +9,10 @@ import { getFilterTabClass, ScrollableFilterBar } from '../components/Scrollable
 import { CampaignStatus } from '../types/clinic';
 
 export const CampaignsPage: React.FC = () => {
-  const { lang, t, campaigns, departments } = useLanguage();
+  const { lang, isRTL, t, campaigns, departments } = useLanguage();
   const { getCampaignBookedCount, getCampaignEffectiveStatus } = useDataStore();
   const [statusFilter, setStatusFilter] = useState<'all' | CampaignStatus>('all');
+  const ArrowIcon = isRTL ? ArrowLeft : ArrowRight;
 
   const statusTabs: { key: 'all' | CampaignStatus; label: string }[] = [
     { key: 'all', label: t('common.all') },
@@ -104,11 +105,14 @@ export const CampaignsPage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="px-6 py-4 border-t border-slate-100 flex items-center justify-between text-xs">
-                <span className="text-slate-600 tabular-nums">
-                  {t('home.remainingSeats')}: <strong>{remaining}</strong> / {camp.totalCapacity}
+              <div className="px-6 py-4 border-t border-[#0F4C5C]/25 bg-gradient-to-r from-[#0F4C5C]/20 via-sky-100/95 to-[#0284C7]/18 flex items-center justify-between gap-2 text-xs">
+                <span className="text-slate-700 font-medium tabular-nums">
+                  {t('home.remainingSeats')}: <strong className="text-[#0F4C5C]">{remaining}</strong> / {camp.totalCapacity}
                 </span>
-                <span className="font-semibold text-[#0F4C5C]">{t('common.readMore')}</span>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/95 group-hover:bg-gradient-to-r group-hover:from-[#0F4C5C] group-hover:to-[#0284C7] text-[#0F4C5C] group-hover:text-white border border-[#0F4C5C]/20 group-hover:border-transparent font-bold shadow-2xs transition-all duration-200 whitespace-nowrap">
+                  <span>{t('common.readMore')}</span>
+                  <ArrowIcon className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-0.5" />
+                </span>
               </div>
             </Link>
           );

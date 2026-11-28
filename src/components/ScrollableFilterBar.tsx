@@ -153,24 +153,26 @@ export const ScrollableFilterBar: React.FC<ScrollableFilterBarProps> = ({
 
   const containerSurfaceClass =
     surface === 'featured'
-      ? 'bg-gradient-to-b from-white to-sky-50/40 border border-[#0F4C5C]/25 rounded-2xl p-2 shadow-[0_10px_28px_-12px_rgba(15,76,92,0.28)] ring-1 ring-[#0F4C5C]/10'
+      ? 'bg-gradient-to-b from-white via-white to-sky-50/55 border border-[#0F4C5C]/25 rounded-2xl p-2 shadow-[0_12px_30px_-12px_rgba(15,76,92,0.28)] ring-2 ring-sky-200/45'
       : surface === 'elevated'
-      ? 'bg-white border border-[#0F4C5C]/20 rounded-2xl p-1.5 shadow-[0_8px_24px_-10px_rgba(15,76,92,0.22)] ring-1 ring-[#0F4C5C]/5'
-      : 'bg-slate-50 border border-slate-200 rounded-xl p-1.5 shadow-xs';
+      ? 'bg-gradient-to-b from-white to-sky-50/30 border border-[#0F4C5C]/22 rounded-2xl p-1.5 shadow-[0_10px_26px_-10px_rgba(15,76,92,0.22)] ring-1 ring-sky-200/40'
+      : 'bg-slate-50/90 border border-slate-200/90 rounded-xl p-1.5 shadow-xs ring-1 ring-white/70';
 
   const fadeFrom =
-    surface === 'featured'
-      ? 'from-white'
-      : surface === 'elevated'
-      ? 'from-white'
-      : 'from-slate-50';
+    surface === 'inset'
+      ? 'from-slate-50 via-slate-50/80'
+      : 'from-white via-white/80';
 
-  const arrowBtnSize = surface === 'featured' ? 'w-9 h-9' : 'w-8 h-8';
+  const arrowBtnSize = surface === 'featured' ? 'w-9 h-9' : 'w-9 h-9 sm:w-8 sm:h-8';
 
   return (
     <div
-      className={`relative ${fullWidth ? 'w-full' : 'w-fit max-w-full'} flex items-center gap-2 ${containerSurfaceClass} ${className}`}
+      className={`relative overflow-hidden ${fullWidth ? 'w-full' : 'w-fit max-w-full'} flex items-center gap-1.5 sm:gap-2 ${containerSurfaceClass} ${className}`}
     >
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-6 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#0284C7]/35 to-transparent"
+      />
       {shouldShowIcon && (
         <span
           aria-hidden="true"
@@ -186,10 +188,10 @@ export const ScrollableFilterBar: React.FC<ScrollableFilterBarProps> = ({
           onClick={() => scrollPhysically(isRTL ? 260 : -260)}
           disabled={!startEnabled}
           aria-label={lang === 'ar' ? 'تحريك الشريط للخلف' : 'Scroll filters back'}
-          className={`${arrowBtnSize} rounded-xl border flex items-center justify-center shrink-0 transition-all duration-150 ${
+          className={`btn-interactive ${arrowBtnSize} rounded-xl border flex items-center justify-center shrink-0 transition-all duration-150 ${
             startEnabled
-              ? 'bg-white border-slate-200 text-[#0F4C5C] hover:bg-[#0F4C5C] hover:text-white hover:border-[#0F4C5C] shadow-xs'
-              : 'bg-slate-50 border-slate-100 text-slate-300 cursor-default'
+              ? 'bg-white/95 backdrop-blur-xs border-slate-200 text-[#0F4C5C] hover:bg-[#0F4C5C] hover:text-white hover:border-[#0F4C5C] shadow-xs'
+              : 'bg-slate-50/80 border-slate-100 text-slate-300 cursor-default'
           }`}
         >
           <StartIcon className="w-4 h-4" />
@@ -197,18 +199,18 @@ export const ScrollableFilterBar: React.FC<ScrollableFilterBarProps> = ({
       )}
 
       <div className="relative min-w-0 flex-1 overflow-hidden">
-        {canScrollLeft && (
-          <div
-            aria-hidden="true"
-            className={`pointer-events-none absolute inset-y-0 left-0 w-7 z-10 bg-gradient-to-r ${fadeFrom} to-transparent`}
-          />
-        )}
-        {canScrollRight && (
-          <div
-            aria-hidden="true"
-            className={`pointer-events-none absolute inset-y-0 right-0 w-7 z-10 bg-gradient-to-l ${fadeFrom} to-transparent`}
-          />
-        )}
+        <div
+          aria-hidden="true"
+          className={`pointer-events-none absolute inset-y-0 left-0 w-8 sm:w-10 z-10 bg-gradient-to-r ${fadeFrom} to-transparent transition-opacity duration-200 ${
+            canScrollLeft ? 'opacity-100' : 'opacity-0'
+          }`}
+        />
+        <div
+          aria-hidden="true"
+          className={`pointer-events-none absolute inset-y-0 right-0 w-8 sm:w-10 z-10 bg-gradient-to-l ${fadeFrom} to-transparent transition-opacity duration-200 ${
+            canScrollRight ? 'opacity-100' : 'opacity-0'
+          }`}
+        />
 
         <div
           ref={scrollRef}
@@ -221,8 +223,8 @@ export const ScrollableFilterBar: React.FC<ScrollableFilterBarProps> = ({
           onPointerCancel={endDrag}
           onPointerLeave={endDrag}
           onClickCapture={handleClickCapture}
-          className={`flex items-center flex-nowrap gap-2 overflow-x-auto max-w-full select-none py-0.5 px-0.5 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden ${
-            hasOverflow ? (isDragging ? 'cursor-grabbing' : 'cursor-grab') : ''
+          className={`flex items-center flex-nowrap gap-2 overflow-x-auto max-w-full select-none scroll-smooth snap-x snap-proximity touch-pan-y py-0.5 px-0.5 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden ${
+            hasOverflow ? (isDragging ? 'cursor-grabbing scroll-auto' : 'cursor-grab') : ''
           }`}
         >
           {children}
@@ -235,10 +237,10 @@ export const ScrollableFilterBar: React.FC<ScrollableFilterBarProps> = ({
           onClick={() => scrollPhysically(isRTL ? -260 : 260)}
           disabled={!endEnabled}
           aria-label={lang === 'ar' ? 'تحريك الشريط للأمام' : 'Scroll filters forward'}
-          className={`${arrowBtnSize} rounded-xl border flex items-center justify-center shrink-0 transition-all duration-150 ${
+          className={`btn-interactive ${arrowBtnSize} rounded-xl border flex items-center justify-center shrink-0 transition-all duration-150 ${
             endEnabled
-              ? 'bg-white border-slate-200 text-[#0F4C5C] hover:bg-[#0F4C5C] hover:text-white hover:border-[#0F4C5C] shadow-xs'
-              : 'bg-slate-50 border-slate-100 text-slate-300 cursor-default'
+              ? 'bg-white/95 backdrop-blur-xs border-slate-200 text-[#0F4C5C] hover:bg-[#0F4C5C] hover:text-white hover:border-[#0F4C5C] shadow-xs'
+              : 'bg-slate-50/80 border-slate-100 text-slate-300 cursor-default'
           }`}
         >
           <EndIcon className="w-4 h-4" />

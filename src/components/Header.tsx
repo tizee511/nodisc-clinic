@@ -260,9 +260,9 @@ export const Header: React.FC = () => {
               type="button"
               onClick={() => setSearchOpen(true)}
               aria-label={t('nav.search')}
-              className="p-1.5 sm:p-2 rounded-lg text-slate-100 hover:text-[#7DD3FC] hover:bg-white/10 transition-colors"
+              className="min-w-[40px] min-h-[40px] sm:min-w-0 sm:min-h-0 p-2 rounded-lg text-slate-100 hover:text-[#7DD3FC] hover:bg-white/10 transition-colors inline-flex items-center justify-center"
             >
-              <Search className="w-4 h-4 sm:w-5 sm:h-5" />
+              <Search className="w-4.5 h-4.5 sm:w-5 sm:h-5" />
             </button>
 
             <button
@@ -270,13 +270,13 @@ export const Header: React.FC = () => {
               onClick={() => setLang(lang === 'ar' ? 'en' : 'ar')}
               aria-label={lang === 'ar' ? 'Switch to English' : 'التبديل إلى العربية'}
               title={lang === 'ar' ? 'Switch to English' : 'التبديل إلى العربية'}
-              className="relative p-1.5 sm:p-2 rounded-lg text-slate-100 hover:text-[#7DD3FC] hover:bg-white/10 transition-colors inline-flex items-center justify-center gap-1"
+              className="relative min-w-[40px] min-h-[40px] sm:min-w-0 sm:min-h-0 p-2 rounded-lg text-slate-100 hover:text-[#7DD3FC] hover:bg-white/10 transition-colors inline-flex items-center justify-center gap-1"
             >
-              <Globe className="w-4 h-4 sm:w-5 sm:h-5" />
+              <Globe className="w-4.5 h-4.5 sm:w-5 sm:h-5" />
               <span className="hidden md:inline text-[11px] font-bold uppercase tracking-wide">
                 {lang === 'ar' ? 'EN' : 'AR'}
               </span>
-              <span className="md:hidden absolute -bottom-0.5 -end-0.5 px-1 rounded bg-[#05222B] border border-sky-300/35 text-[8px] font-extrabold text-[#7DD3FC] leading-tight uppercase">
+              <span className="md:hidden absolute bottom-0.5 end-0.5 px-1 rounded bg-[#05222B] border border-sky-300/35 text-[8px] font-extrabold text-[#7DD3FC] leading-tight uppercase">
                 {lang === 'ar' ? 'EN' : 'AR'}
               </span>
             </button>
@@ -293,7 +293,7 @@ export const Header: React.FC = () => {
               onClick={() => setMobileMenuOpen((prev) => !prev)}
               aria-label={mobileMenuOpen ? t('nav.closeMenu') : t('nav.menu')}
               aria-expanded={mobileMenuOpen}
-              className="lg:hidden p-1.5 sm:p-2 rounded-lg text-white hover:bg-white/10 transition-colors"
+              className="lg:hidden min-w-[40px] min-h-[40px] p-2 rounded-lg text-white hover:bg-white/10 transition-colors inline-flex items-center justify-center"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -320,15 +320,15 @@ export const Header: React.FC = () => {
         aria-label={lang === 'ar' ? 'قائمة الجوال' : 'Mobile Navigation'}
       >
         <aside
-          className={`relative z-10 w-1/2 min-w-0 h-full bg-[#093542] bg-gradient-to-b from-[#062B35] via-[#093542] to-[#0F4C5C] border-e border-sky-400/25 shadow-2xl flex flex-col overflow-hidden transition-all duration-350 ease-[cubic-bezier(0.22,1.18,0.36,1)] ${
+          className={`relative z-10 w-[78vw] max-w-[320px] min-w-0 h-dvh pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] overscroll-contain bg-[#093542] bg-gradient-to-b from-[#062B35] via-[#093542] to-[#0F4C5C] border-e border-sky-400/25 shadow-2xl flex flex-col overflow-hidden transition-all duration-350 ease-[cubic-bezier(0.22,1.18,0.36,1)] ${
             mobileMenuOpen
               ? 'translate-x-0 scale-100 opacity-100'
               : `${isRTL ? 'translate-x-full' : '-translate-x-full'} scale-[0.96] opacity-90`
           }`}
         >
             {/* Drawer Header */}
-            <div className="px-2.5 sm:px-3 py-3 border-b border-white/10 bg-[#05222B] text-white flex items-center justify-between gap-1.5 shrink-0">
-              <span className="font-display font-bold text-xs sm:text-sm truncate text-white">
+            <div className="px-3.5 py-3 border-b border-white/10 bg-[#05222B] text-white flex items-center justify-between gap-2 shrink-0">
+              <span className="font-display font-bold text-sm truncate text-white">
                 {lang === 'ar' ? 'القائمة الرئيسية' : 'Main Menu'}
               </span>
               <button

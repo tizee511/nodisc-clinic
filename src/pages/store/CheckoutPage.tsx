@@ -402,7 +402,7 @@ export const CheckoutPage: React.FC = () => {
           ]}
         />
         <div className="flex flex-wrap items-end justify-between gap-4">
-          <h1 className="font-display font-bold text-3xl text-slate-900">
+          <h1 className="font-display font-bold text-2xl sm:text-3xl text-slate-900">
             {t('store.checkout.title')}
           </h1>
           <div className="inline-flex items-center gap-1.5 text-xs text-slate-500">
@@ -1502,13 +1502,13 @@ export const CheckoutPage: React.FC = () => {
             </AnimatePresence>
 
             {/* Step Footer Controls */}
-            <div className="pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
-              <div>
+            <div className="pt-4 border-t border-slate-100 flex flex-col-reverse sm:flex-row sm:items-center justify-between gap-3">
+              <div className="w-full sm:w-auto">
                 {currentStep > 1 && (
                   <button
                     type="button"
                     onClick={goToPrevStep}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-sm font-semibold transition-colors"
+                    className="w-full sm:w-auto min-h-[44px] inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-sm font-semibold transition-colors"
                   >
                     <PrevArrow className="w-4 h-4" />
                     <span>{t('store.checkout.wizard.prevBtn')}</span>
@@ -1516,12 +1516,12 @@ export const CheckoutPage: React.FC = () => {
                 )}
               </div>
 
-              <div>
+              <div className="w-full sm:w-auto">
                 {currentStep < 4 ? (
                   <button
                     type="button"
                     onClick={goToNextStep}
-                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#0F4C5C] hover:bg-[#093542] text-white text-sm font-semibold transition-colors shadow-xs"
+                    className="w-full sm:w-auto min-h-[46px] inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#0F4C5C] hover:bg-[#093542] text-white text-sm font-semibold transition-colors shadow-xs"
                   >
                     <span>{t('store.checkout.wizard.nextBtn')}</span>
                     <NextArrow className="w-4 h-4" />
@@ -1530,7 +1530,7 @@ export const CheckoutPage: React.FC = () => {
                   <button
                     type="submit"
                     disabled={isSubmitting || !isStockVerified}
-                    className="inline-flex items-center justify-center gap-2 px-7 py-3 rounded-xl bg-[#0F4C5C] hover:bg-[#093542] disabled:opacity-60 text-white text-sm font-semibold transition-colors shadow-xs"
+                    className="w-full sm:w-auto min-h-[46px] inline-flex items-center justify-center gap-2 px-7 py-3 rounded-xl bg-[#0F4C5C] hover:bg-[#093542] disabled:opacity-60 text-white text-sm font-semibold transition-colors shadow-xs"
                   >
                     {isSubmitting && <Loader2 className="w-4 h-4 animate-spin" />}
                     <span>{t('store.checkout.placeOrder')}</span>
@@ -1653,7 +1653,7 @@ export const CheckoutPage: React.FC = () => {
                       if (couponMsg) setCouponMsg(null);
                     }}
                     placeholder={lang === 'ar' ? 'كوبون (مثال: NODISC20)' : 'Promo code'}
-                    className="flex-1 min-w-0 px-2.5 py-1.5 rounded-lg border border-slate-300 text-xs font-mono uppercase"
+                    className="flex-1 min-w-0 min-h-[42px] px-3 py-2 rounded-lg border border-slate-300 text-xs font-mono uppercase"
                   />
                   <button
                     type="button"
@@ -1662,7 +1662,7 @@ export const CheckoutPage: React.FC = () => {
                       setCouponMsg({ ok: res.ok, text: res.message });
                       if (res.ok) setCouponInput('');
                     }}
-                    className="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-[#0F4C5C] text-white text-xs font-semibold shrink-0"
+                    className="min-h-[42px] px-3.5 py-2 rounded-lg bg-slate-900 hover:bg-[#0F4C5C] text-white text-xs font-semibold shrink-0"
                   >
                     {lang === 'ar' ? 'تطبيق' : 'Apply'}
                   </button>

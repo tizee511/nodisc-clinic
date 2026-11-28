@@ -297,7 +297,7 @@ export const AdminLayout: React.FC<{
             type="button"
             onClick={() => setMobileOpen(false)}
             aria-label={lang === 'ar' ? 'إغلاق القائمة' : 'Close menu'}
-            className="p-1.5 rounded-lg text-slate-600 hover:bg-slate-100"
+            className="min-w-[40px] min-h-[40px] inline-flex items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100"
           >
             <X className="w-5 h-5" />
           </button>
@@ -422,10 +422,10 @@ export const AdminLayout: React.FC<{
   );
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 flex overflow-x-clip">
+    <div className="min-h-dvh bg-slate-50 text-slate-900 flex overflow-x-clip">
       {/* Desktop Sidebar */}
       <aside
-        className={`hidden lg:block shrink-0 border-e border-slate-200 bg-white sticky top-0 h-screen transition-all duration-200 ${
+        className={`hidden lg:block shrink-0 border-e border-slate-200 bg-white sticky top-0 h-dvh transition-all duration-200 ${
           collapsed ? 'w-[70px]' : 'w-68'
         }`}
       >
@@ -439,7 +439,7 @@ export const AdminLayout: React.FC<{
             className="fixed inset-0 bg-slate-900/50"
             onClick={() => setMobileOpen(false)}
           />
-          <aside className="relative w-72 max-w-[85vw] h-full bg-white border-e border-slate-200 z-10">
+          <aside className="relative w-72 max-w-[85vw] h-dvh pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] bg-white border-e border-slate-200 z-10 overscroll-contain">
             {renderSidebarContent(true)}
           </aside>
         </div>
@@ -454,7 +454,7 @@ export const AdminLayout: React.FC<{
               type="button"
               onClick={() => setMobileOpen(true)}
               aria-label={lang === 'ar' ? 'فتح القائمة' : 'Open menu'}
-              className="lg:hidden p-2 rounded-lg text-slate-700 hover:bg-slate-100 shrink-0"
+              className="lg:hidden min-w-[40px] min-h-[40px] inline-flex items-center justify-center rounded-lg text-slate-700 hover:bg-slate-100 shrink-0"
             >
               <Menu className="w-5 h-5" />
             </button>
@@ -487,7 +487,7 @@ export const AdminLayout: React.FC<{
                 type="button"
                 onClick={() => setNotifOpen((o) => !o)}
                 aria-label={lang === 'ar' ? 'الإشعارات' : 'Notifications'}
-                className="relative p-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50"
+                className="relative min-w-[40px] min-h-[40px] inline-flex items-center justify-center rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50"
               >
                 <Bell className="w-4 h-4" />
                 {totalNotifs > 0 && (

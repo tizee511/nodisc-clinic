@@ -302,7 +302,7 @@ export const BookAppointmentPage: React.FC = () => {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 lg:py-12 space-y-8">
       <div>
         <Breadcrumbs items={[{ label: t('booking.title') }]} />
-        <h1 className="font-display font-bold text-3xl text-slate-900">{t('booking.title')}</h1>
+        <h1 className="font-display font-bold text-2xl sm:text-3xl text-slate-900">{t('booking.title')}</h1>
         <p className="text-sm sm:text-base text-slate-600 mt-2 max-w-2xl">
           {t('booking.subtitle')}
         </p>
@@ -393,17 +393,17 @@ export const BookAppointmentPage: React.FC = () => {
             </div>
           )}
 
-          <div className="flex flex-wrap gap-3 pt-2">
+          <div className="flex flex-col sm:flex-row flex-wrap gap-3 pt-2">
             <button
               type="button"
               onClick={handleResetNewRequest}
-              className="px-5 py-2.5 rounded-lg bg-[#0F4C5C] text-white text-sm font-semibold hover:bg-[#093542]"
+              className="w-full sm:w-auto min-h-[44px] inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-[#0F4C5C] text-white text-sm font-semibold hover:bg-[#093542]"
             >
               {t('booking.result.newRequest')}
             </button>
             <Link
               to="/"
-              className="px-5 py-2.5 rounded-lg border border-slate-300 text-slate-700 text-sm font-medium hover:bg-slate-50"
+              className="w-full sm:w-auto min-h-[44px] inline-flex items-center justify-center px-5 py-2.5 rounded-lg border border-slate-300 text-slate-700 text-sm font-medium hover:bg-slate-50"
             >
               {t('nav.home')}
             </Link>
@@ -598,7 +598,7 @@ export const BookAppointmentPage: React.FC = () => {
                               <button
                                 type="button"
                                 onClick={handleLookupExistingFile}
-                                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#0F4C5C] hover:bg-[#093542] text-white text-xs sm:text-sm font-semibold shrink-0 transition-colors"
+                                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 min-h-[44px] rounded-xl bg-[#0F4C5C] hover:bg-[#093542] text-white text-xs sm:text-sm font-semibold shrink-0 transition-colors"
                               >
                                 <Search className="w-4 h-4" />
                                 <span>{t('booking.wizard.returningLookupBtn')}</span>
@@ -1080,13 +1080,13 @@ export const BookAppointmentPage: React.FC = () => {
               </AnimatePresence>
 
               {/* Step Footer Navigation */}
-              <div className="pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
-                <div>
+              <div className="pt-4 border-t border-slate-100 flex flex-col-reverse sm:flex-row sm:items-center justify-between gap-3">
+                <div className="w-full sm:w-auto">
                   {currentStep > 1 && (
                     <button
                       type="button"
                       onClick={goToPrevStep}
-                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-sm font-semibold transition-colors"
+                      className="w-full sm:w-auto min-h-[44px] inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-sm font-semibold transition-colors"
                     >
                       <PrevArrow className="w-4 h-4" />
                       <span>{t('booking.wizard.prevBtn')}</span>
@@ -1094,12 +1094,12 @@ export const BookAppointmentPage: React.FC = () => {
                   )}
                 </div>
 
-                <div>
+                <div className="w-full sm:w-auto">
                   {currentStep < 4 ? (
                     <button
                       type="button"
                       onClick={goToNextStep}
-                      className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#0F4C5C] hover:bg-[#093542] text-white text-sm font-semibold transition-colors shadow-xs"
+                      className="w-full sm:w-auto min-h-[46px] inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#0F4C5C] hover:bg-[#093542] text-white text-sm font-semibold transition-colors shadow-xs"
                     >
                       <span>{t('booking.wizard.nextBtn')}</span>
                       <NextArrow className="w-4 h-4" />
@@ -1108,7 +1108,7 @@ export const BookAppointmentPage: React.FC = () => {
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="inline-flex items-center justify-center gap-2 px-7 py-3 rounded-xl bg-[#0F4C5C] hover:bg-[#093542] disabled:opacity-60 text-white text-sm font-semibold transition-colors shadow-xs"
+                      className="w-full sm:w-auto min-h-[46px] inline-flex items-center justify-center gap-2 px-7 py-3 rounded-xl bg-[#0F4C5C] hover:bg-[#093542] disabled:opacity-60 text-white text-sm font-semibold transition-colors shadow-xs"
                     >
                       {isSubmitting ? (
                         <>

@@ -339,6 +339,27 @@ export const enLibrary: Record<string, Partial<LibraryItem>> = {
     videoPreviewNote: 'Interactive demo video player — ready to link the clinic’s official hosted video file.',
     summary: 'Brief visual guide demonstrating monitor height, chair alignment, and three safe desk stretches.',
   },
+  'lib-vid-mri-reading': {
+    typeLabel: 'Educational Video',
+    title: 'How a Neurosurgeon Interprets Spine MRI Scans',
+    authorName: 'Dr. Mohammed Al-Jurbani',
+    videoPreviewNote: 'Interactive demo video player — ready to link the clinic’s official hosted video file.',
+    summary: 'Clear walkthrough of spinal MRI slices and how specialists distinguish mild disc bulges from nerve root compression.',
+  },
+  'lib-vid-pain-injections': {
+    typeLabel: 'Educational Video',
+    title: 'When Do Guided Nerve Root Injections Replace Surgery?',
+    authorName: 'Interventional Pain Management Team',
+    videoPreviewNote: 'Interactive demo video player — ready to link the clinic’s official hosted video file.',
+    summary: 'Visual guide explaining precision image-guided inflammation relief around irritated spinal nerves to accelerate recovery.',
+  },
+  'lib-vid-postop-walk': {
+    typeLabel: 'Educational Video',
+    title: 'Safe Walking & Early Spine Rehabilitation After Disc Care',
+    authorName: 'Rehabilitation & Physiotherapy Unit',
+    videoPreviewNote: 'Interactive demo video player — ready to link the clinic’s official hosted video file.',
+    summary: 'Practical movement steps for getting out of bed safely, pacing daily walks, and protecting spinal alignment.',
+  },
   'lib-cond-cervical-radiculopathy': {
     typeLabel: 'Condition',
     title: 'Neck Pain Radiating to the Arm & Finger Tingling',

@@ -24,6 +24,7 @@ import { BookActionButton } from '../components/BookActionLink';
 import { SequentialCarousel } from '../components/SequentialCarousel';
 import { EmergencyRedFlagsSection } from '../components/EmergencyRedFlagsSection';
 import { ClinicalTrustStrip } from '../components/ClinicalTrustStrip';
+import { HeroImageSlider } from '../components/HeroImageSlider';
 
 const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 
@@ -122,9 +123,11 @@ export const HomePage: React.FC = () => {
     ...libraryReadings.filter((l) => l.featuredOnHome),
     ...libraryReadings.filter((l) => !l.featuredOnHome),
   ];
-  const featuredVideo =
-    library.find((l) => l.type === 'video' && l.featuredOnHome) ||
-    library.find((l) => l.type === 'video');
+  const videoItems = library.filter((l) => l.type === 'video');
+  const sequentialVideos = [
+    ...videoItems.filter((v) => v.featuredOnHome),
+    ...videoItems.filter((v) => !v.featuredOnHome),
+  ];
   const homeFaqs = library.filter((l) => l.type === 'faq' && l.featuredOnHome).slice(0, 4);
 
   const heroKicker = lang === 'ar' ? homeHero.kickerAr : t('home.heroKicker');
@@ -161,7 +164,7 @@ export const HomePage: React.FC = () => {
             />
 
             <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-10 lg:py-16">
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
                 <motion.div
                   initial={{ opacity: 0, y: 18 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -183,20 +186,20 @@ export const HomePage: React.FC = () => {
                   </div>
 
                   <div>
-                    <h1 className="font-display font-bold text-3xl sm:text-4xl lg:text-[2.75rem] leading-[1.2] text-slate-900">
+                    <h1 className="font-display font-bold text-2xl sm:text-4xl lg:text-[2.75rem] leading-[1.24] text-slate-900">
                       {heroTitle}
                     </h1>
                     <GeometricTitleRule />
                   </div>
 
-                  <p className="text-base sm:text-lg text-slate-600 leading-relaxed max-w-2xl">
+                  <p className="text-sm sm:text-lg text-slate-600 leading-relaxed max-w-2xl">
                     {heroSubtitle}
                   </p>
 
-                  <div className="flex flex-wrap items-center gap-3 pt-2">
+                  <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 pt-2">
                     <Link
                       to="/book"
-                      className="btn-interactive btn-sheen btn-sheen-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-gradient-to-r from-[#0F4C5C] via-[#0F4C5C] to-[#0284C7] hover:from-[#093542] hover:to-[#0369A1] text-white border border-sky-300/40 ring-2 ring-[#0F4C5C]/15 text-sm sm:text-base font-bold shadow-[0_10px_24px_-8px_rgba(15,76,92,0.55)] hover:shadow-[0_14px_28px_-8px_rgba(2,132,199,0.55)] whitespace-nowrap"
+                      className="btn-interactive btn-sheen btn-sheen-auto w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-gradient-to-r from-[#0F4C5C] via-[#0F4C5C] to-[#0284C7] hover:from-[#093542] hover:to-[#0369A1] text-white border border-sky-300/40 ring-2 ring-[#0F4C5C]/15 text-sm sm:text-base font-bold shadow-[0_10px_24px_-8px_rgba(15,76,92,0.55)] hover:shadow-[0_14px_28px_-8px_rgba(2,132,199,0.55)] whitespace-nowrap"
                     >
                       <Calendar className="w-4 h-4 text-[#7DD3FC]" />
                       <span>{heroPrimaryCta}</span>
@@ -210,7 +213,7 @@ export const HomePage: React.FC = () => {
                         )}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="btn-interactive btn-sheen inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white border border-emerald-300/40 ring-2 ring-emerald-500/15 text-sm sm:text-base font-bold shadow-[0_10px_22px_-8px_rgba(16,185,129,0.55)] whitespace-nowrap"
+                        className="btn-interactive btn-sheen w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white border border-emerald-300/40 ring-2 ring-emerald-500/15 text-sm sm:text-base font-bold shadow-[0_10px_22px_-8px_rgba(16,185,129,0.55)] whitespace-nowrap"
                       >
                         <MessageSquare className="w-4 h-4 text-emerald-100" />
                         <span>{lang === 'ar' ? 'حجز سريع عبر واتساب' : 'Quick WhatsApp'}</span>
@@ -218,7 +221,7 @@ export const HomePage: React.FC = () => {
                     )}
                     <a
                       href="#departments-section"
-                      className="btn-interactive inline-flex items-center justify-center px-5 py-3.5 rounded-xl border-2 border-[#0F4C5C]/25 bg-white/95 hover:border-[#0284C7] hover:bg-sky-50/70 text-[#0F4C5C] text-sm sm:text-base font-bold shadow-xs whitespace-nowrap"
+                      className="btn-interactive flex-1 sm:flex-none inline-flex items-center justify-center px-4 sm:px-5 py-3 rounded-xl border-2 border-[#0F4C5C]/25 bg-white/95 hover:border-[#0284C7] hover:bg-sky-50/70 text-[#0F4C5C] text-xs sm:text-base font-bold shadow-xs whitespace-nowrap"
                     >
                       {heroSecondaryCta}
                     </a>
@@ -228,7 +231,7 @@ export const HomePage: React.FC = () => {
                     />
                     <a
                       href="#clinic-location-section"
-                      className="btn-interactive inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-sky-50/90 hover:bg-sky-100 border border-sky-200/90 text-[#0284C7] text-xs sm:text-sm font-bold whitespace-nowrap"
+                      className="btn-interactive flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-3.5 py-3 rounded-xl bg-sky-50/90 hover:bg-sky-100 border border-sky-200/90 text-[#0284C7] text-xs sm:text-sm font-bold whitespace-nowrap"
                     >
                       <MapPin className="w-4 h-4" />
                       <span>{t('common.clinicLocation')}</span>
@@ -245,14 +248,12 @@ export const HomePage: React.FC = () => {
                   transition={{ duration: 0.5, delay: 0.08, ease: EASE_OUT_EXPO }}
                   className="lg:col-span-6 relative"
                 >
-                  <div className="relative h-full p-1.5 rounded-2xl bg-gradient-to-br from-[#0F4C5C]/15 via-sky-100/60 to-white border border-slate-200/80 shadow-sm">
-                    <SafeImage
-                      src={homeHero.heroImage || localizedConfig.brand.heroImage}
-                      alt={localizedConfig.brand.nameAr}
-                      aspectClass="aspect-[16/10] lg:h-full lg:aspect-auto min-h-[260px]"
-                      className="rounded-xl"
-                    />
-                  </div>
+                  <HeroImageSlider
+                    primarySrc={homeHero.heroImage || localizedConfig.brand.heroImage}
+                    brandName={localizedConfig.brand.nameAr}
+                    lang={lang}
+                    isRTL={isRTL}
+                  />
                 </motion.div>
               </div>
             </div>
@@ -330,59 +331,67 @@ export const HomePage: React.FC = () => {
                       : 'bg-slate-700 text-white';
 
                   return (
-                    <Link
-                      to={`/campaigns/${camp.slug}`}
-                      className="group bg-white text-slate-900 rounded-xl border border-white/20 overflow-hidden flex flex-col justify-between w-full shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5"
-                    >
-                      <div>
-                        {camp.image && (
-                          <div className="relative overflow-hidden">
-                            <SafeImage
-                              src={camp.image}
-                              alt={camp.title}
-                              aspectClass="aspect-[16/9]"
-                              className="transition-transform duration-500 ease-out group-hover:scale-[1.02]"
-                            />
-                            <span
-                              className={`absolute top-2.5 start-2.5 px-2.5 py-1 rounded-md text-[11px] font-bold shadow-xs ${statusBadgeStyle}`}
-                            >
-                              {t(`campaigns.status.${effectiveStatus}`)}
-                            </span>
+                    <div className="w-full flex rounded-2xl p-[1.5px] bg-gradient-to-br from-sky-300/60 via-white/35 to-emerald-300/50 hover:from-[#7DD3FC] hover:via-white/80 hover:to-emerald-300/80 shadow-[0_12px_28px_-14px_rgba(0,0,0,0.45)] transition-all duration-200 hover:-translate-y-0.5">
+                      <Link
+                        to={`/campaigns/${camp.slug}`}
+                        className="group bg-white text-slate-900 rounded-[14.5px] overflow-hidden flex flex-col justify-between w-full"
+                      >
+                        <span
+                          aria-hidden="true"
+                          className="h-[3px] w-full bg-gradient-to-r from-[#38BDF8] via-[#0284C7] to-emerald-400 shrink-0"
+                        />
+                        <div>
+                          {camp.image && (
+                            <div className="p-1.5 pb-0">
+                              <div className="relative overflow-hidden rounded-xl border border-slate-100">
+                                <SafeImage
+                                  src={camp.image}
+                                  alt={camp.title}
+                                  aspectClass="aspect-[16/9]"
+                                  className="transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+                                />
+                                <span
+                                  className={`absolute top-2.5 start-2.5 px-2.5 py-1 rounded-lg text-[11px] font-bold shadow-xs ${statusBadgeStyle}`}
+                                >
+                                  {t(`campaigns.status.${effectiveStatus}`)}
+                                </span>
+                              </div>
+                            </div>
+                          )}
+                          <div className="p-5 space-y-2">
+                            <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                              {dept && (
+                                <span className="text-[#0284C7] font-semibold">{dept.nameAr}</span>
+                              )}
+                              <span aria-hidden="true">·</span>
+                              <span>{camp.dayLabel}</span>
+                            </div>
+                            <h3 className="font-display font-bold text-base sm:text-lg text-slate-900 group-hover:text-[#0F4C5C] line-clamp-2 transition-colors">
+                              {camp.title}
+                            </h3>
+                            <p className="text-sm text-slate-600 line-clamp-2 leading-relaxed">
+                              {camp.serviceSummary}
+                            </p>
                           </div>
-                        )}
-                        <div className="p-5 space-y-2">
-                          <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
-                            {dept && (
-                              <span className="text-[#0284C7] font-semibold">{dept.nameAr}</span>
-                            )}
-                            <span aria-hidden="true">·</span>
-                            <span>{camp.dayLabel}</span>
-                          </div>
-                          <h3 className="font-display font-bold text-base sm:text-lg text-slate-900 group-hover:text-[#0F4C5C] line-clamp-2">
-                            {camp.title}
-                          </h3>
-                          <p className="text-sm text-slate-600 line-clamp-2 leading-relaxed">
-                            {camp.serviceSummary}
-                          </p>
                         </div>
-                      </div>
 
-                      <div className="px-5 py-3.5 border-t border-slate-100 flex items-center justify-between gap-3 text-xs">
-                        <span className="text-slate-600 tabular-nums">
-                          {t('home.remainingSeats')}:{' '}
-                          <strong className="text-slate-900">{remaining}</strong> {t('home.seatsOf')}{' '}
-                          {camp.totalCapacity}
-                        </span>
-                        <span className="text-[#0F4C5C] font-bold inline-flex items-center gap-1 whitespace-nowrap">
-                          <span>
-                            {effectiveStatus === 'open'
-                              ? t('home.campaignDetails')
-                              : t('common.readMore')}
+                        <div className="px-5 py-3.5 border-t border-[#0F4C5C]/25 bg-gradient-to-r from-[#0F4C5C]/20 via-sky-100/95 to-[#0284C7]/18 flex items-center justify-between gap-3 text-xs">
+                          <span className="text-slate-700 font-medium tabular-nums">
+                            {t('home.remainingSeats')}:{' '}
+                            <strong className="text-[#0F4C5C]">{remaining}</strong> {t('home.seatsOf')}{' '}
+                            {camp.totalCapacity}
                           </span>
-                          <ArrowIcon className="w-3.5 h-3.5" />
-                        </span>
-                      </div>
-                    </Link>
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/95 group-hover:bg-gradient-to-r group-hover:from-[#0F4C5C] group-hover:to-[#0284C7] text-[#0F4C5C] group-hover:text-white border border-[#0F4C5C]/20 group-hover:border-transparent font-bold shadow-2xs transition-all duration-200 whitespace-nowrap">
+                            <span>
+                              {effectiveStatus === 'open'
+                                ? t('home.campaignDetails')
+                                : t('common.readMore')}
+                            </span>
+                            <ArrowIcon className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-0.5" />
+                          </span>
+                        </div>
+                      </Link>
+                    </div>
                   );
                 }}
               />
@@ -433,32 +442,44 @@ export const HomePage: React.FC = () => {
                 </Link>
               }
               renderItem={(dept) => (
-                <Link
-                  to={`/departments/${dept.slug}`}
-                  className="group bg-white rounded-xl border border-slate-200 overflow-hidden flex flex-col w-full transition-all duration-200 hover:-translate-y-0.5 hover:border-[#0F4C5C]/45"
-                >
-                  <SafeImage
-                    src={dept.image}
-                    alt={dept.nameAr}
-                    aspectClass="aspect-[4/3]"
-                    className="transition-transform duration-500 ease-out group-hover:scale-[1.02]"
-                  />
-                  <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
-                    <div>
-                      <span className="text-xs text-slate-500 block mb-1" dir="ltr">
-                        {dept.nameEn}
-                      </span>
-                      <h3 className="font-display font-bold text-lg text-slate-900 group-hover:text-[#0F4C5C] transition-colors">
-                        {dept.nameAr}
-                      </h3>
-                      <p className="text-sm text-slate-600 mt-2 leading-relaxed">{dept.shortDesc}</p>
+                <div className="w-full flex rounded-2xl p-[1.5px] bg-gradient-to-br from-[#0F4C5C]/24 via-sky-200/80 to-teal-200/55 hover:from-[#0F4C5C]/65 hover:via-[#0284C7]/70 hover:to-emerald-400/60 shadow-[0_10px_24px_-14px_rgba(15,76,92,0.22)] transition-all duration-200 hover:-translate-y-0.5">
+                  <Link
+                    to={`/departments/${dept.slug}`}
+                    className="group bg-white rounded-[14.5px] overflow-hidden flex flex-col w-full"
+                  >
+                    <span
+                      aria-hidden="true"
+                      className="h-[3px] w-full bg-gradient-to-r from-[#0F4C5C] via-[#0284C7] to-[#38BDF8] shrink-0 opacity-85 group-hover:opacity-100 transition-opacity"
+                    />
+                    <div className="p-1.5 pb-0">
+                      <div className="overflow-hidden rounded-xl border border-slate-100">
+                        <SafeImage
+                          src={dept.image}
+                          alt={dept.nameAr}
+                          aspectClass="aspect-[4/3]"
+                          className="transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+                        />
+                      </div>
                     </div>
-                    <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-[#0F4C5C]">
-                      <span>{t('common.readMore')}</span>
-                      <ArrowIcon className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
+                    <div className="flex-1 flex flex-col justify-between">
+                      <div className="p-5">
+                        <span className="text-xs text-slate-500 block mb-1" dir="ltr">
+                          {dept.nameEn}
+                        </span>
+                        <h3 className="font-display font-bold text-lg text-slate-900 group-hover:text-[#0F4C5C] transition-colors">
+                          {dept.nameAr}
+                        </h3>
+                        <p className="text-sm text-slate-600 mt-2 leading-relaxed">{dept.shortDesc}</p>
+                      </div>
+                      <div className="px-5 py-3.5 border-t border-[#0F4C5C]/25 bg-gradient-to-r from-[#0F4C5C]/20 via-sky-100/95 to-[#0284C7]/18 flex items-center justify-between">
+                        <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white/95 group-hover:bg-gradient-to-r group-hover:from-[#0F4C5C] group-hover:to-[#0284C7] text-[#0F4C5C] group-hover:text-white border border-[#0F4C5C]/20 group-hover:border-transparent text-xs font-bold shadow-2xs transition-all duration-200 whitespace-nowrap">
+                          <span>{t('common.readMore')}</span>
+                          <ArrowIcon className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-0.5" />
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                </Link>
+                  </Link>
+                </div>
               )}
             />
             </motion.div>
@@ -811,57 +832,68 @@ export const HomePage: React.FC = () => {
                 const dept = departments.find((d) => d.id === srv.departmentId);
                 const doc = doctors.find((d) => d.id === srv.doctorId);
                 return (
-                  <div className="group bg-white rounded-xl border border-slate-200 overflow-hidden flex flex-col justify-between w-full transition-all duration-200 hover:-translate-y-0.5 hover:border-[#0284C7]/50 hover:shadow-md">
-                    <div>
-                      {srv.image && (
-                        <Link to={`/services/${srv.slug}`} className="block overflow-hidden">
-                          <SafeImage
-                            src={srv.image}
-                            alt={srv.title}
-                            aspectClass="aspect-[16/9]"
-                            className="transition-transform duration-500 ease-out group-hover:scale-[1.02]"
-                          />
-                        </Link>
-                      )}
-                      <div className="p-6 pb-4 space-y-2.5">
-                        <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
-                          <span className="font-mono font-bold text-[#0284C7] tabular-nums">
-                            {String(idx + 1).padStart(2, '0')}.
-                          </span>
-                          <span>{dept?.nameAr}</span>
-                          {doc && (
-                            <>
-                              <span aria-hidden="true">·</span>
-                              <span>{doc.nameAr}</span>
-                            </>
-                          )}
+                  <div className="w-full flex rounded-2xl p-[1.5px] bg-gradient-to-br from-[#0284C7]/28 via-sky-200/75 to-[#0F4C5C]/25 hover:from-[#0284C7]/70 hover:via-[#38BDF8]/65 hover:to-[#0F4C5C]/70 shadow-[0_10px_26px_-14px_rgba(15,76,92,0.24)] transition-all duration-200 hover:-translate-y-0.5">
+                    <div className="group bg-white rounded-[14.5px] overflow-hidden flex flex-col justify-between w-full">
+                      <span
+                        aria-hidden="true"
+                        className="h-[3px] w-full bg-gradient-to-r from-[#0284C7] via-[#38BDF8] to-[#0F4C5C] shrink-0 opacity-85 group-hover:opacity-100 transition-opacity"
+                      />
+                      <div>
+                        {srv.image && (
+                          <div className="p-1.5 pb-0">
+                            <Link
+                              to={`/services/${srv.slug}`}
+                              className="block overflow-hidden rounded-xl border border-slate-100"
+                            >
+                              <SafeImage
+                                src={srv.image}
+                                alt={srv.title}
+                                aspectClass="aspect-[16/9]"
+                                className="transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+                              />
+                            </Link>
+                          </div>
+                        )}
+                        <div className="p-6 pb-4 space-y-2.5">
+                          <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                            <span className="px-1.5 py-0.5 rounded-md bg-sky-50 border border-sky-200/80 font-mono font-bold text-[#0284C7] tabular-nums">
+                              {String(idx + 1).padStart(2, '0')}
+                            </span>
+                            <span className="font-semibold text-[#0F4C5C]">{dept?.nameAr}</span>
+                            {doc && (
+                              <>
+                                <span aria-hidden="true">·</span>
+                                <span>{doc.nameAr}</span>
+                              </>
+                            )}
+                          </div>
+                          <h3 className="font-display font-bold text-lg text-slate-900">
+                            <Link to={`/services/${srv.slug}`} className="hover:text-[#0F4C5C] transition-colors">
+                              {srv.title}
+                            </Link>
+                          </h3>
+                          <p className="text-sm text-slate-600 leading-relaxed">{srv.shortDesc}</p>
                         </div>
-                        <h3 className="font-display font-bold text-lg text-slate-900">
-                          <Link to={`/services/${srv.slug}`} className="hover:text-[#0F4C5C]">
-                            {srv.title}
-                          </Link>
-                        </h3>
-                        <p className="text-sm text-slate-600 leading-relaxed">{srv.shortDesc}</p>
                       </div>
-                    </div>
 
-                    <div className="px-6 pb-5 pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
-                      <Link
-                        to={`/services/${srv.slug}`}
-                        className="text-sm font-bold text-[#0F4C5C] hover:text-[#0284C7] inline-flex items-center gap-1 transition-colors"
-                      >
-                        <span>{t('common.readMore')}</span>
-                        <ArrowIcon className="w-3.5 h-3.5" />
-                      </Link>
-                      <BookActionButton
-                        departmentId={srv.departmentId}
-                        serviceId={srv.id}
-                        doctorId={srv.doctorId || undefined}
-                        sourceLabel={srv.title}
-                        className="btn-interactive btn-sheen text-xs font-bold px-4 py-2 rounded-xl bg-gradient-to-r from-[#0F4C5C] to-[#0284C7] text-white border border-sky-300/30 shadow-xs"
-                      >
-                        {t('common.bookService')}
-                      </BookActionButton>
+                      <div className="px-6 py-4 border-t border-[#0F4C5C]/25 bg-gradient-to-r from-[#0F4C5C]/20 via-sky-100/95 to-[#0284C7]/18 flex flex-wrap items-center justify-between gap-3">
+                        <Link
+                          to={`/services/${srv.slug}`}
+                          className="btn-interactive inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/95 hover:bg-gradient-to-r hover:from-[#0F4C5C] hover:to-[#0284C7] text-[#0F4C5C] hover:text-white border border-[#0F4C5C]/20 hover:border-transparent text-xs font-bold shadow-2xs transition-all duration-200 whitespace-nowrap"
+                        >
+                          <span>{t('common.readMore')}</span>
+                          <ArrowIcon className="w-3.5 h-3.5" />
+                        </Link>
+                        <BookActionButton
+                          departmentId={srv.departmentId}
+                          serviceId={srv.id}
+                          doctorId={srv.doctorId || undefined}
+                          sourceLabel={srv.title}
+                          className="btn-interactive btn-sheen text-xs font-bold px-4 py-2 rounded-xl bg-gradient-to-r from-[#0F4C5C] to-[#0284C7] text-white border border-sky-300/30 shadow-xs"
+                        >
+                          {t('common.bookService')}
+                        </BookActionButton>
+                      </div>
                     </div>
                   </div>
                 );
@@ -911,39 +943,49 @@ export const HomePage: React.FC = () => {
                 renderItem={(story) => {
                   const dept = departments.find((d) => d.id === story.departmentId);
                   return (
-                    <Link
-                      to={`/stories/${story.slug}`}
-                      className="group bg-slate-50 rounded-xl border border-slate-200 overflow-hidden flex flex-col justify-between w-full hover:border-[#0F4C5C]/40 transition-colors"
-                    >
-                      <div>
-                        {story.image && (
-                          <SafeImage
-                            src={story.image}
-                            alt={story.title}
-                            aspectClass="aspect-[16/9]"
-                            className="transition-transform duration-500 ease-out group-hover:scale-[1.02]"
-                          />
-                        )}
-                        <div className="p-6 pb-4 space-y-2.5">
-                          <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
-                            <span className="text-[#0284C7] font-medium">{dept?.nameAr}</span>
-                            <span aria-hidden="true">·</span>
-                            <span className="tabular-nums">{story.date}</span>
+                    <div className="w-full flex rounded-2xl p-[1.5px] bg-gradient-to-br from-emerald-400/35 via-sky-200/75 to-[#0F4C5C]/25 hover:from-emerald-500/70 hover:via-[#0284C7]/65 hover:to-[#0F4C5C]/70 shadow-[0_10px_24px_-14px_rgba(15,76,92,0.2)] transition-all duration-200 hover:-translate-y-0.5">
+                      <Link
+                        to={`/stories/${story.slug}`}
+                        className="group bg-gradient-to-b from-slate-50/70 to-white rounded-[14.5px] overflow-hidden flex flex-col justify-between w-full"
+                      >
+                        <span
+                          aria-hidden="true"
+                          className="h-[3px] w-full bg-gradient-to-r from-emerald-500 via-teal-400 to-[#0284C7] shrink-0 opacity-85 group-hover:opacity-100 transition-opacity"
+                        />
+                        <div>
+                          {story.image && (
+                            <div className="p-1.5 pb-0">
+                              <div className="overflow-hidden rounded-xl border border-slate-100">
+                                <SafeImage
+                                  src={story.image}
+                                  alt={story.title}
+                                  aspectClass="aspect-[16/9]"
+                                  className="transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+                                />
+                              </div>
+                            </div>
+                          )}
+                          <div className="p-6 pb-4 space-y-2.5">
+                            <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                              <span className="text-[#0284C7] font-semibold">{dept?.nameAr}</span>
+                              <span aria-hidden="true">·</span>
+                              <span className="tabular-nums">{story.date}</span>
+                            </div>
+                            <h3 className="font-display font-bold text-lg text-slate-900 group-hover:text-[#0F4C5C] transition-colors">
+                              {story.title}
+                            </h3>
+                            <p className="text-sm text-slate-600 leading-relaxed">{story.summary}</p>
                           </div>
-                          <h3 className="font-display font-bold text-lg text-slate-900 group-hover:text-[#0F4C5C]">
-                            {story.title}
-                          </h3>
-                          <p className="text-sm text-slate-600 leading-relaxed">{story.summary}</p>
                         </div>
-                      </div>
-                      <div className="px-6 py-3.5 text-xs font-medium text-slate-500 border-t border-slate-200/70 flex items-center justify-between">
-                        <span>{story.patientLabel}</span>
-                        <span className="text-[#0F4C5C] font-semibold inline-flex items-center gap-1">
-                          <span>{t('common.readMore')}</span>
-                          <ArrowIcon className="w-3.5 h-3.5" />
-                        </span>
-                      </div>
-                    </Link>
+                        <div className="px-6 py-3.5 text-xs font-medium text-slate-700 border-t border-emerald-600/25 bg-gradient-to-r from-emerald-600/20 via-teal-100/90 to-sky-100/90 flex items-center justify-between gap-2">
+                          <span className="truncate">{story.patientLabel}</span>
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/95 group-hover:bg-gradient-to-r group-hover:from-[#0F4C5C] group-hover:to-emerald-600 text-[#0F4C5C] group-hover:text-white border border-emerald-600/25 group-hover:border-transparent font-bold shadow-2xs transition-all duration-200 whitespace-nowrap shrink-0">
+                            <span>{t('common.readMore')}</span>
+                            <ArrowIcon className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-0.5" />
+                          </span>
+                        </div>
+                      </Link>
+                    </div>
                   );
                 }}
               />
@@ -999,78 +1041,138 @@ export const HomePage: React.FC = () => {
                   renderItem={(art) => {
                     const dept = departments.find((d) => d.id === art.departmentId);
                     return (
-                      <Link
-                        to={`/library/${art.slug}`}
-                        className="group bg-white rounded-xl border border-slate-200 overflow-hidden flex flex-col w-full hover:border-[#0F4C5C]/40 transition-colors"
-                      >
-                        <SafeImage src={art.image} alt={art.title} aspectClass="aspect-[4/3]" />
-                        <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
-                          <div>
-                            <div className="text-xs text-slate-500 flex flex-wrap items-center gap-1.5 mb-1.5">
-                              <span className="text-[#0284C7] font-medium">{art.typeLabel}</span>
-                              <span aria-hidden="true">·</span>
-                              <span>{dept?.nameAr}</span>
+                      <div className="w-full flex rounded-2xl p-[1.5px] bg-gradient-to-br from-[#0F4C5C]/22 via-sky-200/75 to-indigo-200/55 hover:from-[#0F4C5C]/60 hover:via-[#0284C7]/65 hover:to-indigo-400/60 shadow-[0_8px_22px_-14px_rgba(15,76,92,0.2)] transition-all duration-200 hover:-translate-y-0.5">
+                        <Link
+                          to={`/library/${art.slug}`}
+                          className="group bg-white rounded-[14.5px] overflow-hidden flex flex-col w-full"
+                        >
+                          <span
+                            aria-hidden="true"
+                            className="h-[3px] w-full bg-gradient-to-r from-[#0F4C5C] via-[#0284C7] to-indigo-500 shrink-0 opacity-85 group-hover:opacity-100 transition-opacity"
+                          />
+                          <div className="p-1.5 pb-0">
+                            <div className="overflow-hidden rounded-xl border border-slate-100">
+                              <SafeImage
+                                src={art.image}
+                                alt={art.title}
+                                aspectClass="aspect-[4/3]"
+                                className="transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+                              />
                             </div>
-                            <h3 className="font-display font-bold text-base text-slate-900 group-hover:text-[#0F4C5C]">
-                              {art.title}
-                            </h3>
-                            <p className="text-sm text-slate-600 mt-2 line-clamp-3">{art.summary}</p>
                           </div>
-                          <span className="text-xs font-semibold text-[#0F4C5C] inline-flex items-center gap-1">
-                            <span>{t('common.readMore')}</span>
-                            <ArrowIcon className="w-3.5 h-3.5" />
-                          </span>
-                        </div>
-                      </Link>
+                          <div className="flex-1 flex flex-col justify-between">
+                            <div className="p-5">
+                              <div className="text-xs text-slate-500 flex flex-wrap items-center gap-1.5 mb-1.5">
+                                <span className="text-[#0284C7] font-semibold">{art.typeLabel}</span>
+                                <span aria-hidden="true">·</span>
+                                <span>{dept?.nameAr}</span>
+                              </div>
+                              <h3 className="font-display font-bold text-base text-slate-900 group-hover:text-[#0F4C5C] transition-colors">
+                                {art.title}
+                              </h3>
+                              <p className="text-sm text-slate-600 mt-2 line-clamp-3">{art.summary}</p>
+                            </div>
+                            <div className="px-5 py-3.5 border-t border-[#0F4C5C]/25 bg-gradient-to-r from-[#0F4C5C]/20 via-sky-100/95 to-indigo-100/80 flex items-center justify-between">
+                              <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white/95 group-hover:bg-gradient-to-r group-hover:from-[#0F4C5C] group-hover:to-[#0284C7] text-[#0F4C5C] group-hover:text-white border border-[#0F4C5C]/20 group-hover:border-transparent text-xs font-bold shadow-2xs transition-all duration-200 whitespace-nowrap">
+                                <span>{t('common.readMore')}</span>
+                                <ArrowIcon className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-0.5" />
+                              </span>
+                            </div>
+                          </div>
+                        </Link>
+                      </div>
                     );
                   }}
                 />
               </div>
 
-              {featuredVideo && (
-                <div className="lg:col-span-5 bg-slate-900 text-white rounded-xl overflow-hidden flex flex-col justify-between border border-slate-800">
-                  <div className="relative">
-                    <SafeImage
-                      src={featuredVideo.image}
-                      alt={featuredVideo.title}
-                      aspectClass="aspect-[16/10]"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/30 to-transparent flex items-center justify-center">
-                      <Link
-                        to={`/library/${featuredVideo.slug}`}
-                        aria-label={featuredVideo.title}
-                        className="w-14 h-14 rounded-full bg-white/95 text-[#0F4C5C] flex items-center justify-center shadow-lg hover:scale-105 transition-transform"
-                      >
-                        <Play className="w-6 h-6 fill-current" />
-                      </Link>
-                    </div>
-                  </div>
-                  <div className="p-6 space-y-3 flex-1 flex flex-col justify-between">
-                    <div>
-                      <div className="text-xs text-sky-300 font-medium flex items-center gap-2 mb-1.5">
+              {sequentialVideos.length > 0 && (
+                <div className="lg:col-span-5 flex flex-col justify-between">
+                  <SequentialCarousel
+                    items={sequentialVideos}
+                    keyExtractor={(vid) => vid.id}
+                    desktopCols={1}
+                    tabletCols={1}
+                    intervalMs={4800}
+                    compactHeader
+                    ariaLabel={t('home.featuredVideoLabel')}
+                    isRTL={isRTL}
+                    lang={lang}
+                    headerLeft={
+                      <span className="text-xs font-semibold text-[#0284C7] inline-flex items-center gap-2">
                         <span>{t('home.featuredVideoLabel')}</span>
-                        {featuredVideo.videoDuration && (
-                          <>
-                            <span aria-hidden="true">·</span>
-                            <span className="tabular-nums">{featuredVideo.videoDuration}</span>
-                          </>
-                        )}
+                        <span className="px-1.5 py-0.5 rounded bg-sky-50 border border-sky-200/80 text-[#0F4C5C] text-[10px] font-bold tabular-nums">
+                          {sequentialVideos.length}
+                        </span>
+                      </span>
+                    }
+                    renderItem={(vid) => (
+                      <div className="w-full flex rounded-2xl p-[1.5px] bg-gradient-to-br from-sky-400/50 via-slate-700 to-teal-400/45 hover:from-[#38BDF8] hover:via-slate-600 hover:to-emerald-400/75 shadow-[0_14px_30px_-14px_rgba(15,23,42,0.55)] transition-all duration-200 hover:-translate-y-0.5">
+                        <div className="group bg-slate-900 text-white rounded-[14.5px] overflow-hidden flex flex-col justify-between w-full">
+                          <span
+                            aria-hidden="true"
+                            className="h-[3px] w-full bg-gradient-to-r from-[#38BDF8] via-[#0284C7] to-emerald-400 shrink-0"
+                          />
+                          <div>
+                            <div className="p-1.5 pb-0">
+                              <div className="relative overflow-hidden rounded-xl border border-slate-800">
+                                <SafeImage
+                                  src={vid.image}
+                                  alt={vid.title}
+                                  aspectClass="aspect-[16/10]"
+                                  className="transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/30 to-transparent flex items-center justify-center">
+                                  <Link
+                                    to={`/library/${vid.slug}`}
+                                    aria-label={vid.title}
+                                    className="w-13 h-13 rounded-full bg-white/95 text-[#0F4C5C] ring-4 ring-white/25 flex items-center justify-center shadow-lg hover:scale-105 transition-transform"
+                                  >
+                                    <Play className="w-5 h-5 fill-current" />
+                                  </Link>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="p-5 sm:p-6 space-y-2.5">
+                              <div className="text-xs text-sky-300 font-medium flex items-center gap-2">
+                                <span>{vid.typeLabel}</span>
+                                {vid.videoDuration && (
+                                  <>
+                                    <span aria-hidden="true">·</span>
+                                    <span className="tabular-nums">{vid.videoDuration}</span>
+                                  </>
+                                )}
+                              </div>
+                              <h3 className="font-display font-bold text-base sm:text-lg text-white line-clamp-2">
+                                <Link
+                                  to={`/library/${vid.slug}`}
+                                  className="hover:text-sky-200 transition-colors"
+                                >
+                                  {vid.title}
+                                </Link>
+                              </h3>
+                              <p className="text-sm text-slate-300 leading-relaxed line-clamp-3">
+                                {vid.summary}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="px-5 sm:px-6 py-4 border-t border-sky-400/25 bg-[#041C24] flex items-center justify-between gap-2">
+                            <span className="text-[11px] text-slate-300/90 truncate max-w-[55%]">
+                              {vid.authorName}
+                            </span>
+                            <Link
+                              to={`/library/${vid.slug}`}
+                              className="btn-interactive inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-sky-400/20 hover:bg-gradient-to-r hover:from-[#38BDF8] hover:to-[#0284C7] text-sky-100 hover:text-white border border-sky-300/40 hover:border-transparent text-xs font-bold shadow-2xs transition-all duration-200 shrink-0 whitespace-nowrap"
+                            >
+                              <span>{lang === 'ar' ? 'مشاهدة التفاصيل' : 'Watch Details'}</span>
+                              <ArrowIcon className="w-3.5 h-3.5" />
+                            </Link>
+                          </div>
+                        </div>
                       </div>
-                      <h3 className="font-display font-bold text-lg text-white">
-                        {featuredVideo.title}
-                      </h3>
-                      <p className="text-sm text-slate-300 mt-2 leading-relaxed">
-                        {featuredVideo.summary}
-                      </p>
-                    </div>
-                    <Link
-                      to={`/library/${featuredVideo.slug}`}
-                      className="inline-flex items-center gap-1.5 text-sm font-semibold text-sky-300 hover:text-white pt-2"
-                    >
-                      <span>{lang === 'ar' ? 'مشاهدة التفاصيل' : 'Watch Details'}</span>
-                      <ArrowIcon className="w-4 h-4" />
-                    </Link>
-                  </div>
+                    )}
+                  />
                 </div>
               )}
             </div>
@@ -1119,31 +1221,46 @@ export const HomePage: React.FC = () => {
                   </Link>
                 }
                 renderItem={(item) => (
-                  <Link
-                    to={`/news/${item.slug}`}
-                    className="group bg-slate-50 rounded-xl border border-slate-200 overflow-hidden flex flex-col justify-between w-full hover:border-[#0F4C5C]/40 transition-colors"
-                  >
-                    <div>
-                      <SafeImage src={item.image} alt={item.title} aspectClass="aspect-[16/9]" />
-                      <div className="p-5 space-y-2">
-                        <div className="text-xs text-slate-500 flex items-center gap-2">
-                          <span className="text-[#0284C7] font-medium">{item.categoryLabel}</span>
-                          <span aria-hidden="true">·</span>
-                          <span className="tabular-nums">{item.date}</span>
+                  <div className="w-full flex rounded-2xl p-[1.5px] bg-gradient-to-br from-sky-300/40 via-slate-200/80 to-[#0F4C5C]/25 hover:from-[#0284C7]/65 hover:via-sky-300/70 hover:to-[#0F4C5C]/65 shadow-[0_10px_24px_-14px_rgba(15,76,92,0.2)] transition-all duration-200 hover:-translate-y-0.5">
+                    <Link
+                      to={`/news/${item.slug}`}
+                      className="group bg-gradient-to-b from-slate-50/70 to-white rounded-[14.5px] overflow-hidden flex flex-col justify-between w-full"
+                    >
+                      <span
+                        aria-hidden="true"
+                        className="h-[3px] w-full bg-gradient-to-r from-[#0284C7] via-sky-400 to-[#0F4C5C] shrink-0 opacity-85 group-hover:opacity-100 transition-opacity"
+                      />
+                      <div>
+                        <div className="p-1.5 pb-0">
+                          <div className="overflow-hidden rounded-xl border border-slate-100">
+                            <SafeImage
+                              src={item.image}
+                              alt={item.title}
+                              aspectClass="aspect-[16/9]"
+                              className="transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+                            />
+                          </div>
                         </div>
-                        <h3 className="font-display font-bold text-base text-slate-900 group-hover:text-[#0F4C5C]">
-                          {item.title}
-                        </h3>
-                        <p className="text-sm text-slate-600 line-clamp-3">{item.summary}</p>
+                        <div className="p-5 space-y-2">
+                          <div className="text-xs text-slate-500 flex items-center gap-2">
+                            <span className="text-[#0284C7] font-semibold">{item.categoryLabel}</span>
+                            <span aria-hidden="true">·</span>
+                            <span className="tabular-nums">{item.date}</span>
+                          </div>
+                          <h3 className="font-display font-bold text-base text-slate-900 group-hover:text-[#0F4C5C] transition-colors">
+                            {item.title}
+                          </h3>
+                          <p className="text-sm text-slate-600 line-clamp-3">{item.summary}</p>
+                        </div>
                       </div>
-                    </div>
-                    <div className="px-5 pb-5">
-                      <span className="text-xs font-semibold text-[#0F4C5C] inline-flex items-center gap-1 pt-2 border-t border-slate-200/70 w-full">
-                        <span>{t('common.readMore')}</span>
-                        <ArrowIcon className="w-3.5 h-3.5" />
-                      </span>
-                    </div>
-                  </Link>
+                      <div className="px-5 py-3.5 border-t border-[#0F4C5C]/25 bg-gradient-to-r from-[#0F4C5C]/20 via-sky-100/95 to-[#0284C7]/18 flex items-center justify-between">
+                        <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white/95 group-hover:bg-gradient-to-r group-hover:from-[#0F4C5C] group-hover:to-[#0284C7] text-[#0F4C5C] group-hover:text-white border border-[#0F4C5C]/20 group-hover:border-transparent text-xs font-bold shadow-2xs transition-all duration-200 whitespace-nowrap">
+                          <span>{t('common.readMore')}</span>
+                          <ArrowIcon className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-0.5" />
+                        </span>
+                      </div>
+                    </Link>
+                  </div>
                 )}
               />
             </motion.div>

@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { Breadcrumbs } from '../components/Breadcrumbs';
 import { SafeImage } from '../components/SafeImage';
 import { getFilterTabClass, ScrollableFilterBar } from '../components/ScrollableFilterBar';
 
 export const NewsPage: React.FC = () => {
-  const { lang, t, news, departments } = useLanguage();
+  const { lang, isRTL, t, news, departments } = useLanguage();
   const [selectedDept, setSelectedDept] = useState<string>('all');
+  const ArrowIcon = isRTL ? ArrowLeft : ArrowRight;
 
   const filteredNews =
     selectedDept === 'all'
@@ -87,8 +89,11 @@ export const NewsPage: React.FC = () => {
                 <p className="text-sm text-slate-600 leading-relaxed">{item.summary}</p>
               </div>
             </div>
-            <div className="px-5 py-3 border-t border-slate-100 text-xs font-semibold text-[#0F4C5C]">
-              {t('common.readMore')}
+            <div className="px-5 py-3.5 border-t border-[#0F4C5C]/25 bg-gradient-to-r from-[#0F4C5C]/20 via-sky-100/95 to-[#0284C7]/18 flex items-center justify-between">
+              <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white/95 group-hover:bg-gradient-to-r group-hover:from-[#0F4C5C] group-hover:to-[#0284C7] text-[#0F4C5C] group-hover:text-white border border-[#0F4C5C]/20 group-hover:border-transparent text-xs font-bold shadow-2xs transition-all duration-200 whitespace-nowrap">
+                <span>{t('common.readMore')}</span>
+                <ArrowIcon className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-0.5" />
+              </span>
             </div>
           </Link>
         ))}

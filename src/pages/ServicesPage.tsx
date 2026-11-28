@@ -98,10 +98,10 @@ export const ServicesPage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="px-5 py-4 border-t border-slate-100 flex items-center justify-between gap-2">
+              <div className="px-5 py-4 border-t border-[#0F4C5C]/25 bg-gradient-to-r from-[#0F4C5C]/20 via-sky-100/95 to-[#0284C7]/18 flex items-center justify-between gap-2">
                 <Link
                   to={`/services/${srv.slug}`}
-                  className="text-xs font-semibold text-[#0F4C5C] hover:underline inline-flex items-center gap-1"
+                  className="btn-interactive inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/95 hover:bg-gradient-to-r hover:from-[#0F4C5C] hover:to-[#0284C7] text-[#0F4C5C] hover:text-white border border-[#0F4C5C]/20 hover:border-transparent text-xs font-bold shadow-2xs transition-all duration-200 whitespace-nowrap"
                 >
                   <span>{t('common.readMore')}</span>
                   <ArrowIcon className="w-3.5 h-3.5" />

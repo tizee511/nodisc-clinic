@@ -111,14 +111,14 @@ export const CartPage: React.FC = () => {
                   </div>
 
                   <div className="flex flex-wrap items-center justify-between sm:justify-end gap-2.5 sm:gap-4">
-                    <div className="inline-flex items-center border border-slate-300 rounded-lg shrink-0">
+                    <div className="inline-flex items-center border border-slate-300 rounded-xl shrink-0">
                       <button
                         type="button"
                         onClick={() =>
                           updateCartQuantity(prd.id, item.selectedOption, item.quantity - 1)
                         }
                         aria-label={lang === 'ar' ? 'إنقاص الكمية' : 'Decrease'}
-                        className="p-2 text-slate-600 hover:text-slate-900"
+                        className="min-w-[40px] min-h-[40px] inline-flex items-center justify-center text-slate-600 hover:text-slate-900"
                       >
                         <Minus className="w-3.5 h-3.5" />
                       </button>
@@ -132,7 +132,7 @@ export const CartPage: React.FC = () => {
                           updateCartQuantity(prd.id, item.selectedOption, item.quantity + 1)
                         }
                         aria-label={lang === 'ar' ? 'زيادة الكمية' : 'Increase'}
-                        className="p-2 text-slate-600 hover:text-slate-900 disabled:opacity-40"
+                        className="min-w-[40px] min-h-[40px] inline-flex items-center justify-center text-slate-600 hover:text-slate-900 disabled:opacity-40"
                       >
                         <Plus className="w-3.5 h-3.5" />
                       </button>
@@ -146,7 +146,7 @@ export const CartPage: React.FC = () => {
                       type="button"
                       onClick={() => removeFromCart(prd.id, item.selectedOption)}
                       aria-label={t('store.cart.remove')}
-                      className="p-2 text-slate-400 hover:text-red-600 transition-colors"
+                      className="min-w-[40px] min-h-[40px] inline-flex items-center justify-center rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -242,12 +242,12 @@ export const CartPage: React.FC = () => {
                           if (couponMsg) setCouponMsg(null);
                         }}
                         placeholder="NODISC20"
-                        className="flex-1 min-w-0 px-3 py-2 rounded-lg border border-slate-300 text-xs font-mono uppercase"
+                        className="flex-1 min-w-0 min-h-[44px] px-3 py-2 rounded-xl border border-slate-300 text-xs font-mono uppercase"
                       />
                       <button
                         type="button"
                         onClick={() => handleApplyCoupon(couponInput)}
-                        className="btn-interactive btn-sheen px-4 py-2 rounded-xl bg-gradient-to-r from-[#0F4C5C] to-[#0284C7] text-white border border-sky-300/30 text-xs font-bold shrink-0"
+                        className="btn-interactive btn-sheen min-h-[44px] px-4 py-2 rounded-xl bg-gradient-to-r from-[#0F4C5C] to-[#0284C7] text-white border border-sky-300/30 text-xs font-bold shrink-0"
                       >
                         {lang === 'ar' ? 'تطبيق' : 'Apply'}
                       </button>
